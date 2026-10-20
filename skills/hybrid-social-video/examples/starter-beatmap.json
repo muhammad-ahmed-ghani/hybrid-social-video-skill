@@ -1,0 +1,138 @@
+{
+  "schema": "hybrid-beatmap/1",
+  "meta": {
+    "topic": "<what the video is about>",
+    "thesis": "<the ONE sentence the video proves>",
+    "intent": "mechanism",
+    "misconception_note": "The hook names the common belief; beat 2 corrects it.",
+    "format": "diagram-mechanism",
+    "tier": "R0",
+    "assembly": "L",
+    "platform": [
+      "tiktok",
+      "reels",
+      "shorts"
+    ],
+    "aspect": "9:16",
+    "fps": 30,
+    "target_seconds": 20,
+    "language": "English",
+    "language_tag": "en",
+    "wps": 2.7,
+    "rate_source": "prior",
+    "regulated_topic": "none",
+    "data_origin": "real",
+    "acronyms": [],
+    "disclose": false,
+    "budget_usd": 0,
+    "style": {
+      "name": "set by build_video.py",
+      "family": "set by build_video.py"
+    },
+    "notes": "Starter: replace the <...> text, keep the shape. Copy, then edit."
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "<the fact the video leans on>",
+      "confidence": "primary",
+      "source": "https://example.org/your-source",
+      "source_name": "<where it comes from>",
+      "date": "2026-10-21",
+      "verified": false
+    }
+  ],
+  "beats": [
+    {
+      "id": 1,
+      "role": "hook",
+      "layer": "code",
+      "layer_why": "type needs no footage and reads on mute",
+      "text": "<A question or claim in 12 words or fewer?>",
+      "visual": "two big lines of type land",
+      "device": "kinetic-type",
+      "on_screen_text": [
+        "<LINE ONE>",
+        "<LINE TWO>"
+      ],
+      "mute_proof": true,
+      "misconception": true,
+      "scene": {
+        "type": "kinetic",
+        "lines": [
+          {
+            "text": "<LINE ONE>",
+            "at": 0
+          },
+          {
+            "text": "<LINE TWO>",
+            "at": 4
+          }
+        ]
+      },
+      "claim_refs": [
+        "c1"
+      ]
+    },
+    {
+      "id": 2,
+      "role": "build",
+      "layer": "code",
+      "layer_why": "a drawn list is exact",
+      "text": "<Three short steps spoken in one breath: first this, then that, then the result.>",
+      "visual": "three numbered chips appear in turn",
+      "device": "steps",
+      "on_screen_text": [
+        "<Three steps>"
+      ],
+      "scene": {
+        "type": "steps",
+        "items": [
+          {
+            "text": "<Step one>",
+            "at": "first",
+            "icon": "search"
+          },
+          {
+            "text": "<Step two>",
+            "at": "then",
+            "icon": "gear"
+          },
+          {
+            "text": "<Result>",
+            "at": "result",
+            "icon": "check"
+          }
+        ]
+      },
+      "claim_refs": [
+        "c1"
+      ]
+    },
+    {
+      "id": 3,
+      "role": "payoff",
+      "layer": "code",
+      "layer_why": "closing type echoes the hook",
+      "text": "<One sentence that closes the loop.>",
+      "visual": "two lines of type close the loop",
+      "device": "kinetic-type",
+      "on_screen_text": [
+        "<CLOSE>"
+      ],
+      "scene": {
+        "type": "kinetic",
+        "lines": [
+          "<CLOSE>"
+        ]
+      },
+      "claim_refs": [
+        "c1"
+      ]
+    }
+  ],
+  "audio": {
+    "music_brief": "a quiet synthesised pad with soft ticks on each reveal",
+    "voice": "a clear local voice"
+  }
+}

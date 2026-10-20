@@ -67,7 +67,8 @@ turn.
 1. Beat map: each beat names its diagram state ("pump opens, arrow A to B draws") in `visual`; claims for every
    factual relationship.
 2. Voice, timings, `spans.json`.
-3. Build: `/faceless-explainer` ships blueprint-style shot shapes and a pin-and-paper preset; use it through a
+3. Build: with no HyperFrames, give each beat a `scene` spec (`references/03-beat-map.md`) and run `scripts/build_video.py`
+   (voice and word timings, frames, mix, encode, captions in one step; then `layout_check.py`). Otherwise `/faceless-explainer` ships blueprint-style shot shapes and a pin-and-paper preset; use it through a
    BRIEF (`11-routing.md`), or `/general-video` for a custom diagram. Motion rules from
    `/hyperframes-animation`. SVG icons from a licensed family, or R1 stills from `art_style.json`.
 4. Check step count against narration, then QC.

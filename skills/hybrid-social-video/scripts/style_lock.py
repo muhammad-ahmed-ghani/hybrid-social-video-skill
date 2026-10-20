@@ -26,7 +26,9 @@ is paper-collage, flat-vector-motion is flat-vector), and then spreads videos ap
 `style.json` under `--recent` is excluded, and a candidate whose background sits in the same colour family as the most recent
 look is penalised, so a run of videos does not drift into one palette. A brand colour (`--brand`) does not change the pick: it is
 the accent, applied with `build --accent`. The same topic always gets the same ranking; different topics spread. It prints the
-ranked picks with the reason for each; take the first and record it, with why, in `meta.notes`.
+ranked picks with the reason for each; take the first and record it, with why, in `meta.notes`. With `--format` the pick is limited to
+the looks that format's doc allows (data/formats.json `looks`). `build` resolves each identity font against what is installed and
+falls back to a same-class system stack (a serif look stays serif), reporting what it did in `fonts_not_installed`.
 
 Outputs in --out: style.json, style.css, art_style.json.
 Exit 0 ok | 2 usage / unknown identity.
@@ -119,6 +121,7 @@ def build(identity_id: str, accent: str | None = None, colormap: dict | None = N
         "text_safe_on": on,
     }
     ident["id"] = identity_id
+    ident["fonts_resolved"] = resolve_fonts(ident)
     ident["color_map"] = colormap or {}
     ident["canvas"] = {"width": 1080, "height": 1920, "fps": 30}
     ident["safe_box_px"] = data("platforms")["safe_zones_1080x1920"]["common_safe_box"]
@@ -143,6 +146,11 @@ REGISTERS = [
      ["whiteboard-doodle", "flat-vector", "swiss-grid"]),
 ]
 FORMAT_LOOK = {"vox-collage": "paper-collage", "flat-vector-motion": "flat-vector"}
+
+
+def format_looks(fmt: str) -> list[str]:
+    """Identities the format's doc allows (data/formats.json `looks`); empty means any."""
+    return list((data("formats")["formats"].get(fmt) or {}).get("looks") or [])
 
 
 def hue_family(hexcolor: str) -> str:
@@ -179,6 +187,7 @@ def pick(topic: str, intent: str = "", fmt: str = "", avoid: list[str] | None = 
     avoid, recent = set(avoid or []), list(recent or [])
     if fmt in FORMAT_LOOK:
         return [{"id": FORMAT_LOOK[fmt], "score": 10.0, "why": f"the {fmt} format defines its look"}]
+    allowed = set(format_looks(fmt))
     words = set(re.findall(r"[a-z]+", f"{topic} {intent} {fmt}".lower()))
     last_family = hue_family(ids[recent[0]]["tokens"]["bg"]) if recent and recent[0] in ids else None
     rows = []
@@ -193,8 +202,10 @@ def pick(topic: str, intent: str = "", fmt: str = "", avoid: list[str] | None = 
         if reg:
             score += 0.8 * len(reg)
             why.append("topic words in its register")
-        if iid in avoid:
+        if iid in avoid or (allowed and iid not in allowed):
             continue
+        if allowed:
+            why.append(f"allowed for {fmt}")
         if iid in recent:
             score -= 4.0
             why.append("already used in a recent video")
@@ -207,6 +218,59 @@ def pick(topic: str, intent: str = "", fmt: str = "", avoid: list[str] | None = 
     return rows[:max(1, n)]
 
 
+SERIF = ("fraunces", "playfair", "newsreader", "source serif", "instrument serif", "dm serif", "georgia", "lora", "merriweather")
+MONO = ("mono", "jetbrains", "share tech", "courier", "code")
+CONDENSED = ("oswald", "anton", "bebas", "league gothic", "barlow condensed", "roboto condensed", "archivo black", "lilita")
+HAND = ("caveat", "patrick hand", "permanent marker", "bangers", "architects daughter", "luckiest")
+STACKS = {
+    "serif": '"Georgia", "Times New Roman", serif',
+    "mono": '"Menlo", "Andale Mono", "Courier New", monospace',
+    "condensed": '"Avenir Next Condensed", "Arial Narrow", "Impact", sans-serif',
+    "hand": '"Marker Felt", "Chalkboard SE", "Bradley Hand", cursive',
+    "sans": '"Avenir Next", "Helvetica Neue", "Arial", sans-serif',
+}
+
+
+def _installed_families() -> set[str]:
+    import shutil
+    import subprocess
+    if not shutil.which("fc-list"):
+        return set()
+    try:
+        out = subprocess.run(["fc-list", "--format", "%{family}\\n"], capture_output=True, text=True, timeout=30).stdout
+    except Exception:
+        return set()
+    return {f.strip().casefold() for line in out.splitlines() for f in line.split(",") if f.strip()}
+
+
+def font_class(name: str) -> str:
+    n = name.lower()
+    for key, group in (("hand", HAND), ("condensed", CONDENSED), ("mono", MONO), ("serif", SERIF)):
+        if any(g in n for g in group):
+            return key
+    return "sans"
+
+
+def resolve_fonts(ident: dict, installed: set[str] | None = None) -> dict:
+    """For each of hero/body/numbers: the identity's font if installed, else the first installed alternate, else a generic
+    stack of the same class (serif stays serif). `use` is what the css puts first; `installed` says whether it is the real one."""
+    installed = _installed_families() if installed is None else installed
+    f = ident["fonts"]
+    out = {}
+    for role, key in (("hero", "hero"), ("body", "body"), ("numbers", "numbers_font")):
+        primary = re.sub(r"\s+(\d{3}|uppercase|italic|bold|regular)\b.*$", "", str(f[key]).split("(")[0].strip(), flags=re.I)
+        alts = [re.sub(r"\s*\(.*$", "", a).strip() for a in f.get("alternates", [])]
+        chosen, real = None, False
+        for cand in [primary] + alts:
+            if cand and cand.casefold() in installed:
+                chosen, real = cand, True
+                break
+        stack = STACKS[font_class(primary)]
+        out[role] = {"wanted": primary, "use": chosen or primary, "installed": real,
+                     "stack": (f'"{chosen}", ' if chosen else "") + stack}
+    return out
+
+
 def css(ident: dict) -> str:
     t, f = ident["tokens"], ident["fonts"]
     lines = [":root {"]
@@ -216,9 +280,10 @@ def css(ident: dict) -> str:
         lines.append(f"  --{k.replace('_', '-')}-text: {v};")
     for k, v in ident.get("color_map", {}).items():
         lines.append(f"  --cm-{k.replace('_', '-')}: {v};")
-    lines += [f"  --font-hero: '{f['hero'].split(' ')[0]}', sans-serif;",
-              f"  --font-body: '{f['body'].split(' ')[0]}', sans-serif;",
-              f"  --font-numbers: '{f['numbers_font']}', sans-serif;",
+    fr = ident.get("fonts_resolved") or resolve_fonts(ident)
+    lines += [f"  --font-hero: {fr['hero']['stack']};",
+              f"  --font-body: {fr['body']['stack']};",
+              f"  --font-numbers: {fr['numbers']['stack']};",
               "  font-variant-numeric: tabular-nums;", "}"]
     tex = ident["texture"]
     if tex["kind"] == "noise":
@@ -288,7 +353,8 @@ def main(argv: list[str]) -> int:
         try:
             ident = build(opt.get("identity", ""), opt.get("accent"), parse_colormap(opt.get("colormap")))
         except KeyError:
-            eprint(f"unknown identity '{opt.get('identity')}'. Try: style_lock.py list")
+            eprint(f"unknown or missing --identity '{opt.get('identity')}'. Choose one with `style_lock.py pick --topic ... --format ...` "
+                   "(or `list`); build_video.py picks and builds one itself when episode/style.json is missing")
             return 2
         except ValueError as exc:
             eprint(str(exc))
@@ -298,8 +364,12 @@ def main(argv: list[str]) -> int:
         (out / "style.json").write_text(json.dumps(ident, indent=2, ensure_ascii=False))
         (out / "style.css").write_text(css(ident))
         (out / "art_style.json").write_text(json.dumps(art_style(ident), indent=2, ensure_ascii=False))
+        missing = [f"{r['wanted']} -> {r['use'] if r['installed'] else 'a ' + font_class(r['wanted']) + ' system stack'}"
+                   for r in ident["fonts_resolved"].values() if not r["installed"]]
         print(json.dumps({"identity": ident["id"], "out": str(out), "text_safe": ident["text_safe"],
-                          "contrast": ident["contrast"]}))
+                          "contrast": ident["contrast"], "fonts_not_installed": missing}))
+        if missing:
+            eprint("[style] fonts not installed here, same-class system stacks are used: " + "; ".join(missing))
         return 0
     eprint(f"unknown command '{cmd}'")
     return 2

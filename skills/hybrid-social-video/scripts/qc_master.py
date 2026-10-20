@@ -2,7 +2,9 @@
 """qc_master.py - technical QC on the finished master. Offline and free.
 
     python3 qc_master.py master.mp4 [--target 40] [--platform tiktok] [--loop]
-                         [--max-freeze 2.5] [--beatmap beatmap.json]
+                         [--max-freeze 2.5] [--beatmap beatmap.json] [--waive pacing --why "<reason>"]
+
+The JSON report is on stdout and the human summary on stderr (so `json.loads(stdout)` works; do not merge the streams).
 
 Checks (each failure carries a repair hint; report-only, never edits):
   spec          size/aspect/fps/codec/pix_fmt/audio present   (data/platforms.json)
@@ -13,13 +15,17 @@ Checks (each failure carries a repair hint; report-only, never edits):
   dead_frames   no black > 0.1 s, no freeze > --max-freeze (default 2.5 s)
   flicker       no more than 5 large frame-to-frame luma jumps inside any 1 s window (a strobing
                 clip is a valid MP4 that passes ffprobe: a documented failure of generated video)
-  pacing        average shot length + longest hold reported; warns on static stretches
+  pacing        fails a window in which nothing changes (whole-frame change and active area both near zero); reports cuts and the longest hold
   loop          (--loop) last frame resembles first frame (SSIM >= 0.6)
 
 This is the numeric half of QC. The visual half (legibility, safe zones, face
 occlusion, wrong symbols) needs eyes: run contact_sheet.py and LOOK.
 
-Exit codes: 0 all pass | 5 delivered but >=1 failure | 1 unreadable | 2 usage.
+`--waive CHECK --why "<reason>"` turns a failing check into a recorded waiver (shown in the report and the summary) for the case
+where the check is wrong about a video that plainly passes the bar; the reason is required, and a waiver is never a way to ship
+a defect: fix real defects, waive only a false alarm (SKILL.md, the bar).
+
+Exit codes: 0 all pass (or waived) | 5 delivered but >=1 failure | 1 unreadable | 2 usage.
 """
 from __future__ import annotations
 
@@ -44,7 +50,7 @@ HINTS = {
                    "loop or a held last frame: re-render that beat",
     "flicker": "a strobing or flickering stretch: inspect that segment on a contact sheet; a generated "
                "clip that strobes is a content defect, regenerate that beat once with a changed prompt",
-    "pacing": "a stretch with no cut and almost no motion loses viewers: give it a real change (a new overlay state, a reframe, a cut to another layer); never a flash or a fake cut",
+    "pacing": "a stretch where nothing changes loses viewers: give it a real change (a new overlay state, a camera push or reframe toward the active part, a cut to another layer); never a flash or a fake cut. If the check is wrong about a video that does move, waive it: --waive pacing --why \"<reason>\"",
     "loop": "make the last beat's final frame echo the first (same framing/colour) for a clean loop",
 }
 
@@ -155,7 +161,7 @@ def check(path: Path, target: float | None, platform: str, loop: bool, max_freez
         res["hook_audio"] = {"pass": False, "first_audible_s": None}
         res["loudness"] = {"pass": False, "integrated_lufs": None}
 
-    vlog = _filter_log(path, "blackdetect=d=0.1:pix_th=0.10,freezedetect=n=-55dB:d=1.0", None)
+    vlog = _filter_log(path, "blackdetect=d=0.1:pix_th=0.03,freezedetect=n=-55dB:d=1.0", None)
     blacks = [(float(s), float(e)) for s, e in
               re.findall(r"black_start:([\d.]+) black_end:([\d.]+)", vlog)]
     blacks = [(s, e) for s, e in blacks if not (s < 0.05 and e < 0.2)]  # allow a 1-frame fade-in
@@ -187,23 +193,43 @@ def check(path: Path, target: float | None, platform: str, loop: bool, max_freez
         densest = max(densest, sum(1 for t1 in jumps[i:] if t1 - t0 < 1.0))
     res["flicker"] = {"pass": densest <= 5, "max_big_jumps_in_1s": densest}
 
-    # pacing: a long shot is a problem only when nothing moves in it. Hard cuts are one kind of change; a person
-    # talking, an animated diagram or a moving overlay are others, and seamless jump cuts on one framing score as
-    # no cut at all. So a hold longer than the limit fails only when its mean frame-to-frame change is near zero.
+    # pacing: a stretch is a problem only when nothing in it changes. Hard cuts are one kind of change; a person talking, an animated
+    # diagram or a small moving overlay are others, and seamless jump cuts or same-luma beat changes score as no cut at all. So the
+    # picture is read in sliding windows of the hold limit, with two measures: the whole-frame mean change (YDIF) and the active
+    # area (the share of pixels that change by more than 10 levels between frames, which sees a small moving element a whole-frame
+    # mean misses). A window is static only when both are near zero.
     limit = max(4.5, max_freeze * 1.8)
+    al = _filter_log(path, "scale=108:192,format=gray,tblend=all_mode=difference,lut=y='if(gt(val,10),255,0)',signalstats,"
+                           "metadata=print:key=lavfi.signalstats.YAVG", None)
+    active: list[tuple[float, float]] = []
+    t_a = 0.0
+    for line in al.splitlines():
+        m_t = re.search(r"pts_time:([\d.]+)", line)
+        if m_t:
+            t_a = float(m_t.group(1))
+        m_y = re.search(r"YAVG=([\d.]+)", line)
+        if m_y:
+            active.append((t_a, float(m_y.group(1)) / 255.0))
     marks = [0.0] + cuts + [dur]
-    holds = [(a_, b_) for a_, b_ in zip(marks, marks[1:])]
-    static = []
-    for a_, b_ in holds:
-        if b_ - a_ > limit:
-            vals = [v for t_, v in ydif if a_ <= t_ <= b_]
-            mean = sum(vals) / len(vals) if vals else 0.0
-            if mean < 0.5:
-                static.append({"from": round(a_, 2), "to": round(b_, 2), "mean_change": round(mean, 2)})
-    longest = max((b_ - a_ for a_, b_ in holds), default=dur)
+    longest = max((b_ - a_ for a_, b_ in zip(marks, marks[1:])), default=dur)
+    static: list[dict] = []
+    step = 0.5
+    t0 = 0.0
+    while t0 + limit <= dur + 1e-6:
+        ys = [v for t_, v in ydif if t0 <= t_ < t0 + limit]
+        ac = [v for t_, v in active if t0 <= t_ < t0 + limit]
+        my = sum(ys) / len(ys) if ys else 0.0
+        ma = sum(ac) / len(ac) if ac else 0.0
+        if my < 0.3 and ma < 0.0015:
+            if static and t0 <= static[-1]["to"]:
+                static[-1]["to"] = round(t0 + limit, 2)
+            else:
+                static.append({"from": round(t0, 2), "to": round(t0 + limit, 2), "mean_change": round(my, 2), "active_area": round(ma, 4)})
+        t0 += step
     res["pacing"] = {"pass": not static, "cuts": len(cuts), "avg_shot_s": round(dur / max(len(marks) - 1, 1), 2),
                      "longest_hold_s": round(longest, 2), "static_holds": static,
-                     "note": "a long shot passes when it moves (mean luma change per frame >= 0.5); never add flashes or fake cuts to satisfy this check"}
+                     "note": f"a {limit:g} s window fails only when nothing changes in it (whole-frame change < 0.3 and active area < 0.15%); "
+                             "never add flashes or fake cuts to satisfy this check"}
 
     if loop:
         with tempfile.TemporaryDirectory() as td:
@@ -244,6 +270,20 @@ def main(argv: list[str]) -> int:
             target = None
     rep = check(path, target, opt.get("platform", "tiktok"), bool(opt.get("loop")),
                 float(opt.get("max-freeze", 2.5)))
+    waive = opt.get("waive") if opt.get("waive") not in (None, True) else None
+    if waive:
+        why = opt.get("why") if opt.get("why") not in (None, True) else ""
+        if not why.strip():
+            eprint("--waive needs --why with the reason")
+            return 2
+        for k in [w for w in str(waive).split(",") if w]:
+            if k in rep.get("checks", {}) and not rep["checks"][k].get("pass"):
+                rep["checks"][k]["waived"] = why
+                rep["checks"][k]["pass"] = True
+                rep.setdefault("waivers", []).append({"check": k, "why": why})
+                rep["failures"] = [f for f in rep["failures"] if f != k]
+                rep["hints"].pop(k, None)
+        rep["ok"] = not rep["failures"]
     print(json.dumps(rep, indent=2))
     if rep.get("error"):
         eprint("[qc] " + rep["error"])

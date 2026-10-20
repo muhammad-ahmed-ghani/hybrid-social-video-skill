@@ -223,7 +223,8 @@ def main(argv: list[str]) -> int:
     ts = Typesetter(font_path)
     # interface chrome uses a plain face unless the labels were translated, in which case the covering font is used
     ui = ts if opt.get("labels") else Typesetter(next((f for f in FALLBACK_FONTS if Path(f).is_file()), font_path))
-    eprint(f"[animatic] {note}" + ("" if ts.raqm else " | Pillow has no Raqm: complex scripts may not shape or reorder; check the board"))
+    _latin = all(ord(c) < 0x250 for b in bm.get("beats", []) for c in (b.get("text") or ""))
+    eprint(f"[animatic] {note}" + ("" if (ts.raqm or _latin) else " | Pillow has no Raqm: complex scripts may not shape or reorder; check the board"))
     disclose = meta.get("disclose") if "disclose" in meta else None
     spans = None
     if opt.get("spans"):

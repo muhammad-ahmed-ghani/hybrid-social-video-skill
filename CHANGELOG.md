@@ -2,6 +2,40 @@
 
 All notable changes to this skill. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] - 2026-10-21
+
+Found by two independent trials in which fresh agents used the skill, with no paid tools, to make a heat-pump explainer and a Spanish
+article video. Both succeeded, scored it 3 to 4 out of 5 on autonomy and reliability, and wrote down 50 frictions; this release fixes them.
+
+A second round of the same two trials, on this release, needed about 20 tool calls each (down from 53 and 52), asked no questions, wrote no tooling of
+their own, and passed QC; they scored autonomy 5 and script reliability 4 to 5, and output quality 2.5 to 3 ("clean but plain"). The second pass below
+answers their notes: a design upgrade of the faceless template (a 26-icon set, a looping `cycle` scene, dots travelling along flows and loops, drifting
+background light, content centred in the space it has, stat count-ups that land on the spoken word), the layout check folded into the build
+verdict, the recogniser and voice recorded in provenance automatically, a warning for a beat that starts empty, default number words per
+language, a starter beat map, and a scan skip that says why.
+
+### Added
+- **Faceless route in one command.** `scripts/build_video.py` (look, word alignment, frames, mix, encode, captions, QC) over
+  `templates/faceless/index.html`, with eight scene types (`kinetic`, `stat`, `steps`, `flow`, `compare`, `bars`, `terminal`, `quote`) specified
+  per beat in the beat map; text is measured and fitted inside the safe box, a slow reframe and a moving highlight keep long beats alive, and
+  there are no flash transitions. Example: `examples/faceless-money-guard.json`.
+- `speech_align.py spans` (word times and beat spans for any voice-over, with beat starts snapped to the real pauses; English and Spanish
+  numbers), `captions.py` (SRT and VTT), `voice_render.py` (best local voice by language, fitted length), `encode_master.py`,
+  `layout_check.py` (Q1, Q4 and Q5 from the DOM).
+- `cost_plan.py init --free` (the zero-spend path), claim `confidence: "user"` and `verified: false`, `provenance.py --draft/--upgrade`,
+  `qc_master.py --waive CHECK --why REASON`, `mix_audio.py --style`, a `looks` list per format, and font resolution to same-class system stacks.
+- A fast path at the top of `SKILL.md` and a rule for each default that used to be a question (offline first, the voice's locale, a draft
+  voice as a valid end state, accepted defects, unverified sources).
+
+### Changed
+- `qc_master.py`: pacing is read in sliding windows with two measures (whole-frame change and active area) so small moving elements count;
+  dark brand backgrounds are no longer reported as black frames.
+- `voice_check.py` reads the language from the beat map, never uses an English-only model on another language, and returns a `rank`.
+- `reference_scan.py` makes one attempt inside a time budget and exits 3 with a reason when a site refuses, instead of printing success.
+- `style_lock.py pick` respects the format's allowed looks; `capability_probe.py` and `textscript.py` print short summaries; `contact_sheet.py` leads with the
+  hook frame and tints the danger bands lightly; the determinism check tolerates anti-aliasing noise but stays strict between fresh renders.
+- The remaining "ask the user" passages in the references now say what to decide instead.
+
 ## [1.3.0] - 2026-10-21
 
 ### Added

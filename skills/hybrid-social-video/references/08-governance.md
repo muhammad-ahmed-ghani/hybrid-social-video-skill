@@ -45,11 +45,12 @@ what a script can check.
 | Spend card | one call at or above the big-spend threshold the user chose (default: half the cap) | what, which model, why, the estimate, what it replaces | yes (`big_spend`) |
 | G3 delivery | after render | `master.mp4`, the QC report, the ledger total, a contact sheet at beat midpoints, accepted warnings, the disclosure reminder | no, unless QC still fails after the allowed retries |
 
-Event-triggered exception gates (stop and ask): a spend estimate over the cap by more
-than a small tolerance; a vendor moderation or likeness refusal (stop, re-brief,
-never retry with disguised input); a claim with no source; an asset that failed
-review twice; a request to use a paid tool outside the approved plan; a real person,
-brand or character appearing in the plan or detected in frames.
+Event-triggered exceptions: a spend estimate over the cap by more than a small tolerance (cut scope, or stop and
+report: the cap moves only by the user's word); a vendor moderation or likeness refusal (stop, re-brief,
+never retry with disguised input); a request to use a paid tool outside the approved plan; a real person,
+brand or character appearing in the plan or detected in frames (ask: consent). The rest resolve themselves: a claim with no source
+is cited to the user's own text (`confidence: "user"`), marked inference and hedged, or cut; an asset that failed review twice
+moves down a layer (`SKILL.md`, verify loop).
 
 A gate is the end of an assistant turn. Present the material, state what you will do
 on approval, and stop. Doing more work in the same turn is a gate violation. Approval

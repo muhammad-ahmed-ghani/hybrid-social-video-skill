@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """mix_audio.py - final mix: the master voice untouched, a ducked synthesised bed, soft cues, then loudness normalisation.
 
-    python3 mix_audio.py --voice build/host.mp4 --duration 36.0 --out build/mix.wav [--cues cues.json] [--no-bed] [--lufs -14]
+    python3 mix_audio.py --voice build/host.mp4 --duration 36.0 --out build/mix.wav [--cues cues.json] [--no-bed] [--style pad|warm|pulse] [--lufs -14]
 
 --voice is any file with the master speech (the host video's own audio, or a voice-over). It is never retimed or
 replaced. cues.json: {"hits": [seconds], "ticks": [seconds], "whooshes": [seconds]}: a low hit, a soft tick and a short
-upward sweep, synthesised here (no samples, no licences). The bed is a quiet pad that ducks under speech. The chain is a
+upward sweep, synthesised here (no samples, no licences). The bed is a quiet pad that ducks under speech; `--style` varies it
+per video (pad: A minor, warm: C major, pulse: the pad with a soft 90 bpm pulse) so videos do not all sound alike: choose by the
+story's mood and record it. The JSON line reports the final loudness and true peak. The chain is a
 gentle compressor, a limiter and two-pass EBU R128 loudnorm to --lufs (default -14) with true peak -1.5 dBTP.
 Cues belong to meaning: a tick where a state completes, a hit on the payoff, a sweep with a real transition. Needs numpy.
 """
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 import wave
@@ -65,8 +68,13 @@ def main(argv: list[str]) -> int:
     for c in cues["whooshes"]: add(sfx, c, whoosh)
     bed = np.zeros(n)
     if not opt.get("no-bed"):
-        for f, a in [(110, .5), (164.81, .35), (220, .3), (261.63, .22), (329.63, .12)]:
+        style = str(opt.get("style", "pad"))
+        chord = [(130.81, .5), (164.81, .35), (196.0, .3), (261.63, .22), (329.63, .12)] if style == "warm" else \
+                [(110, .5), (164.81, .35), (220, .3), (261.63, .22), (329.63, .12)]
+        for f, a in chord:
             bed += a * np.sin(2 * np.pi * f * t + 0.3 * np.sin(2 * np.pi * 0.07 * t)) * (0.75 + 0.25 * np.sin(2 * np.pi * 0.11 * t + f))
+        if style == "pulse":
+            bed *= 0.7 + 0.3 * (0.5 + 0.5 * np.sin(2 * np.pi * 1.5 * t))
         bed *= np.minimum(1, t / 1.5) * np.minimum(1, (D - t) / 1.5) * 0.05
         win = int(0.05 * SR); env = np.sqrt(np.convolve(voice ** 2, np.ones(win) / win, "same"))
         env = np.convolve(env, np.ones(int(0.15 * SR)) / int(0.15 * SR), "same")
@@ -82,7 +90,11 @@ def main(argv: list[str]) -> int:
     af = chain + f":measured_I={j['input_i']}:measured_TP={j['input_tp']}:measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']}:linear=true"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(pre), "-af", af, "-ar", "48000", "-ac", "2", str(out)], check=True)
     pre.unlink()
-    print(json.dumps({"mix": str(out), "cues": {k: len(v) for k, v in cues.items()}, "input_lufs": j["input_i"]}))
+    eb = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(out), "-af", "ebur128=peak=true", "-f", "null", "-"], capture_output=True, text=True).stderr
+    tail = eb[eb.rfind("Summary:"):] if "Summary:" in eb else ""
+    mi, mp = re.search(r"I:\s+(-?[\d.]+) LUFS", tail), re.search(r"Peak:\s+(-?[\d.]+) dBFS", tail)
+    print(json.dumps({"mix": str(out), "cues": {k: len(v) for k, v in cues.items()}, "style": str(opt.get("style", "pad")),
+                      "output_lufs": float(mi.group(1)) if mi else None, "true_peak_dbfs": float(mp.group(1)) if mp else None}))
     return 0
 
 

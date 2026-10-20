@@ -69,8 +69,8 @@ def draw_zones(img: "Image.Image", platform: str) -> None:
     sx, sy = W / 1080.0, H / 1920.0
     ov = Image.new("RGBA", img.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(ov)
-    red = (255, 40, 40, 85)
-    line = (255, 60, 60, 200)
+    red = (255, 40, 40, 38)                      # light tint so the real palette stays readable; the band edge is the line
+    line = (255, 60, 60, 220)
     top, bot, left, right = (margins[k] for k in ("top", "bottom", "left", "right"))
     for box in ((0, 0, W, top * sy), (0, H - bot * sy, W, H),
                 (0, top * sy, left * sx, H - bot * sy), (W - right * sx, top * sy, W, H - bot * sy)):
@@ -121,7 +121,7 @@ def sheet(video: Path, times: list[tuple[str, float]], out: Path, cols: int, zon
 
 
 def main(argv: list[str]) -> int:
-    pos, opt = parse_args(argv, flags={"no-zones"})
+    pos, opt = parse_args(argv, flags={"no-zones", "no-hook"})
     if not pos:
         eprint(__doc__)
         return 2
@@ -144,6 +144,8 @@ def main(argv: list[str]) -> int:
     else:
         n = int(opt.get("frames", 8))
         times = [(str(i), max(0.1, dur * (i + 0.5) / n)) for i in range(n)]
+    if not opt.get("times") and not opt.get("no-hook"):
+        times = [("hook 0.4s", min(0.4, max(dur - 0.05, 0.0)))] + times       # Q11: the hook frame, judged with sound off
     cols = int(opt.get("cols", 4))
     out = Path(opt.get("out") or video.with_suffix(".sheet.png"))
     ok = sheet(video, times, out, cols, not opt.get("no-zones"), opt.get("platform", "common"))

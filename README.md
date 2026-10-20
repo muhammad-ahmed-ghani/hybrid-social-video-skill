@@ -9,7 +9,7 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 <p align="center">
 <a href="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml"><img src="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT">
-<img src="https://img.shields.io/badge/skill-v1.3-informational" alt="skill v1.3">
+<img src="https://img.shields.io/badge/skill-v1.4-informational" alt="skill v1.4">
 <img src="https://img.shields.io/badge/Agent_Skills-compatible-success" alt="Agent Skills compatible">
 </p>
 
@@ -50,6 +50,13 @@ authorisation, a real person's likeness or voice, a credential. A plan that cost
   login, and deletes what it downloads.
 - **A different look for each video.** `style_lock.py pick` ranks looks by topic and spreads consecutive videos apart, so one palette
   does not take over everything it makes. A brand colour sets the accent only.
+- **A faceless route that builds itself.** Give each beat a `scene` (a stat that counts up, steps, a flow, a closed loop, a comparison, bars, kinetic type,
+  a terminal, a quote, with 26 built-in icons) and `build_video.py` does the rest: it picks the look, aligns the voice-over word by word, draws the frames with text fitted
+  inside the safe box, mixes the sound, encodes the master, writes the captions and runs QC. `layout_check.py` then measures text size, the
+  safe box and collisions from the page itself.
+- **A voice route that needs no one.** `voice_render.py` picks the best local voice for the language (Premium, Enhanced and Siri voices
+  count as neural; novelty voices never), fits the length, and `voice_check.py` ranks routes by round-trip word accuracy, in any language.
+  A draft voice is recorded and the upgrade is named, never hidden.
 - **The right layer for each beat.** Code draws numbers, labels and diagrams exactly; AI invents what no camera could reach; real
   or stock footage proves things. A model never renders a number.
 - **It knows what it uses.** Tools and models are discovered (local models, MCP servers, credentials by name), pinned, and
@@ -107,6 +114,7 @@ Start a new session afterwards so the skill is picked up.
 - `python3` (3.9+) and `ffmpeg` / `ffprobe`. The scripts use the standard library, with `Pillow` for sheets and `numpy` for the mix.
 - For the host-plus-overlay route: `playwright` with Chromium (`pip install playwright && playwright install chromium`) and
   `faster-whisper` for word timings.
+- Faceless route: Playwright with Chromium, `faster-whisper`, `numpy` and `Pillow`; a local voice (macOS `say`, espeak-ng or better).
 - Optional, used when present: an image, video, voice or music tool (for example an MCP server such as ImagineArt, or fal), the
   HyperFrames CLI, a Manim skill, `explainer-reel-skill`. `references/11-routing.md` says how the skill degrades without them.
 
