@@ -151,8 +151,9 @@ bars(b,sc,t){const L=items(sc,'items').slice(0,5),n=L.length,mx=Math.max(...L.ma
 kinetic(b,sc,t){const L=(sc.lines||[]).slice(0,4).map(l=>typeof l==='string'?{text:l}:l);let a='';
   const hs=L.map(l=>th(l.text,{size:130,min:90,w:800,stack:FH,maxLines:2,prefer:'size'})),gap=34,total=hs.reduce((m,h)=>m+h,0)+gap*(L.length-1);let y=0;
   L.forEach((it,k)=>{const p=back(pr(t,when(b,it,k,L.length),0.4)),cy=y+hs[k]/2;y+=hs[k]+gap;if(pr(t,when(b,it,k,L.length),0.4)<=0)return;
-    a+=tx(CX,cy+(1-clamp(p))*36,it.text,{size:130,min:90,w:800,stack:FH,maxLines:2,prefer:'size',op:clamp(p),fill:k===L.length-1&&L.length>1?TK.accent2:TK.ink,vc:true});
-    if(k===L.length-1&&t>when(b,it,k,L.length))a+=shine(ART.x,cy-hs[k]/2,ART.w,hs[k],t,20,0)});return{svg:a,h:total}},
+    const br=1+0.022*Math.sin(2*Math.PI*(t+k*0.55)/1.8)*clamp((t-when(b,it,k,L.length)-0.4)/0.6);     // a slow breath once the line has landed
+    a+=`<g transform="translate(${CX} ${cy}) scale(${br}) translate(${-CX} ${-cy})">`+tx(CX,cy+(1-clamp(p))*36,it.text,{size:130,min:90,w:800,stack:FH,maxLines:2,prefer:'size',op:clamp(p),fill:k===L.length-1&&L.length>1?TK.accent2:TK.ink,vc:true})+'</g>';
+    if(t>when(b,it,k,L.length)+0.4)a+=shine(ART.x,cy-hs[k]/2,ART.w,hs[k],t,20,k*0.9)});return{svg:a,h:total}},      // every settled line keeps a moving highlight: a type-only beat never goes still
 terminal(b,sc,t){const L=(sc.lines||[]).slice(0,6);let a='';const w=ART.w,h=76+L.length*70;
   a+=rect(ART.x,0,w,h,{fill:TK.surface,stroke:TK.accent,sw:4})+[0,1,2].map(i=>circ(ART.x+34+i*32,34,9,{fill:[TK.accent2,TK.accent,TK.muted][i]})).join('');
   L.forEach((l,k)=>{const t0=when(b,{at:l.at},k,L.length),txt=typeof l==='string'?l:l.text,p=pr(t,t0,0.9);if(p<=0)return;
