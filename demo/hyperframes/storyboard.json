@@ -1,0 +1,70 @@
+{
+ "schemaVersion": 3,
+ "composition": {
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationSeconds": 35.3667,
+  "layout": "portrait",
+  "themeId": "custom",
+  "seed": 7
+ },
+ "videoTrack": {
+  "sourcePath": "input-video.mp4",
+  "startSec": 0,
+  "endSec": 35.3667
+ },
+ "subtitles": {
+  "enabled": false
+ },
+ "cards": [
+  {
+   "id": "card-01",
+   "startSec": 0.1,
+   "endSec": 3.75,
+   "layout": "overlay"
+  },
+  {
+   "id": "card-02",
+   "startSec": 3.8,
+   "endSec": 9.5,
+   "layout": "pip"
+  },
+  {
+   "id": "card-03",
+   "startSec": 9.6,
+   "endSec": 13.4,
+   "layout": "pip"
+  },
+  {
+   "id": "card-04",
+   "startSec": 13.4,
+   "endSec": 19.0,
+   "layout": "pip"
+  },
+  {
+   "id": "card-05",
+   "startSec": 19.0,
+   "endSec": 23.1,
+   "layout": "pip"
+  },
+  {
+   "id": "card-06",
+   "startSec": 23.0,
+   "endSec": 24.0,
+   "layout": "overlay"
+  },
+  {
+   "id": "card-07",
+   "startSec": 24.0,
+   "endSec": 30.3,
+   "layout": "overlay"
+  },
+  {
+   "id": "card-08",
+   "startSec": 30.4,
+   "endSec": 35.3,
+   "layout": "overlay"
+  }
+ ]
+}

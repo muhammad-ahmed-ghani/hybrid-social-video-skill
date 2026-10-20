@@ -84,6 +84,19 @@ Do not stop. Take the fallback (`build_video.py` for faceless, `examples/host-ov
 plainer route in the decision record under accepted defects, and give the user the one-line install, `npx skills add heygen-com/hyperframes`, so the next
 run is better. If the user has said they want HyperFrames and it cannot be reached, say so first in the final note.
 
+## Lessons from the demo build
+
+The demo reel in `demo/hyperframes/` was built this way; its generator is a worked example. Things `hyperframes lint` and `check` rejected, and what works:
+
+- Never tween `visibility` or `autoAlpha` on an element with `class="clip"`: the framework owns clip visibility from `data-start` and `data-duration`. Fade the
+  card's inner `.card` element instead.
+- Never tween `left`, `top`, `width` or `height` (they snap to whole pixels and stutter under frame-by-frame capture). To move the host into a round
+  picture-in-picture, keep `#video-wrap` full size and tween `x`, `y`, `scale` and `clipPath: circle(...)` about the face's centre (`transformOrigin`), with the ring
+  as its own element. To return, tween them back to `x:0, y:0, scale:1`.
+- Keep a pip card alive until the host has finished growing back, or the cut shows an empty frame. Run `snapshot` at every card boundary, not only mid-card.
+- Put the caption lane clear of every card (here y 1330 on a 1920 frame) so graphics and captions never share pixels; check text on the host's face and hands.
+- Quantise cue times to the frame (1/30 s) and read them from the host's word timings, never from an estimate.
+
 ## Read, do not remember
 
 The HyperFrames skills and the hosted connector change independently of this file. Before relying on a name, a flag or a workflow here, read

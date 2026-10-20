@@ -23,8 +23,8 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 
 That reel was made by this skill from one sentence: *"create a video explaining that if you want social reels or explainer
 videos, go to this repository and tell your agent to use it."* The agent chose the format, wrote and linted the plan, priced it,
-generated a fictional presenter and one talking clip per beat, timed everything from the host's own words, drew the overlays in
-code, mixed the sound, and passed QC. The host and his voice are AI-generated and labelled as such.
+generated a fictional presenter and one talking clip per beat, timed everything from the host's own words, handed the motion design
+over the footage to HyperFrames (sources in [`demo/hyperframes/`](demo/hyperframes/)), mixed the sound, and passed QC. The host and his voice are AI-generated and labelled as such.
 How it was made, model by model: [`demo/AI-USE.md`](demo/AI-USE.md) · the plan: [`demo/beatmap.json`](demo/beatmap.json).
 
 ## Use it in one line
@@ -136,7 +136,7 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 │   ├── data/                       formats, intents, identities, platforms (thresholds, no prices)
 │   ├── examples/                   linting beat maps and the host-plus-overlay page behind the demo
 │   └── tests/                      pytest suite pinning the skill's invariants
-├── demo/                           the demo reel, its GIF preview, its plan, and its AI-use statement
+├── demo/                           the demo reel, its animated preview, its plan, its HyperFrames sources, and its AI-use statement
 ├── assets/                         the mascot and the social preview image
 ├── dist/hybrid-social-video.skill  packaged skill, rebuilt by tools/package_skill.py
 ├── tools/package_skill.py          validate and pack
