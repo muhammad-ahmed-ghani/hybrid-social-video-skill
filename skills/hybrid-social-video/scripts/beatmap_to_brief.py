@@ -3,6 +3,7 @@
 
     python3 beatmap_to_brief.py episode/beatmap.json --out episode/hf/ [--spans episode/spans.json]
                                 [--workflow faceless-explainer] [--tts-text] [--series series/]
+                                [--host-video public/host.mp4]
 
 Writes, into --out (a HyperFrames project directory, created by `npx hyperframes init`
 BEFORE you copy these in; init refuses a non-empty directory):
@@ -19,6 +20,13 @@ Beat ids are the join key: line N in SCRIPT.md is beat id N in beatmap.json.
 brief also states the text's direction and the script fonts, both read from the text itself.
 A beat with `character` gets a Speaker line, and with --series the voice stored in that
 character's passport, so every episode speaks with the same voice.
+
+Each beat's `scene` spec (references/03-beat-map.md) and its `device` become the design asks under "Customizations", with the
+beat's seconds from --spans (or timing.json), so HyperFrames draws the same picture the beat map describes.
+`--host-video` is for a video that already has a speaking host (host_assemble.py's host.mp4): the workflow becomes
+`talking-head-recut` (designed overlays over existing footage, the footage's own audio untouched), the file is listed under Assets as the
+master clock, and SCRIPT.md is the transcript to time the overlays to. Unless the HyperFrames skills are installed this file is
+just a brief: see references/19-hyperframes.md for connecting HyperFrames first.
 
 Exit 0 ok | 1 beat map unreadable | 2 usage.
 """
@@ -48,7 +56,34 @@ DELIVERY = {"hook": "Land the claim on the first word; sound from frame 0.",
             "tag": "A short button after the laugh.", "cliffhanger": "Stop on the unresolved beat; do not resolve it in the voice."}
 
 
-def brief(bm: dict, workflow: str, lock_state: bool = False) -> str:
+def scene_ask(b: dict) -> str:
+    """One plain-language design ask for a beat's scene spec, so HyperFrames draws what the beat map describes."""
+    sc = b.get("scene")
+    if not sc:
+        return ""
+    t = sc.get("type")
+    def txt(x):
+        return x.get("text", "") if isinstance(x, dict) else str(x)
+    if t == "stat":
+        return f"a huge count-up number {sc.get('value')} labelled '{sc.get('label', '')}'"
+    if t in ("steps", "flow", "cycle"):
+        key = "items" if t == "steps" else "nodes"
+        extra = f", centre label '{sc['center']}'" if sc.get("center") else ""
+        return f"{t} of " + " -> ".join(txt(i) for i in sc.get(key, [])) + extra
+    if t == "compare":
+        return f"two columns: '{(sc.get('left') or {}).get('title', '')}' against '{(sc.get('right') or {}).get('title', '')}'"
+    if t == "bars":
+        return "exact bars from zero: " + ", ".join(f"{txt(i.get('label'))} {i.get('value')}" for i in sc.get("items", []) if isinstance(i, dict))
+    if t == "kinetic":
+        return "kinetic type: " + " / ".join(txt(i) for i in sc.get("lines", []))
+    if t == "terminal":
+        return "a terminal typing: " + " then ".join(txt(i) for i in sc.get("lines", []))
+    if t == "quote":
+        return f"a large quotation: '{sc.get('text', '')}'"
+    return str(t)
+
+
+def brief(bm: dict, workflow: str, lock_state: bool = False, spans: dict | None = None, host_video: str | None = None) -> str:
     m = bm["meta"]
     tp = text_profile(beatmap_texts(bm))
     fonts = m.get("script_fonts") or ({"rtl": m["rtl_font"]} if m.get("rtl_font") else {})
@@ -60,8 +95,14 @@ def brief(bm: dict, workflow: str, lock_state: bool = False) -> str:
             kind = ov.get("kind") if isinstance(ov, dict) else ov
             content = ov.get("content", "") if isinstance(ov, dict) else ""
             overlays.append(f"- beat {b['id']}: {kind} {content}".rstrip())
-        if b.get("device"):
-            overlays.append(f"- beat {b['id']}: device `{b['device']}` ({b.get('visual', '')})")
+        when = ""
+        if spans and str(b["id"]) in spans:
+            when = f" ({spans[str(b['id'])][0]:.1f}-{spans[str(b['id'])][1]:.1f}s)"
+        ask = scene_ask(b)
+        if ask:
+            overlays.append(f"- beat {b['id']}{when}: {ask}")
+        if b.get("device") and not ask:
+            overlays.append(f"- beat {b['id']}{when}: device `{b['device']}` ({b.get('visual', '')})")
     assets = []
     for b in beats:
         a = (b.get("assets") or {})
@@ -98,6 +139,9 @@ def brief(bm: dict, workflow: str, lock_state: bool = False) -> str:
         "## Assets",
         "",
     ]
+    if host_video:
+        assets.insert(0, f"- {host_video} - the speaking host, already recorded: its own audio is the master clock and plays unchanged; "
+                         "design overlays over it, never replace or retime it")
     lines += assets or ["- none supplied beyond the beat map; code-layer beats are built from the plan"]
     lines += ["", "## Customizations", ""]
     lines += overlays or ["- none"]
@@ -179,10 +223,11 @@ def main(argv: list[str]) -> int:
     locked = False
     if opt.get("series") and (Path(opt["series"]) / "series.json").is_file():
         locked = bool(load_json(Path(opt["series"]) / "series.json").get("locks"))
-    (out / "BRIEF.md").write_text(brief(bm, opt.get("workflow", default_wf), locked), encoding="utf-8")
+    workflow = opt.get("workflow") or ("talking-head-recut" if opt.get("host-video") else default_wf)
+    (out / "BRIEF.md").write_text(brief(bm, workflow, locked, spans, opt.get("host-video") if opt.get("host-video") not in (None, True) else None), encoding="utf-8")
     (out / "SCRIPT.md").write_text(script(bm, spans, bool(opt.get("tts-text")), opt.get("series")), encoding="utf-8")
     print(json.dumps({"brief": str(out / "BRIEF.md"), "script": str(out / "SCRIPT.md"),
-                      "workflow": opt.get("workflow", default_wf), "beats": len(bm["beats"])}))
+                      "workflow": workflow, "beats": len(bm["beats"])}))
     return 0
 
 

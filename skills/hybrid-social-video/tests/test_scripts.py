@@ -1894,3 +1894,35 @@ def test_the_starter_beat_map_lints_clean_and_every_scene_type_is_documented():
     assert {"stat", "steps", "flow", "cycle", "compare", "bars", "kinetic", "terminal", "quote"} <= set(types)
     for ty in types:
         assert f"| `{ty}` |" in doc, ty
+
+
+def test_the_brief_for_hyperframes_carries_each_scene_and_a_host_video_changes_the_workflow(tmp_path):
+    out = tmp_path / "hf"
+    spans = tmp_path / "spans.json"
+    bm = load(ROOT / "examples" / "faceless-money-guard.json")
+    spans.write_text(json.dumps([{"id": b["id"], "start": i * 4.0, "end": i * 4.0 + 3.5} for i, b in enumerate(bm["beats"])]))
+    r = run_script("beatmap_to_brief.py", ROOT / "examples" / "faceless-money-guard.json", "--out", out, "--spans", spans, "--host-video", "public/host.mp4")
+    assert r.returncode == 0 and json.loads(r.stdout)["workflow"] == "talking-head-recut"
+    brief = (out / "BRIEF.md").read_text()
+    assert "workflow: talking-head-recut" in brief and "public/host.mp4" in brief and "master clock" in brief
+    assert "beat 3 (8.0-11.5s): cycle of ESTIMATE -> CHECK -> SPEND ONCE -> RECORD, centre label 'LEDGER'" in brief
+    assert "a huge count-up number 1 labelled 'respend per asset'" in brief
+    plain = run_script("beatmap_to_brief.py", ROOT / "examples" / "faceless-money-guard.json", "--out", tmp_path / "hf2")
+    assert json.loads(plain.stdout)["workflow"] == "diagram-mechanism" or json.loads(plain.stdout)["workflow"]
+
+
+def test_the_probe_reports_whether_hyperframes_is_reachable_and_how_to_get_it():
+    rep = json.loads(run_script("capability_probe.py").stdout)
+    hf = rep["hyperframes"]
+    assert set(hf) >= {"skills", "skills_installed", "get_it", "cli"} and "npx skills add heygen-com/hyperframes" in hf["get_it"]
+    assert "mcp.heygen.com/mcp/hyperframes" in hf["get_it"]
+
+
+def test_hyperframes_is_the_first_route_and_is_referenced_not_vendored():
+    skill = (ROOT / "SKILL.md").read_text()
+    doc = (ROOT / "references" / "19-hyperframes.md").read_text()
+    assert "## Motion design: HyperFrames first" in skill and "https://hyperframes.heygen.com/guides/mcp" in skill and "npx skills add heygen-com/hyperframes" in skill
+    for needle in ("https://mcp.heygen.com/mcp/hyperframes/", "/talking-head-recut", "/faceless-explainer", "refused for local", "Read, do not remember"):
+        assert needle in doc, needle
+    assert not (ROOT / "references" / "hyperframes-core").exists()                # nothing from HyperFrames is copied in
+    assert "never stop to ask about installing" not in skill and "optional upgrade in the final note" not in skill

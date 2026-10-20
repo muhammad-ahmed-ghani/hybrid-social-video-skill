@@ -9,19 +9,17 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 <p align="center">
 <a href="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml"><img src="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT">
-<img src="https://img.shields.io/badge/skill-v1.4-informational" alt="skill v1.4">
+<img src="https://img.shields.io/badge/skill-v1.5-informational" alt="skill v1.5">
 <img src="https://img.shields.io/badge/Agent_Skills-compatible-success" alt="Agent Skills compatible">
 </p>
 
 ## See it work
 
 <p align="center">
-<video src="https://raw.githubusercontent.com/muhammad-ahmed-ghani/hybrid-social-video-skill/main/demo/hybrid-social-video-demo.mp4" controls width="300">
-<a href="https://raw.githubusercontent.com/muhammad-ahmed-ghani/hybrid-social-video-skill/main/demo/hybrid-social-video-demo.mp4"><img src="demo/preview.gif" width="270" alt="Demo reel: a host explains the skill. Click to open the full 35 second video with sound."></a>
-</video>
+<img src="demo/demo.webp" width="300" alt="The demo reel: a host explains the skill with motion graphics over the footage. Silent preview of the full 35 second video.">
 </p>
 
-<p align="center">Press play for the full 35 s reel, with sound. If the player does not load, <a href="https://raw.githubusercontent.com/muhammad-ahmed-ghani/hybrid-social-video-skill/main/demo/hybrid-social-video-demo.mp4">open the video directly</a>.</p>
+<p align="center">Silent preview of the full 35 s reel. <a href="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/raw/main/demo/hybrid-social-video-demo.mp4"><b>Download it with sound (mp4)</b></a>.</p>
 
 That reel was made by this skill from one sentence: *"create a video explaining that if you want social reels or explainer
 videos, go to this repository and tell your agent to use it."* The agent chose the format, wrote and linted the plan, priced it,
@@ -50,7 +48,10 @@ authorisation, a real person's likeness or voice, a credential. A plan that cost
   login, and deletes what it downloads.
 - **A different look for each video.** `style_lock.py pick` ranks looks by topic and spreads consecutive videos apart, so one palette
   does not take over everything it makes. A brand colour sets the accent only.
-- **A faceless route that builds itself.** Give each beat a `scene` (a stat that counts up, steps, a flow, a closed loop, a comparison, bars, kinetic type,
+- **Motion design by HyperFrames.** When [HyperFrames](https://github.com/heygen-com/hyperframes) is reachable the skill hands the motion design and the
+  render to it (`/talking-head-recut` for designed overlays over a host video, `/faceless-explainer` and `/general-video` for the rest), writing the
+  brief from the approved plan. It references HyperFrames and never copies its skills. Without it, a built-in route takes over.
+- **A faceless fallback that builds itself.** Give each beat a `scene` (a stat that counts up, steps, a flow, a closed loop, a comparison, bars, kinetic type,
   a terminal, a quote, with 26 built-in icons) and `build_video.py` does the rest: it picks the look, aligns the voice-over word by word, draws the frames with text fitted
   inside the safe box, mixes the sound, encodes the master, writes the captions and runs QC. `layout_check.py` then measures text size, the
   safe box and collisions from the page itself.
@@ -108,6 +109,12 @@ cp -R hybrid-social-video-skill/skills/hybrid-social-video ~/.claude/skills/
 ```
 
 Start a new session afterwards so the skill is picked up.
+
+**For the best motion design, connect HyperFrames.** In an agent with a filesystem (Claude Code, Cursor, Codex) install its skills with
+`npx skills add heygen-com/hyperframes`; the skill does this itself when the host allows it. In a chat client with no filesystem (Claude.ai, ChatGPT, Grok)
+connect the hosted MCP by following the [HyperFrames MCP guide](https://hyperframes.heygen.com/guides/mcp) (endpoint
+`https://mcp.heygen.com/mcp/hyperframes/`, HeyGen sign-in). The hosted MCP refuses compose and render from local CLI agents, so there the local skills are the way.
+Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/19-hyperframes.md).
 
 ## Requirements
 

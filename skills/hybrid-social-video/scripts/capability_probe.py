@@ -96,6 +96,20 @@ def _run_all(cmd: list[str], timeout: int = 20) -> list[str]:
         return []
 
 
+HF_SKILLS = ["hyperframes", "hyperframes-core", "hyperframes-creative", "hyperframes-animation", "hyperframes-cli", "faceless-explainer", "talking-head-recut",
+             "general-video", "embedded-captions", "motion-graphics", "media-use"]
+
+
+def _hyperframes() -> dict:
+    """Is HyperFrames reachable? Its skills (listed by folder name in the usual agent skill folders), its CLI, and how to get it."""
+    homes = [Path("~/.claude/skills"), Path("~/.agents/skills"), Path("~/.codex/skills"), Path(".claude/skills"), Path(".agents/skills")]
+    found = sorted({n for h in homes for n in HF_SKILLS if (h.expanduser() / n / "SKILL.md").is_file()})
+    return {"skills": found, "skills_installed": bool(found),
+            "get_it": "npx skills add heygen-com/hyperframes (agents with a filesystem: Claude Code, Cursor, Codex); the hosted MCP "
+                      "(https://mcp.heygen.com/mcp/hyperframes/, guide: https://hyperframes.heygen.com/guides/mcp) is for chat clients and "
+                      "refuses compose and render from CLI agents. Read references/19-hyperframes.md"}
+
+
 def _voice_routes() -> dict:
     """Offline voice routes: the best local voice per language and any high-quality (Premium, Enhanced, Siri) voices."""
     try:
@@ -166,6 +180,8 @@ def probe() -> dict:
             if f.startswith("models--"):
                 ai.append({"id": f[len("models--"):].replace("--", "/"), "kind": f"{name} cache", "role": "model", "runs": "local", "offline": True,
                            "note": "cached weights: confirm what it does before relying on it"})
+    out["hyperframes"] = _hyperframes()
+    out["hyperframes"]["cli"] = loc.get("hyperframes_cli")
     out["ai_models"] = {"local": ai, "hosted_hints": sorted(set(out["credentials_present"].values())),
                         "director": None, "tool_models": [], "voice_routes": _voice_routes()}
     if "fc-list" in loc["binaries"]:
@@ -198,8 +214,11 @@ def main(argv: list[str]) -> int:
             loc, ai = rep["local"], rep["ai_models"]
             vr = ai["voice_routes"]
             print(f"[probe] ffmpeg {'yes' if 'ffmpeg' in loc['binaries'] else 'NO'} | playwright {'yes' if 'playwright' in loc['modules'] else 'no'} | "
-                  f"HyperFrames {'yes' if loc.get('hyperframes_cli') else 'no'} | yt-dlp {'yes' if 'yt-dlp' in loc['binaries'] else 'no'} | "
+                  f"yt-dlp {'yes' if 'yt-dlp' in loc['binaries'] else 'no'} | "
                   f"{loc['cpu_count']} cpus, {loc['free_disk_gb']} GB free")
+            hf = rep["hyperframes"]
+            print(f"[probe] HyperFrames: skills {', '.join(hf['skills'][:4]) + (' ...' if len(hf['skills']) > 4 else '') if hf['skills'] else 'NOT installed'}"
+                  f" | cli {hf['cli'] or 'no'}" + ("" if hf["skills_installed"] else " | get it: npx skills add heygen-com/hyperframes (references/19-hyperframes.md)"))
             print(f"[probe] voices: {vr.get('engine') or 'none'} ({vr.get('voices', 0)}); high-quality local: {', '.join(vr.get('high_quality') or []) or 'none'}; "
                   f"best by language: " + "; ".join(f"{k}: {(vr.get('best_by_language') or {})[k]}" for k in ("en", "es", "fr", "de", "pt", "it", "ar", "hi", "ur", "ja", "zh", "ko") if k in (vr.get("best_by_language") or {})))
             print("[probe] AI models here: " + ", ".join(f"{m['id']} ({m['role']}, {'offline' if m['offline'] else 'online'})" for m in ai["local"] if m["role"] != "runtime") + "; "
