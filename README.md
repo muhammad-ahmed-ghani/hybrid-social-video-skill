@@ -16,10 +16,12 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 ## See it work
 
 <p align="center">
-<a href="demo/hybrid-social-video-demo.mp4"><img src="demo/preview.gif" width="270" alt="Demo reel: a host explains the skill; click for the full 35 second video with sound"></a>
+<video src="https://raw.githubusercontent.com/muhammad-ahmed-ghani/hybrid-social-video-skill/main/demo/hybrid-social-video-demo.mp4" controls width="300">
+<a href="https://raw.githubusercontent.com/muhammad-ahmed-ghani/hybrid-social-video-skill/main/demo/hybrid-social-video-demo.mp4"><img src="demo/preview.gif" width="270" alt="Demo reel: a host explains the skill. Click to open the full 35 second video with sound."></a>
+</video>
 </p>
 
-<p align="center"><a href="demo/hybrid-social-video-demo.mp4"><b>Watch the full 35 s reel with sound</b></a></p>
+<p align="center">Press play for the full 35 s reel, with sound. If the player does not load, <a href="https://raw.githubusercontent.com/muhammad-ahmed-ghani/hybrid-social-video-skill/main/demo/hybrid-social-video-demo.mp4">open the video directly</a>.</p>
 
 That reel was made by this skill from one sentence: *"create a video explaining that if you want social reels or explainer
 videos, go to this repository and tell your agent to use it."* The agent chose the format, wrote and linted the plan, priced it,
