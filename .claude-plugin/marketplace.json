@@ -1,0 +1,16 @@
+{
+  "name": "hybrid-social-video-marketplace",
+  "owner": { "name": "Muhammad Ahmed Ghani" },
+  "metadata": {
+    "description": "Hybrid Social Video: an agent skill that directs 9:16 social videos by assigning each beat to the layer that is reliable for it."
+  },
+  "plugins": [
+    {
+      "name": "hybrid-social-video",
+      "description": "Directs a 9:16 social video or series: picks a format, writes a linted beat map, prices it, enforces approval gates and a budget cap, and runs QC.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/hybrid-social-video"]
+    }
+  ]
+}

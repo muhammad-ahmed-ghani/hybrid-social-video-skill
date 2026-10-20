@@ -1,0 +1,145 @@
+{
+  "_comment": "14 visual identities for 9:16 explainers. Hex values are design proposals; contrast ratios were computed with the WCAG relative-luminance formula (tests/test_scripts.py re-checks them). 'text_safe' maps an accent to a variant that meets 4.5:1 as TEXT on the background named in text_safe_on; accents that fail as text are for fills only. Fonts: OFL unless noted (checked against google/fonts METADATA.pb on 2026-10-20). 'no_tabular' lists fonts whose files have no tabular figures: animate numbers in numbers_font instead. Palettes are original to this skill; no studio's brand assets are claimed.",
+  "identities": {
+    "editorial-serif": {
+      "name": "Editorial serif (salmon paper)", "register": "explanatory journalism, economics, history, policy: trust and calm",
+      "tokens": {"bg": "#FFF1E5", "surface": "#FFF8F1", "ink": "#1A1817", "muted": "#66605C", "accent": "#990F3D", "accent2": "#0F5499", "bar_context": "#C9A9A6"},
+      "text_safe": {}, "text_safe_on": "bg",
+      "fonts": {"hero": "Fraunces 700", "hero_accent": "Fraunces italic 400", "body": "Inter", "alternates": ["Playfair Display", "Newsreader", "Source Serif 4", "Instrument Serif"], "no_tabular": ["Fraunces"], "numbers_font": "Inter"},
+      "texture": {"kind": "noise", "opacity": 0.10, "blend": "multiply", "extras": "6px ink rule above the kicker; hairline rules between blocks"},
+      "motion": {"verbs": ["draw a rule", "reveal a line", "swap to italic", "count a figure", "settle"], "ease": "power3.out", "duration": [0.7, 1.1], "stagger": [0.12, 0.2], "overshoot": "none", "cuts": "hard cuts, occasional horizontal-rule wipe", "camera": "slow 2% push on stills"},
+      "traps": ["low-chroma palette plus thin serif strokes compress badly: keep the hero at 140 px or larger", "Fraunces has no tabular figures"],
+      "ai_art_style": {"medium": "editorial illustration, flat colour shapes on warm newsprint paper", "lighting": "soft even daylight, no hard shadows", "texture": "fine paper grain, slight ink spread", "color_grading": "warm cream, claret and oxford blue, low saturation", "mood": "calm, authoritative", "signature_technique": "restrained spot colour with one claret highlight"}
+    },
+    "newsroom": {
+      "name": "Newsroom / broadcast", "register": "breaking and current affairs: authority and speed",
+      "tokens": {"bg": "#0B1F3A", "surface": "#12304F", "ink": "#FFFFFF", "muted": "#A9B8CC", "accent": "#FFD400", "accent2": "#E10600", "bar_context": "#4A6A93"},
+      "text_safe": {"accent2": "#FF4B45"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Oswald 700 uppercase", "body": "Source Sans 3", "alternates": ["Barlow Condensed", "Roboto Condensed", "League Gothic"], "no_tabular": ["Oswald"], "numbers_font": "Source Sans 3"},
+      "texture": {"kind": "none", "extras": "vertical gradient plate; red kicker tag (white on #E10600 is 4.97:1); red rule above the source line"},
+      "motion": {"verbs": ["slam in", "slide", "roll up", "wipe", "flash", "tick over"], "ease": "expo.out", "duration": [0.35, 0.5], "stagger": [0.08, 0.12], "overshoot": "none", "cuts": "angled wipes at about 15 degrees and hard cuts", "camera": "lower-third bar slides in, text lags 0.1 s"},
+      "traps": ["red #E10600 as text on navy is 3.33:1: use it as a fill with white text or text-safe #FF4B45", "condensed type is for headlines only"],
+      "ai_art_style": {"medium": "clean documentary photograph look, neutral colour, broadcast news cutaway", "lighting": "even practical light", "texture": "slight video grain", "color_grading": "cool navy shadows, neutral skin, restrained saturation", "mood": "serious, factual", "signature_technique": "wide, steady, undramatic framing"}
+    },
+    "creator-shorts": {
+      "name": "Creator / shorts caption style", "register": "hosted and talking-head shorts, fast opinion, word-pop captions",
+      "tokens": {"bg": "#1C1C24", "surface": "#2A2A36", "ink": "#FFFFFF", "muted": "#B4B4C6", "accent": "#FFE600", "accent2": "#FF2D55", "pop": "#2BFF88"},
+      "text_safe": {}, "text_safe_on": "bg",
+      "fonts": {"hero": "Anton uppercase", "body": "Montserrat 800", "alternates": ["Bebas Neue", "Archivo Black", "Lilita One", "Bangers", "Luckiest Guy (Apache-2.0)"], "no_tabular": ["Anton"], "numbers_font": "Bebas Neue"},
+      "texture": {"kind": "none", "extras": "soft radial gradient; legibility comes from a 7-8% stroke (-webkit-text-stroke with paint-order: stroke fill) plus a hard shadow"},
+      "motion": {"verbs": ["pop", "punch", "shake", "stamp", "bounce", "zoom-punch"], "ease": "back.out(1.7)", "duration": [0.22, 0.3], "stagger": [0.05, 0.08], "overshoot": "hero word only", "cuts": "every 1 to 2.5 s", "camera": "1.0 to 1.12 zoom punch in 0.12 s"},
+      "traps": ["a heavy stroke over a 3-line hero eats vertical budget: two lines maximum", "captions must stay inside the platform safe box: the bottom 480 px is UI"],
+      "ai_art_style": {"medium": "punchy sticker-style graphic on a dark gradient", "lighting": "high-contrast rim light", "texture": "clean, no grain", "color_grading": "saturated yellow, hot pink, mint on charcoal", "mood": "energetic", "signature_technique": "thick black outline on every foreground shape"}
+    },
+    "tech-terminal": {
+      "name": "Tech / terminal", "register": "software, AI, security, developer topics",
+      "tokens": {"bg": "#0A0E14", "surface": "#121923", "ink": "#D6E2F0", "muted": "#7A889E", "accent": "#39FF88", "accent2": "#4CC2FF", "warn": "#FFB454", "bar_context": "#2A3A52"},
+      "text_safe": {}, "text_safe_on": "bg",
+      "fonts": {"hero": "JetBrains Mono 800", "body": "Space Grotesk", "alternates": ["IBM Plex Mono", "Geist Mono", "DM Mono"], "no_tabular": [], "numbers_font": "Space Grotesk"},
+      "texture": {"kind": "scanlines", "extras": "repeating-linear-gradient scanlines at 3.5% white; 90 px blue grid at 7%; subtle text glow; block cursor; kicker prefixed '$ '"},
+      "motion": {"verbs": ["type", "scan", "decode", "compile", "ping", "blink"], "ease": "none (typewriter), power1.out (panels)", "duration": [0.3, 0.7], "stagger": [0.04, 0.06], "overshoot": "none", "cuts": "hard cuts, glitch of 3 to 5 frames sparingly", "camera": "static"},
+      "traps": ["neon on black glares at large sizes: keep the glow subtle", "scanlines can alias after compression"],
+      "ai_art_style": {"medium": "dark UI and terminal aesthetic, vector grid, monospaced details", "lighting": "emissive glow from screens", "texture": "faint scanlines", "color_grading": "near-black with green and cyan accents", "mood": "precise, technical", "signature_technique": "thin glowing lines on a dark grid"}
+    },
+    "blueprint": {
+      "name": "Blueprint / technical drawing", "register": "how things work, engineering, systems",
+      "tokens": {"bg": "#0F3D7A", "surface": "#144C94", "ink": "#F2F7FF", "muted": "#A9C4EA", "accent": "#7FDBFF", "accent2": "#FFD166"},
+      "text_safe": {}, "text_safe_on": "bg",
+      "fonts": {"hero": "Share Tech Mono uppercase", "body": "Share Tech Mono", "alternates": ["IBM Plex Mono", "Architects Daughter (annotations)"], "no_tabular": [], "numbers_font": "Share Tech Mono"},
+      "texture": {"kind": "grid", "extras": "two-level grid: 240 px major at 16% white, 48 px minor at 7%; hatch fills; title-block label in yellow"},
+      "motion": {"verbs": ["plot", "trace", "dimension", "extend", "annotate", "hatch"], "ease": "power2.inOut", "duration": [0.8, 1.4], "stagger": [0.1, 0.15], "overshoot": "none", "cuts": "hard cuts", "camera": "slow pan along the drawing"},
+      "traps": ["thin lines must stay 3 to 4 px at 1080 wide to survive recompression", "the minor grid must stay behind text"],
+      "ai_art_style": {"medium": "technical blueprint drawing, white and cyan linework on deep blue", "lighting": "none, flat", "texture": "faint grid paper", "color_grading": "monochrome blue with a single yellow annotation colour", "mood": "analytical", "signature_technique": "orthographic line drawing with dimension lines"}
+    },
+    "paper-collage": {
+      "name": "Paper collage / cut-out", "register": "human stories, culture, history, food: warm and tactile",
+      "tokens": {"bg": "#D9C7A3", "surface": "#F4EBDD", "ink": "#2B2118", "muted": "#5C4B38", "accent": "#E4572E", "accent2": "#2E86AB", "mustard": "#F2B134"},
+      "text_safe": {"accent": "#B8401B"}, "text_safe_on": "surface",
+      "fonts": {"hero": "DM Serif Display", "body": "Caveat (annotations)", "alternates": ["Fraunces", "Patrick Hand", "Permanent Marker (Apache-2.0)"], "no_tabular": ["DM Serif Display"], "numbers_font": "Inter"},
+      "texture": {"kind": "noise", "opacity": 0.16, "blend": "multiply", "extras": "torn paper edges via clip-path on a background shape, cards rotated about -2 degrees, hard offset drop shadow"},
+      "motion": {"verbs": ["slap", "tear", "peel", "shuffle", "pin", "wobble"], "ease": "steps(8) quantised to 8-12 fps", "duration": [0.25, 0.4], "stagger": [0.1, 0.18], "overshoot": "rotation of plus or minus 3 degrees", "cuts": "paper wipes, no smooth camera moves", "camera": "stop-motion jitter"},
+      "traps": ["clip-path on a bar also clips its absolutely positioned labels: clip a background shape, not the element holding labels", "tomato #E4572E text is 2.2:1 on kraft: use ink, or text-safe #B8401B"],
+      "ai_art_style": {"medium": "2.5D layered paper collage with torn rims, sticker borders and visible fibres", "lighting": "soft overhead light with layered paper shadows", "texture": "kraft paper, halftone accents, tape", "color_grading": "limited palette of kraft, cream, tomato red, teal and mustard", "mood": "handmade, editorial", "signature_technique": "contour-cut subjects as separate paper pieces with white sticker borders"}
+    },
+    "halftone-pop": {
+      "name": "Halftone / pop-print", "register": "punchy, comic, youth culture, pop-science",
+      "tokens": {"bg": "#FFF4D6", "surface": "#FFFFFF", "ink": "#111111", "muted": "#4A4A4A", "accent": "#E8262D", "accent2": "#0074D9", "yellow": "#FFD400"},
+      "text_safe": {"accent": "#C81D25"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Bangers", "body": "Archivo Black", "alternates": ["Anton", "Lilita One"], "no_tabular": [], "numbers_font": "Archivo Black"},
+      "texture": {"kind": "halftone", "extras": "red dot field radial-gradient 36 px, masked diagonally so dots fade; 10 px black borders"},
+      "motion": {"verbs": ["POW", "burst", "flash", "panel-slide", "shake"], "ease": "back.out(2.5)", "duration": [0.18, 0.25], "stagger": [0.05, 0.08], "overshoot": "up to 19%", "cuts": "hard cuts and panel wipes", "camera": "dot field pulses 1.0 to 1.06 on hits"},
+      "traps": ["white on halftone red is 4.42:1: use #C81D25 or black text on red", "keep the dot mask away from the text column"],
+      "ai_art_style": {"medium": "pop-art comic print with halftone dots and thick ink outlines", "lighting": "flat, graphic", "texture": "visible halftone and slight misprint", "color_grading": "cream paper with red, blue and yellow", "mood": "loud, playful", "signature_technique": "Ben-Day dots on shadows"}
+    },
+    "risograph": {
+      "name": "Risograph", "register": "culture, art, independent-press feel, human-scale data",
+      "tokens": {"bg": "#F4EFE6", "surface": "#FBF8F2", "ink": "#1D2A5B", "muted": "#5B6488", "accent": "#0078BF", "accent2": "#FF48B0", "yellow": "#FFE800", "teal": "#00838A"},
+      "text_safe": {"accent": "#00629C"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Bricolage Grotesque 800", "body": "DM Mono", "alternates": ["Space Grotesk"], "no_tabular": [], "numbers_font": "Bricolage Grotesque"},
+      "texture": {"kind": "noise", "opacity": 0.22, "blend": "multiply", "extras": "ink layers overprint with mix-blend-mode multiply; misregistration of 6 to 10 px between inks; at most 3 inks"},
+      "motion": {"verbs": ["overprint", "register", "slide in by ink", "jitter", "fade the plate"], "ease": "power2.out", "duration": [0.5, 0.7], "stagger": [0.1, 0.1], "overshoot": "none", "cuts": "hard cuts", "camera": "1 to 2 px jitter at 12 fps; misregistration settles from 14 px to 8 px"},
+      "traps": ["pink #FF48B0 (2.69:1) and yellow #FFE800 (1.09:1) are never text", "multiply blending makes dark on dark disappear"],
+      "ai_art_style": {"medium": "two and three colour risograph print on uncoated paper", "lighting": "flat", "texture": "grainy ink with misregistered overprint", "color_grading": "blue, fluorescent pink and yellow on off-white", "mood": "human, independent", "signature_technique": "overlapping translucent ink layers"}
+    },
+    "flat-vector": {
+      "name": "Flat vector explainer", "register": "science, space, biology, big-picture how-things-work",
+      "tokens": {"bg": "#001372", "surface": "#0B0054", "ink": "#FFFFFF", "muted": "#B9B6E6", "accent": "#FBBE00", "accent2": "#E30050", "orange": "#E32E01", "violet": "#6A5CFF"},
+      "text_safe": {"accent2": "#FF4D88"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Poppins 800", "body": "Poppins", "alternates": ["Montserrat", "Plus Jakarta Sans"], "no_tabular": ["Poppins"], "numbers_font": "Plus Jakarta Sans"},
+      "texture": {"kind": "stars", "extras": "star-field dots; flat shapes with one two-tone shade (inset shadow); rounded tops; no outlines"},
+      "motion": {"verbs": ["bounce", "orbit", "morph", "zoom", "wobble", "drift"], "ease": "back.out(1.4)", "duration": [0.6, 0.9], "stagger": [0.08, 0.14], "overshoot": "squash and stretch at most 8%", "cuts": "zoom-through and camera pans", "camera": "parallax star drift 2 to 4% per second; objects persist and morph"},
+      "traps": ["red #E30050 text on navy is 3.84:1: text-safe #FF4D88", "plain shapes alone drift toward generic: illustration quality carries this look"],
+      "ai_art_style": {"medium": "flat vector illustration with rounded shapes and a single two-tone shade", "lighting": "none, flat colour", "texture": "none, clean edges", "color_grading": "deep indigo background with yellow, magenta and orange accents", "mood": "friendly, curious", "signature_technique": "no outlines, one darker tone for form"}
+    },
+    "glass-keynote": {
+      "name": "Glassmorphism (keynote)", "register": "product, fintech, premium consumer tech, UI-led explainers",
+      "tokens": {"bg": "#1B1464", "surface": "#2A2080", "ink": "#FFFFFF", "muted": "#D8D4F5", "accent": "#00C2FF", "accent2": "#FF6A88", "blob": "#7C4DFF"},
+      "text_safe": {}, "text_safe_on": "bg",
+      "fonts": {"hero": "Plus Jakarta Sans 800", "body": "Inter", "alternates": ["Manrope", "Inter Tight"], "no_tabular": [], "numbers_font": "Plus Jakarta Sans"},
+      "texture": {"kind": "glass", "extras": "mesh background of radial blobs; panels rgba(255,255,255,.14) with backdrop-filter blur 36px; 2 px translucent border; text-protection tint 0.5 to 0.6 when the blob behind can be bright"},
+      "motion": {"verbs": ["float", "frost", "rise", "rack-focus", "parallax", "dissolve"], "ease": "power3.out", "duration": [0.8, 1.2], "stagger": [0.12, 0.2], "overshoot": "none", "cuts": "dissolves", "camera": "layered depth, different speeds"},
+      "traps": ["white text on the .38 tint is 2.47:1 over white: raise the tint to 0.5 to 0.6", "large backdrop-filter blur is GPU-heavy per frame"],
+      "ai_art_style": {"medium": "soft 3D glass and frosted translucent panels over a gradient mesh", "lighting": "diffuse studio light with glowing edges", "texture": "frosted glass blur", "color_grading": "violet, cyan and coral gradients", "mood": "premium, calm", "signature_technique": "layered translucent depth"}
+    },
+    "neo-brutalist": {
+      "name": "Neo-brutalist", "register": "startup, creator economy, bold opinion",
+      "tokens": {"bg": "#FFFDF5", "surface": "#FFFFFF", "ink": "#000000", "muted": "#333333", "accent": "#FFD60A", "accent2": "#FF6B6B", "blue": "#4D96FF", "green": "#6BCB77"},
+      "text_safe": {"blue": "#1D4ED8"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Space Grotesk 800", "body": "Space Grotesk", "alternates": ["Archivo Black", "Bricolage Grotesque"], "no_tabular": [], "numbers_font": "Space Grotesk"},
+      "texture": {"kind": "none", "extras": "10 px black borders, hard offset shadows (24 px on cards, 14 px on bars), hero block tilted about -1.5 degrees"},
+      "motion": {"verbs": ["slap", "stack", "press", "shake", "snap"], "ease": "back.out(1.4)", "duration": [0.2, 0.3], "stagger": [0.05, 0.1], "overshoot": "rotation within plus or minus 2 degrees", "cuts": "stepped transitions between cards", "camera": "static"},
+      "traps": ["coral and blue as text on cream are 2.7 and 2.9:1: use them as fills with black text", "yellow with cyan pairings can fail readability"],
+      "ai_art_style": {"medium": "bold flat graphic with thick black outlines and hard offset shadows", "lighting": "none, flat", "texture": "none", "color_grading": "primary yellow, coral and blue on cream", "mood": "blunt, confident", "signature_technique": "hard offset shadows"}
+    },
+    "swiss-grid": {
+      "name": "Swiss grid / International style", "register": "authority without drama, data-led, design-literate audiences",
+      "tokens": {"bg": "#F2F2F0", "surface": "#FFFFFF", "ink": "#0A0A0A", "muted": "#5D5D5D", "accent": "#E3000F", "accent2": "#0A0A0A"},
+      "text_safe": {"accent": "#D1001C"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Inter Tight 800", "body": "Inter", "alternates": ["Archivo", "Public Sans"], "no_tabular": [], "numbers_font": "Inter"},
+      "texture": {"kind": "none", "extras": "strict left alignment on a grid; a solid red circle; 12 px black top rule over the kicker; 8 px black baseline"},
+      "motion": {"verbs": ["align", "extend", "snap", "cut", "step"], "ease": "expo.out", "duration": [0.4, 0.6], "stagger": [0.06, 0.1], "overshoot": "none", "cuts": "geometric hard-edged wipes", "camera": "static; rules extend with scaleX"},
+      "traps": ["red #E3000F text on #F2F2F0 is 4.4:1: text-safe #D1001C", "the look dies if anything is off-grid: lint alignment"],
+      "ai_art_style": {"medium": "Swiss poster design, geometric shapes and a strict grid, photographic cut-outs", "lighting": "flat", "texture": "none", "color_grading": "off-white, black and one signal red", "mood": "rational, exact", "signature_technique": "asymmetric grid composition"}
+    },
+    "dark-luxe": {
+      "name": "Dark luxe / cinematic", "register": "premium product, finance as lifestyle, documentary-style narration",
+      "tokens": {"bg": "#0A0A0A", "surface": "#1D1A14", "ink": "#F3EDE2", "muted": "#A39B8B", "accent": "#C8A96A", "accent2": "#7A1F2B", "bar_context": "#5A4D33"},
+      "text_safe": {}, "text_safe_on": "bg",
+      "fonts": {"hero": "Cormorant Garamond 500", "hero_accent": "Cormorant Garamond italic gold", "body": "Inter", "alternates": ["Bodoni Moda", "Playfair Display"], "no_tabular": [], "numbers_font": "Cormorant Garamond"},
+      "texture": {"kind": "vignette", "extras": "radial vignette; 2 px gold inset frame at 55% alpha about 90 px from the edge (inset more on TikTok's right rail); optional letterbox"},
+      "motion": {"verbs": ["reveal", "drift", "breathe", "glint", "dissolve"], "ease": "power3.out", "duration": [1.2, 2.0], "stagger": [0.15, 0.25], "overshoot": "none", "cuts": "rare; dissolves of 0.5 to 0.8 s", "camera": "1 to 3% push; letter-spacing tightens from .12em to 0"},
+      "traps": ["hairline serifs vanish when compressed: hero 140 px or larger", "deep red #7A1F2B is decoration only (1.9:1 as text)"],
+      "ai_art_style": {"medium": "low-key cinematic still life, dark background with warm gold highlights", "lighting": "single warm key, deep shadows", "texture": "fine film grain", "color_grading": "black, antique gold, restrained deep red", "mood": "slow, luxurious", "signature_technique": "rim-lit subject emerging from darkness"}
+    },
+    "whiteboard-doodle": {
+      "name": "Whiteboard / notebook doodle", "register": "education, step-by-step reasoning, friendly tutoring",
+      "tokens": {"bg": "#FBFBF8", "surface": "#FFFFFF", "ink": "#1F2A44", "muted": "#4B5672", "accent": "#E63946", "accent2": "#2A9D8F", "orange": "#F4A261", "grid": "#CFE3F2"},
+      "text_safe": {"accent": "#CC2F3B", "accent2": "#2F7D74"}, "text_safe_on": "bg",
+      "fonts": {"hero": "Patrick Hand", "body": "Caveat (notes); Kalam for Devanagari", "alternates": [], "no_tabular": ["Patrick Hand"], "numbers_font": "Inter"},
+      "texture": {"kind": "grid", "extras": "72 px paper grid; wavy red underline; slightly irregular rounded corners"},
+      "motion": {"verbs": ["draw", "circle", "underline", "cross out", "arrow", "erase"], "ease": "power1.inOut", "duration": [0.6, 1.2], "stagger": [0.1, 0.15], "overshoot": "none", "cuts": "wipe-erase", "camera": "static; strokes appear in the order the voice says them"},
+      "traps": ["red #E63946 text is 4.0:1 (large only): text-safe #CC2F3B", "handwriting fonts are hard to read below about 56 px"],
+      "ai_art_style": {"medium": "hand-drawn marker doodles on a notebook grid", "lighting": "none, flat", "texture": "paper grid, slightly wobbly lines", "color_grading": "navy marker with red, green and orange accents on white", "mood": "friendly, curious", "signature_technique": "single-weight marker line"}
+    }
+  }
+}

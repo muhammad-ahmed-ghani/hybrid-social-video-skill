@@ -1,0 +1,365 @@
+{
+  "_comment": "Story skeletons (what job the video does). beatmap_lint.py checks meta.intent against this file and warns when meta.format is not in the intent's `formats` list. hooks use the H1-H11 ids in references/02-intents-and-scripts.md. misconception=true means a 'what you probably think' beat is required before the answer. Source: writing and narrative research, 2026-10-20.",
+  "intents": {
+    "mechanism": {
+      "name": "How it works",
+      "hooks": [
+        "H1",
+        "H2",
+        "H4"
+      ],
+      "misconception": true,
+      "formats": [
+        "diagram-mechanism",
+        "math-science-manim",
+        "flat-vector-motion",
+        "screen-demo",
+        "host-broll",
+        "vox-collage",
+        "kinetic-type-essay"
+      ],
+      "skeleton_30s": "question about a familiar object | obvious answer or misconception + 'three steps' | at most 3 causal steps, one state change each | where the simple model breaks | model in one sentence + hook callback",
+      "failure": "a parts list; more than 3 new terms in 30 s; decorative b-roll; viewer feels they understood but did not"
+    },
+    "causal": {
+      "name": "Why did X happen",
+      "hooks": [
+        "H9",
+        "H6",
+        "H4"
+      ],
+      "misconception": true,
+      "formats": [
+        "map-evidence",
+        "archival-documentary",
+        "vox-collage",
+        "news-brief",
+        "host-broll",
+        "kinetic-type-essay",
+        "data-story"
+      ],
+      "skeleton_30s": "event + the usual answer | stake | underlying condition (AND) | trigger (BUT) | outcome (THEREFORE) | 'not one cause' + the factor viewers did not hear",
+      "failure": "single-cause story; hindsight neatness; correlation presented as cause; wrong-event footage"
+    },
+    "concept": {
+      "name": "What is X",
+      "hooks": [
+        "H2"
+      ],
+      "misconception": false,
+      "formats": [
+        "kinetic-type-essay",
+        "diagram-mechanism",
+        "flat-vector-motion",
+        "host-broll",
+        "chat-dialogue",
+        "math-science-manim"
+      ],
+      "skeleton_30s": "question | definition in <=18 words | concrete example by 8 s | near-neighbour 'not the same as Y' | why it matters | recap",
+      "failure": "dictionary reading; abstract first; jargon chains; no example by 8 s"
+    },
+    "versus": {
+      "name": "X vs Y",
+      "hooks": [
+        "H7",
+        "H2"
+      ],
+      "misconception": false,
+      "formats": [
+        "data-story",
+        "kinetic-type-essay",
+        "diagram-mechanism",
+        "screen-demo",
+        "chat-dialogue",
+        "host-broll"
+      ],
+      "skeleton_30s": "which is better? | same goal, different mechanism | dimension 1 | dimension 2 | the deciding dimension | conditional verdict | loop",
+      "failure": "more than 3 dimensions; unequal coverage; hidden criterion; unit or window mismatch; verdict without conditions"
+    },
+    "myth": {
+      "name": "Myth vs fact",
+      "hooks": [
+        "H1",
+        "H2"
+      ],
+      "misconception": true,
+      "formats": [
+        "kinetic-type-essay",
+        "host-broll",
+        "chat-dialogue",
+        "news-brief",
+        "data-story",
+        "diagram-mechanism"
+      ],
+      "skeleton_30s": "label the claim MYTH on screen and in voice | the fact, larger and with the last word | why the myth is believable + evidence | fact restated with one proof | takeaway",
+      "failure": "most time spent on the myth; no account of why it arises; fact less vivid than myth; unlabelled false claim in the first seconds"
+    },
+    "timeline": {
+      "name": "Timeline and history",
+      "hooks": [
+        "H8",
+        "H4"
+      ],
+      "misconception": false,
+      "formats": [
+        "archival-documentary",
+        "map-evidence",
+        "vox-collage",
+        "data-story",
+        "kinetic-type-essay"
+      ],
+      "skeleton_30s": "then/now or striking image | at most 5 dated nodes linked by 'so' or 'but' | the hinge node | now",
+      "failure": "date dump; and-then chaining; unannounced non-linear time scale; anachronistic imagery"
+    },
+    "news": {
+      "name": "What happened and why it matters",
+      "hooks": [
+        "H9"
+      ],
+      "misconception": false,
+      "formats": [
+        "news-brief",
+        "map-evidence",
+        "data-story",
+        "host-broll",
+        "talking-head-package",
+        "screen-demo"
+      ],
+      "skeleton_30s": "date-stamped what happened | known vs not known | why it matters (one concrete impact) | what to watch next",
+      "failure": "stale facts; unattributed claims; no date; AI depiction of the event"
+    },
+    "numbers": {
+      "name": "The scale of X",
+      "hooks": [
+        "H3"
+      ],
+      "misconception": false,
+      "formats": [
+        "data-story",
+        "kinetic-type-essay",
+        "map-evidence",
+        "math-science-manim",
+        "flat-vector-motion",
+        "diagram-mechanism"
+      ],
+      "skeleton_30s": "hero number with unit and denominator | comparison 1 (familiar anchor) | comparison 2 (escalation) | the so-what | hero number again",
+      "failure": "digits read as digits; mismatched units; non-like-for-like comparisons; more than 3 distinct numbers per 30 s"
+    },
+    "howto": {
+      "name": "How to / tutorial",
+      "hooks": [
+        "H10"
+      ],
+      "misconception": false,
+      "formats": [
+        "screen-demo",
+        "host-broll",
+        "diagram-mechanism",
+        "kinetic-type-essay",
+        "talking-head-package"
+      ],
+      "skeleton_30s": "utility promise | finished result first | prerequisite (one line) | 3 imperative steps, one action each | the common mistake | recap",
+      "failure": "steps not matched to frames; skipped step; wrong UI version; stock footage of the wrong tool"
+    },
+    "case": {
+      "name": "Case study / breakdown",
+      "hooks": [
+        "H6",
+        "H11"
+      ],
+      "misconception": false,
+      "formats": [
+        "vox-collage",
+        "archival-documentary",
+        "data-story",
+        "host-broll",
+        "news-brief",
+        "map-evidence"
+      ],
+      "skeleton_30s": "who + one-line outcome | the obstacle (BUT) | the decision (THEREFORE) | result with a number | the lesson",
+      "failure": "hagiography; survivorship bias; unsourced numbers or quotes; fabricated dialogue; real-person likeness"
+    },
+    "ladder": {
+      "name": "ELI5 ladder",
+      "hooks": [
+        "H2"
+      ],
+      "misconception": true,
+      "formats": [
+        "diagram-mechanism",
+        "math-science-manim",
+        "flat-vector-motion",
+        "kinetic-type-essay",
+        "chat-dialogue"
+      ],
+      "skeleton_30s": "question | level 1 sentence + toy analogy | level 2 adds the mechanism | level 3 adds the hard part | what each level leaves out",
+      "failure": "levels that are not truly different; jargon at the top; inconsistent analogies; viewer stops at level 1"
+    },
+    "list": {
+      "name": "Listicle / ranking",
+      "hooks": [
+        "H7"
+      ],
+      "misconception": false,
+      "formats": [
+        "kinetic-type-essay",
+        "data-story",
+        "host-broll",
+        "vox-collage"
+      ],
+      "skeleton_30s": "challenge | criterion in one line | 3 items (~5 s each), ascending interest | #1 with a twist | loop",
+      "failure": "more than 5 items at 60 s; padding; unstated criterion; unverifiable superlatives"
+    },
+    "reveal": {
+      "name": "The hidden reason (mystery)",
+      "hooks": [
+        "H6"
+      ],
+      "misconception": false,
+      "formats": [
+        "archival-documentary",
+        "vox-collage",
+        "map-evidence",
+        "host-broll",
+        "kinetic-type-essay"
+      ],
+      "skeleton_30s": "puzzle in 3-8 s | eliminate the obvious answer (BUT) | clue | reveal by ~20 s | implication",
+      "failure": "reveal held to the last second; reveal does not match the tease; 'hidden' framing around unverified claims"
+    },
+    "predict": {
+      "name": "What happens next",
+      "hooks": [
+        "H7",
+        "H9"
+      ],
+      "misconception": false,
+      "formats": [
+        "data-story",
+        "news-brief",
+        "map-evidence",
+        "kinetic-type-essay",
+        "host-broll"
+      ],
+      "skeleton_30s": "current state | driver 1 | driver 2 | two scenarios with calibrated terms | the signpost to watch",
+      "failure": "false precision; a single forecast; no as-of date; analogue chosen by hindsight"
+    },
+    "paper": {
+      "name": "Explain a paper",
+      "hooks": [
+        "H2",
+        "H9"
+      ],
+      "misconception": false,
+      "formats": [
+        "diagram-mechanism",
+        "data-story",
+        "math-science-manim",
+        "kinetic-type-essay",
+        "host-broll"
+      ],
+      "skeleton_30s": "the question | what they did (n and design in one sentence) | what they found (absolute effect) | caveat + so-what",
+      "failure": "press-release claims; causal verbs for observational data; relative risk only; preprint presented as settled; 'scientists say'"
+    },
+    "policy": {
+      "name": "Explain a law or policy",
+      "hooks": [
+        "H9",
+        "H5"
+      ],
+      "misconception": false,
+      "formats": [
+        "news-brief",
+        "kinetic-type-essay",
+        "diagram-mechanism",
+        "data-story",
+        "host-broll",
+        "map-evidence"
+      ],
+      "skeleton_30s": "what it does in one line | who it applies to | what changes and the effective date | what does not change | where to read it",
+      "failure": "implied legal advice; wrong jurisdiction; stale status; partisan framing",
+      "regulated": true
+    },
+    "finance": {
+      "name": "Money and economics",
+      "hooks": [
+        "H2",
+        "H3"
+      ],
+      "misconception": true,
+      "formats": [
+        "data-story",
+        "kinetic-type-essay",
+        "chat-dialogue",
+        "math-science-manim",
+        "host-broll"
+      ],
+      "skeleton_30s": "question | everyday example with numbers | mechanism | nominal vs real, per-capita | so-what | not-advice line",
+      "failure": "nominal vs real confusion; no denominator; cherry-picked window; advice-like tone; AI-persona monetisation rule",
+      "regulated": true
+    },
+    "health": {
+      "name": "Health and science with risk",
+      "hooks": [
+        "H2",
+        "H5"
+      ],
+      "misconception": true,
+      "formats": [
+        "diagram-mechanism",
+        "data-story",
+        "flat-vector-motion",
+        "kinetic-type-essay",
+        "host-broll"
+      ],
+      "skeleton_30s": "the claim | evidence level | absolute risk in natural frequencies | who it applies to | what to do or see a clinician",
+      "failure": "relative risk alone; ambiguous single-event probabilities; observational data with causal verbs; 'cure' language; AI doctor persona",
+      "regulated": true
+    },
+    "culture": {
+      "name": "Culture and etymology",
+      "hooks": [
+        "H2",
+        "H6"
+      ],
+      "misconception": true,
+      "formats": [
+        "archival-documentary",
+        "vox-collage",
+        "map-evidence",
+        "kinetic-type-essay",
+        "host-broll"
+      ],
+      "skeleton_30s": "the word or custom everyone knows | the surprising origin | the path in at most 2 hops | the popular-but-false version | why it stuck",
+      "failure": "folk etymology repeated as fact; single anecdote as proof; stereotyped visuals"
+    },
+    "sketch": {
+      "name": "Comedy sketch",
+      "hooks": [
+        "H12",
+        "H13"
+      ],
+      "misconception": false,
+      "formats": [
+        "comedy-sketch",
+        "cartoon-episode"
+      ],
+      "skeleton_30s": "a situation with a rule | a character follows or breaks it | escalation, same rhythm (rule of three) | the turn | punchline, key word last | tag after the laugh",
+      "failure": "explaining the joke; unclear stakes; the same gag with the same outcome as last episode; a punchline buried under specifics; AI-written punchlines nobody rewrote"
+    },
+    "serial-story": {
+      "name": "Serial story episode",
+      "hooks": [
+        "H12",
+        "H14",
+        "H15"
+      ],
+      "misconception": false,
+      "formats": [
+        "cartoon-episode",
+        "comedy-sketch"
+      ],
+      "skeleton_30s": "cold open inside the conflict | one-line recap only if the series needs it | what the character wants | the obstacle (BUT) | the decision (THEREFORE) | an outcome that changes the story state | an optional pull toward the next episode",
+      "failure": "the state does not change; a cliffhanger that is never paid off; a character acting out of character; a recap that eats the episode"
+    }
+  }
+}

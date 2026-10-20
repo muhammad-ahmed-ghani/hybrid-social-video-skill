@@ -1,0 +1,43 @@
+{
+  "_comment": "Platform specs read by qc_master.py and contact_sheet.py. Safe-zone margins are px at 1080x1920 (UI-covered bands). TikTok and Google/YouTube numbers were measured from the platforms' own safe-zone templates (ad templates; organic overlays are at most as large). Meta numbers are third-party quotes of the Meta Ads Guide. No platform publishes a loudness target: -14 LUFS / -1 dBTP is social practice. Re-check before relying on a number in a client deliverable.",
+  "as_of": "2026-10-20",
+  "delivery": {
+    "fps_range": [24, 60], "preferred_fps": 30,
+    "lufs_target": -14, "lufs_gate": [-17, -11],
+    "true_peak_gate": -0.3, "true_peak_warn": -1.0,
+    "container": "MP4, H.264 High profile, yuv420p, BT.709, moov atom first (+faststart)",
+    "audio": "AAC-LC 48 kHz stereo, 384 kbps",
+    "video_bitrate_note": "YouTube SDR 1080p: 8 Mbps at 24-30 fps. TikTok in-feed minimum 516 kbps, file up to 500 MB."
+  },
+  "platforms": {
+    "tiktok": {"max_seconds": 600, "note": "ad specs allow up to 10 min; organic maximum unverified"},
+    "reels": {"max_seconds": 180, "note": "Reels over 3 min are not placed in the Reels tab (reported)"},
+    "shorts": {"max_seconds": 180, "note": "any vertical or square video up to 3 min uploaded after 2024-10-15 is a Short"}
+  },
+  "safe_zones_1080x1920": {
+    "platforms": {
+      "common": {"top": 288, "bottom": 672, "left": 120, "right": 192},
+      "tiktok": {"top": 240, "bottom": 660, "left": 120, "right": 120, "rail": {"from_y": 840, "extra_right": 180}},
+      "reels": {"top": 269, "bottom": 672, "left": 65, "right": 65},
+      "shorts": {"top": 288, "bottom": 672, "left": 48, "right": 192}
+    },
+    "common_safe_box": {"x": 120, "y": 288, "w": 768, "h": 960},
+    "lower_lane": {"x": 120, "y": 840, "w": 660, "h": 408, "note": "below y=840 TikTok's action rail makes the right limit x<=780"},
+    "caption_lanes": [
+      {"name": "A", "x": 120, "y": 620, "w": 768, "h": 220, "note": "safe on all three platforms"},
+      {"name": "B", "x": 120, "y": 840, "w": 660, "h": 400, "note": "x<=780; mirror for TikTok's Arabic (RTL) layout"}
+    ],
+    "avoid_caption_below_y": 1250,
+    "profile_grid_crop_note": "3:4 grid crop loses 240 px top and bottom: keep the cover subject in y 240-1680",
+    "sources": {
+      "tiktok": "official In-Feed ad safe-zone PNG (720x1280, scaled x1.5), via ads.tiktok.com video-ads-specifications",
+      "shorts": "Google 'Universal safe zones for video ads on YouTube' vertical PNG, clear rect x48-887 y288-1247",
+      "reels": "Meta Ads Guide wording quoted by third parties: 14% top, 35% bottom, 6% each side (reported)"
+    }
+  },
+  "captions": {
+    "font_px_target": [56, 72], "font_px_floor": 40,
+    "chars_per_line_at_60px": [21, 25], "max_lines": 2, "min_on_screen_seconds": 0.8,
+    "contrast_min": 4.5, "note": "phrase-level (3-5 words) is the default; word-level highlight is styling, not an evidenced retention lever"
+  }
+}

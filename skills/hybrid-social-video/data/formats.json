@@ -1,0 +1,619 @@
+{
+  "_comment": "Format profiles read by beatmap_lint.py. `mix` = allowed share of RUNTIME by BASE layer (overlays do not count). beat_seconds = band for one beat's spoken length. Edit here, never in code. hyperframes_workflow = the HyperFrames workflow that builds the code layer (host-broll: the overlay track only; the base is explainer-reel-skill). host_covers_full_vo = the avatar call is billed for the whole voice-over (the host is the clock), so the linter prices host seconds on total runtime, not on host beats only. `wps` is a PRIOR in speech units per second (words, or characters for unsegmented scripts); it is replaced by a measured rate (scripts/speech_rate.py) and the linter treats duration checks as warnings until it is. `read` = the reference files (stems under references/) to read for this format beyond the always-read set in SKILL.md; `needs_punchline` and `punchline_max_seconds` are house heuristics for comedy, editable; `allow_repeat_treatment` permits three identical layer+device beats in a row (shot and reverse shot in dialogue).",
+  "formats": {
+    "data-story": {
+      "family": "code-native",
+      "name": "Data story / scale explainer",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "ai_video",
+        "stock",
+        "capture"
+      ],
+      "mix": {
+        "code": [
+          0.7,
+          1.0
+        ],
+        "ai_video": [
+          0,
+          0.1
+        ],
+        "ai_image": [
+          0,
+          0.2
+        ]
+      },
+      "beat_seconds": [
+        1.5,
+        6.0
+      ],
+      "length_seconds": [
+        20,
+        75
+      ],
+      "wps": 2.5,
+      "hook_max_words": 12,
+      "max_on_screen_words": 6,
+      "default_tier": "R0",
+      "hyperframes_workflow": "faceless-explainer",
+      "read": [
+        "04-style-bible",
+        "05b-data-and-math",
+        "06-sound"
+      ]
+    },
+    "math-science-manim": {
+      "family": "code-native",
+      "name": "Math and science (3Blue1Brown lineage, Manim)",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "stock"
+      ],
+      "mix": {
+        "code": [
+          0.9,
+          1.0
+        ],
+        "ai_video": [
+          0,
+          0.0
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        9.0
+      ],
+      "length_seconds": [
+        30,
+        90
+      ],
+      "wps": 2.2,
+      "hook_max_words": 14,
+      "max_on_screen_words": 8,
+      "default_tier": "R0",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "04-style-bible",
+        "05b-data-and-math",
+        "06-sound"
+      ]
+    },
+    "kinetic-type-essay": {
+      "family": "code-native",
+      "name": "Kinetic-type essay (faceless, typography-led)",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "stock"
+      ],
+      "mix": {
+        "code": [
+          0.75,
+          1.0
+        ],
+        "ai_video": [
+          0,
+          0.0
+        ]
+      },
+      "beat_seconds": [
+        1.2,
+        5.0
+      ],
+      "length_seconds": [
+        15,
+        75
+      ],
+      "wps": 2.7,
+      "hook_max_words": 10,
+      "max_on_screen_words": 6,
+      "default_tier": "R0",
+      "hyperframes_workflow": "faceless-explainer",
+      "read": [
+        "04-style-bible",
+        "05-motion-and-edit-grammar",
+        "06-sound"
+      ]
+    },
+    "diagram-mechanism": {
+      "family": "code-native",
+      "name": "Animated diagram / how-it-works",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "ai_video",
+        "stock"
+      ],
+      "mix": {
+        "code": [
+          0.7,
+          1.0
+        ],
+        "ai_video": [
+          0,
+          0.1
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        7.0
+      ],
+      "length_seconds": [
+        25,
+        80
+      ],
+      "wps": 2.4,
+      "hook_max_words": 12,
+      "max_on_screen_words": 6,
+      "default_tier": "R0",
+      "hyperframes_workflow": "faceless-explainer",
+      "read": [
+        "04-style-bible",
+        "05-motion-and-edit-grammar",
+        "05b-data-and-math"
+      ]
+    },
+    "screen-demo": {
+      "family": "code-native",
+      "name": "Screen-capture explainer with callouts",
+      "layers_allowed": [
+        "capture",
+        "code",
+        "stock",
+        "ai_image"
+      ],
+      "mix": {
+        "capture": [
+          0.5,
+          0.9
+        ],
+        "code": [
+          0.1,
+          0.5
+        ],
+        "ai_video": [
+          0,
+          0.0
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        7.0
+      ],
+      "length_seconds": [
+        20,
+        90
+      ],
+      "wps": 2.5,
+      "hook_max_words": 12,
+      "max_on_screen_words": 6,
+      "default_tier": "R0",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "05-motion-and-edit-grammar",
+        "06-sound",
+        "11-routing"
+      ]
+    },
+    "chat-dialogue": {
+      "family": "code-native",
+      "name": "Chat / dialogue explainer (message-thread)",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "stock"
+      ],
+      "mix": {
+        "code": [
+          0.85,
+          1.0
+        ]
+      },
+      "beat_seconds": [
+        1.2,
+        4.0
+      ],
+      "length_seconds": [
+        15,
+        60
+      ],
+      "wps": 2.8,
+      "hook_max_words": 10,
+      "max_on_screen_words": 14,
+      "default_tier": "R0",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "04-style-bible",
+        "05-motion-and-edit-grammar"
+      ]
+    },
+    "vox-collage": {
+      "family": "editorial",
+      "name": "Paper-collage editorial (AI-era collage look)",
+      "layers_allowed": [
+        "ai_image",
+        "code",
+        "ai_video",
+        "stock",
+        "real"
+      ],
+      "mix": {
+        "ai_image": [
+          0.4,
+          0.85
+        ],
+        "code": [
+          0.1,
+          0.5
+        ],
+        "ai_video": [
+          0,
+          0.35
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        6.0
+      ],
+      "length_seconds": [
+        30,
+        90
+      ],
+      "wps": 2.5,
+      "hook_max_words": 12,
+      "max_on_screen_words": 5,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "04-style-bible",
+        "05-motion-and-edit-grammar",
+        "07-ai-layer"
+      ]
+    },
+    "map-evidence": {
+      "family": "editorial",
+      "name": "Map-and-evidence explainer (geography, documents, headlines)",
+      "layers_allowed": [
+        "code",
+        "real",
+        "capture",
+        "stock",
+        "ai_image"
+      ],
+      "mix": {
+        "code": [
+          0.4,
+          0.85
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        6.0
+      ],
+      "length_seconds": [
+        30,
+        90
+      ],
+      "wps": 2.5,
+      "hook_max_words": 12,
+      "max_on_screen_words": 6,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "04-style-bible",
+        "05b-data-and-math",
+        "07-ai-layer"
+      ]
+    },
+    "archival-documentary": {
+      "family": "editorial",
+      "name": "Archival documentary (stills, grain, voice)",
+      "layers_allowed": [
+        "ai_image",
+        "stock",
+        "real",
+        "code",
+        "ai_video"
+      ],
+      "mix": {
+        "ai_image": [
+          0,
+          0.7
+        ],
+        "stock": [
+          0,
+          0.6
+        ],
+        "real": [
+          0,
+          0.5
+        ],
+        "code": [
+          0.1,
+          0.5
+        ],
+        "ai_video": [
+          0,
+          0.2
+        ]
+      },
+      "beat_seconds": [
+        3.0,
+        7.0
+      ],
+      "length_seconds": [
+        30,
+        90
+      ],
+      "wps": 2.4,
+      "hook_max_words": 12,
+      "max_on_screen_words": 5,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "04-style-bible",
+        "07-ai-layer",
+        "08-governance"
+      ]
+    },
+    "flat-vector-motion": {
+      "family": "editorial",
+      "name": "Flat-vector motion explainer (Kurzgesagt register)",
+      "layers_allowed": [
+        "ai_image",
+        "code",
+        "ai_video"
+      ],
+      "mix": {
+        "ai_image": [
+          0.2,
+          0.8
+        ],
+        "code": [
+          0.2,
+          0.7
+        ],
+        "ai_video": [
+          0,
+          0.4
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        6.0
+      ],
+      "length_seconds": [
+        30,
+        90
+      ],
+      "wps": 2.5,
+      "hook_max_words": 12,
+      "max_on_screen_words": 5,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "04-style-bible",
+        "05-motion-and-edit-grammar",
+        "07-ai-layer"
+      ]
+    },
+    "host-broll": {
+      "family": "presenter",
+      "name": "Host plus AI b-roll (talking head, 9:16)",
+      "layers_allowed": [
+        "host",
+        "ai_video",
+        "ai_image",
+        "stock",
+        "code",
+        "real",
+        "capture"
+      ],
+      "mix": {
+        "host": [
+          0.3,
+          0.7
+        ],
+        "ai_video": [
+          0,
+          0.45
+        ],
+        "code": [
+          0,
+          0.4
+        ]
+      },
+      "beat_seconds": [
+        1.2,
+        3.5
+      ],
+      "length_seconds": [
+        20,
+        75
+      ],
+      "wps": 2.5,
+      "hook_max_words": 8,
+      "max_on_screen_words": 5,
+      "default_tier": "R3",
+      "allow_repeat_treatment": false,
+      "hyperframes_workflow": "motion-graphics",
+      "host_covers_full_vo": true,
+      "read": [
+        "06-sound",
+        "07-ai-layer",
+        "11-routing"
+      ]
+    },
+    "talking-head-package": {
+      "family": "presenter",
+      "name": "Existing footage packaged with graphics and captions",
+      "layers_allowed": [
+        "real",
+        "code"
+      ],
+      "mix": {
+        "real": [
+          0.8,
+          1.0
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        8.0
+      ],
+      "length_seconds": [
+        20,
+        180
+      ],
+      "wps": 2.7,
+      "hook_max_words": 14,
+      "max_on_screen_words": 7,
+      "default_tier": "R0",
+      "hyperframes_workflow": "talking-head-recut",
+      "read": [
+        "05-motion-and-edit-grammar",
+        "06-sound",
+        "11-routing"
+      ]
+    },
+    "news-brief": {
+      "family": "reporting",
+      "name": "News brief (what happened, why it matters)",
+      "layers_allowed": [
+        "code",
+        "stock",
+        "real",
+        "capture",
+        "ai_image"
+      ],
+      "mix": {
+        "code": [
+          0.3,
+          0.8
+        ]
+      },
+      "beat_seconds": [
+        2.0,
+        6.0
+      ],
+      "length_seconds": [
+        25,
+        75
+      ],
+      "wps": 2.6,
+      "hook_max_words": 12,
+      "max_on_screen_words": 6,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "read": [
+        "02-intents-and-scripts",
+        "05b-data-and-math",
+        "08-governance"
+      ]
+    },
+    "comedy-sketch": {
+      "family": "narrative",
+      "name": "Comedy sketch (recurring characters, setup and punchline)",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "ai_video",
+        "stock",
+        "real",
+        "host"
+      ],
+      "mix": {
+        "ai_image": [
+          0.1,
+          0.7
+        ],
+        "code": [
+          0.1,
+          0.7
+        ],
+        "ai_video": [
+          0.0,
+          0.4
+        ]
+      },
+      "beat_seconds": [
+        1.2,
+        5.0
+      ],
+      "length_seconds": [
+        20,
+        75
+      ],
+      "wps": 2.8,
+      "hook_max_words": 14,
+      "max_on_screen_words": 6,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "needs_punchline": true,
+      "punchline_max_seconds": 3.0,
+      "allow_repeat_treatment": true,
+      "read": [
+        "02-intents-and-scripts",
+        "15-series",
+        "06-sound",
+        "07-ai-layer"
+      ]
+    },
+    "cartoon-episode": {
+      "family": "narrative",
+      "name": "Cartoon episode (recurring cast, cut-out puppets animated in code)",
+      "layers_allowed": [
+        "code",
+        "ai_image",
+        "ai_video",
+        "stock"
+      ],
+      "mix": {
+        "code": [
+          0.3,
+          0.95
+        ],
+        "ai_image": [
+          0.05,
+          0.6
+        ],
+        "ai_video": [
+          0.0,
+          0.3
+        ]
+      },
+      "beat_seconds": [
+        1.5,
+        6.0
+      ],
+      "length_seconds": [
+        25,
+        90
+      ],
+      "wps": 2.6,
+      "hook_max_words": 14,
+      "max_on_screen_words": 6,
+      "default_tier": "R1",
+      "hyperframes_workflow": "general-video",
+      "needs_punchline": false,
+      "allow_repeat_treatment": true,
+      "read": [
+        "15-series",
+        "07-ai-layer",
+        "11-routing",
+        "06-sound"
+      ]
+    }
+  },
+  "number_rules": {
+    "max_distinct_per_beat": 3,
+    "year_like_range": [
+      1000,
+      2999
+    ],
+    "_comment": "Craft heuristic, editable. A year-like token is four digits in the range with no separator or unit; it is not counted as a stat."
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "schema": "hybrid-pricebook/1",
+  "currency": "USD",
+  "created": "2026-01-01T00:00:00+00:00",
+  "_comment": "SYNTHETIC numbers for tests only. They are not quotes and match no real provider.",
+  "assumptions": {
+    "retries": {
+      "ai_image": 2.0,
+      "ai_video": 3.0,
+      "host": 2.0
+    },
+    "retries_basis": "synthetic test fixture"
+  },
+  "entries": [
+    {
+      "id": "img-a",
+      "capability": "ai_image",
+      "provider": "synthetic",
+      "model": "image-a",
+      "unit": "image",
+      "usd_per_unit": 0.05,
+      "source": {
+        "type": "user",
+        "ref": "test"
+      },
+      "fetched_at": "2026-01-01T00:00:00+00:00",
+      "confidence": "illustrative",
+      "selected": true,
+      "limits": {}
+    },
+    {
+      "id": "vid-a",
+      "capability": "ai_video",
+      "provider": "synthetic",
+      "model": "video-a",
+      "unit": "second",
+      "usd_per_unit": 0.1,
+      "source": {
+        "type": "user",
+        "ref": "test"
+      },
+      "fetched_at": "2026-01-01T00:00:00+00:00",
+      "confidence": "illustrative",
+      "selected": true,
+      "limits": {
+        "max_seconds": 10
+      }
+    },
+    {
+      "id": "host-a",
+      "capability": "host",
+      "provider": "synthetic",
+      "model": "avatar-a",
+      "unit": "second",
+      "usd_per_unit": 0.05,
+      "source": {
+        "type": "user",
+        "ref": "test"
+      },
+      "fetched_at": "2026-01-01T00:00:00+00:00",
+      "confidence": "illustrative",
+      "selected": true,
+      "limits": {}
+    },
+    {
+      "id": "tts-local",
+      "capability": "tts",
+      "provider": "local",
+      "model": "local-tts",
+      "unit": "1k_chars",
+      "usd_per_unit": 0,
+      "source": {
+        "type": "local",
+        "ref": "test"
+      },
+      "fetched_at": "2026-01-01T00:00:00+00:00",
+      "confidence": "user",
+      "selected": true,
+      "limits": {}
+    },
+    {
+      "id": "stt-local",
+      "capability": "stt",
+      "provider": "local",
+      "model": "local-stt",
+      "unit": "minute",
+      "usd_per_unit": 0,
+      "source": {
+        "type": "local",
+        "ref": "test"
+      },
+      "fetched_at": "2026-01-01T00:00:00+00:00",
+      "confidence": "user",
+      "selected": true,
+      "limits": {}
+    },
+    {
+      "id": "music-a",
+      "capability": "music",
+      "provider": "synthetic",
+      "model": "music-a",
+      "unit": "track",
+      "usd_per_unit": 0.1,
+      "source": {
+        "type": "user",
+        "ref": "test"
+      },
+      "fetched_at": "2026-01-01T00:00:00+00:00",
+      "confidence": "illustrative",
+      "selected": true,
+      "limits": {}
+    }
+  ]
+}
