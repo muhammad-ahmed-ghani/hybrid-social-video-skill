@@ -1,0 +1,9 @@
+[
+  {"file": "clips/c1.mp4", "beats": [1]},
+  {"file": "clips/c2.mp4", "beats": [2]},
+  {"file": "clips/c3.mp4", "beats": [3]},
+  {"file": "clips/c4.mp4", "beats": [4]},
+  {"file": "clips/c5.mp4", "beats": [5]},
+  {"file": "clips/c67.mp4", "beats": [6, 7]},
+  {"file": "clips/c8.mp4", "beats": [8]}
+]

@@ -116,3 +116,12 @@ claims unsourced; every beat the same overlay.
 The same face in every frame; lip-sync proxies (caption coverage, a listen); the hook frame at 0.4 s with sound
 off; each b-roll clip on its own beat; the anchor gate on every place-specific frame; the host stays under about
 12 s per shot; QC 12 of 12 including A/V delta.
+
+## Verified build (2026-10-20)
+
+A host made from one fictional portrait and a video model that speaks the line, with code overlays over it, was built and
+shipped end to end: portrait, one smoke-test clip, one clip per beat, `host_assemble.py` for the track and word timings, an HTML
+overlay page, `render_html.py`, `mix_audio.py`, QC. The recipe, the prompt shape, the costs to measure and the failure modes are in
+`17-ai-models-and-tools.md`; the working page is `examples/host-overlay-composition/`. Layout used: host full frame on the hook, the
+answer and the payoff, with the code layer in the lower third (clear of the eyes and mouth); host in a bubble beside a diagram on
+the explaining beats; all text at the Q1 sizes; captions from the host's own audio; no flash transitions.

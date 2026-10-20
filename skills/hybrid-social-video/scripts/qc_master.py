@@ -44,7 +44,7 @@ HINTS = {
                    "loop or a held last frame: re-render that beat",
     "flicker": "a strobing or flickering stretch: inspect that segment on a contact sheet; a generated "
                "clip that strobes is a content defect, regenerate that beat once with a changed prompt",
-    "pacing": "a static stretch loses viewers: add a motion/graphic change or cut",
+    "pacing": "a stretch with no cut and almost no motion loses viewers: give it a real change (a new overlay state, a reframe, a cut to another layer); never a flash or a fake cut",
     "loop": "make the last beat's final frame echo the first (same framing/colour) for a clean loop",
 }
 
@@ -166,30 +166,44 @@ def check(path: Path, target: float | None, platform: str, loop: bool, max_freez
 
     sc = _filter_log(path, "select='gt(scene,0.30)',showinfo", None)
     cuts = [float(t) for t in re.findall(r"pts_time:([\d.]+)", sc)]
-    marks = [0.0] + cuts + [dur]
-    holds = [b - a_ for a_, b in zip(marks, marks[1:])]
-    asl = dur / max(len(marks) - 1, 1)
-    res["pacing"] = {"pass": (max(holds) if holds else dur) <= max(4.5, max_freeze * 1.8),
-                     "cuts": len(cuts), "avg_shot_s": round(asl, 2),
-                     "longest_hold_s": round(max(holds), 2) if holds else None,
-                     "note": "scene-change cuts only; motion graphics without a hard cut read as one shot"}
 
     # flicker: frame-to-frame luma difference (YDIF, 0-255). The `scene` filter scores the CHANGE
     # in change, so a periodic strobe registers once and then reads zero; YDIF does not have that blind spot.
     dl = _filter_log(path, "scale=108:-2,signalstats,metadata=print:key=lavfi.signalstats.YDIF", None)
     jumps: list[float] = []
+    ydif: list[tuple[float, float]] = []
     t_cur = 0.0
     for line in dl.splitlines():
         m_t = re.search(r"pts_time:([\d.]+)", line)
         if m_t:
             t_cur = float(m_t.group(1))
         m_d = re.search(r"YDIF=([\d.]+)", line)
-        if m_d and float(m_d.group(1)) > 40.0:
-            jumps.append(t_cur)
+        if m_d:
+            ydif.append((t_cur, float(m_d.group(1))))
+            if float(m_d.group(1)) > 40.0:
+                jumps.append(t_cur)
     densest = 0
     for i, t0 in enumerate(jumps):
         densest = max(densest, sum(1 for t1 in jumps[i:] if t1 - t0 < 1.0))
     res["flicker"] = {"pass": densest <= 5, "max_big_jumps_in_1s": densest}
+
+    # pacing: a long shot is a problem only when nothing moves in it. Hard cuts are one kind of change; a person
+    # talking, an animated diagram or a moving overlay are others, and seamless jump cuts on one framing score as
+    # no cut at all. So a hold longer than the limit fails only when its mean frame-to-frame change is near zero.
+    limit = max(4.5, max_freeze * 1.8)
+    marks = [0.0] + cuts + [dur]
+    holds = [(a_, b_) for a_, b_ in zip(marks, marks[1:])]
+    static = []
+    for a_, b_ in holds:
+        if b_ - a_ > limit:
+            vals = [v for t_, v in ydif if a_ <= t_ <= b_]
+            mean = sum(vals) / len(vals) if vals else 0.0
+            if mean < 0.5:
+                static.append({"from": round(a_, 2), "to": round(b_, 2), "mean_change": round(mean, 2)})
+    longest = max((b_ - a_ for a_, b_ in holds), default=dur)
+    res["pacing"] = {"pass": not static, "cuts": len(cuts), "avg_shot_s": round(dur / max(len(marks) - 1, 1), 2),
+                     "longest_hold_s": round(longest, 2), "static_holds": static,
+                     "note": "a long shot passes when it moves (mean luma change per frame >= 0.5); never add flashes or fake cuts to satisfy this check"}
 
     if loop:
         with tempfile.TemporaryDirectory() as td:

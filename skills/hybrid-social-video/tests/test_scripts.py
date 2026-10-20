@@ -1485,3 +1485,100 @@ def test_host_beats_require_a_stated_source_and_consent_for_real_people():
     assert "E082" in codes(beatmap_lint.lint(bm))  # real person without consent is an error
     bm["meta"]["host"] = {"source": "real_person", "consent": "the user, photos supplied by them"}
     assert "E082" not in codes(beatmap_lint.lint(bm))
+
+
+# ---------------------------------------------------------------- v1.2: models, provenance, voice, pacing
+def test_spoken_tokens_treat_digits_and_number_words_alike():
+    from speech_align import align, tokens, wer
+    assert tokens("It picks 1 of 15 formats, hybrid-social-video") == ["it", "picks", "one", "of", "fifteen", "formats", "hybrid", "social", "video"]
+    assert wer(tokens("1 of 15"), tokens("one of fifteen")) == 0.0
+    assert wer(tokens("a b c d"), tokens("a x c d")) == pytest.approx(0.25)
+    assert align(["a", "b", "c"], ["a", "c"]) == {0: 0, 2: 1}
+
+
+def test_provenance_records_models_and_the_check_finds_gaps(tmp_path):
+    ep = tmp_path / "ep"
+    bm = tmp_path / "bm.json"
+    bm.write_text(json.dumps({"beats": [{"id": 1, "layer": "code"}, {"id": 2, "layer": "ai_image"}, {"id": 3, "layer": "host"}]}))
+    assert run_script("provenance.py", "check", "--episode", ep).returncode == 3              # not initialised
+    run_script("provenance.py", "init", "--episode", ep, "--director", "some-model")
+    gap = run_script("provenance.py", "check", "--episode", ep, "--beatmap", bm)
+    assert gap.returncode == 1 and "beat 2" in gap.stderr and "beat 3" in gap.stderr
+    run_script("provenance.py", "add", "--episode", ep, "--role", "image", "--tool", "t", "--model", "m1", "--provider", "p", "--runs", "hosted",
+               "--used-for", "still", "--beats", "2", "--realism", "photoreal", "--depicts", "fictional")
+    run_script("provenance.py", "add", "--episode", ep, "--role", "host", "--tool", "t", "--model", "m2", "--provider", "p", "--runs", "hosted",
+               "--used-for", "clip", "--beats", "3", "--realism", "photoreal", "--depicts", "fictional")
+    assert run_script("provenance.py", "check", "--episode", ep, "--beatmap", bm).returncode == 0
+    rep = run_script("provenance.py", "report", "--episode", ep).stdout
+    assert "Director: some-model" in rep and "m1" in rep and "LABEL" in rep and "host's face and speech are AI-generated" in rep
+
+
+def test_provenance_leaves_a_test_that_is_not_in_the_output_out_of_the_verdict(tmp_path):
+    ep = tmp_path / "ep"
+    run_script("provenance.py", "init", "--episode", ep, "--director", "d")
+    run_script("provenance.py", "add", "--episode", ep, "--role", "tts", "--tool", "t", "--model", "m", "--provider", "p", "--runs", "hosted",
+               "--used-for", "a test", "--in-output", "false")
+    rep = run_script("provenance.py", "report", "--episode", ep).stdout
+    assert "(not in the output)" in rep and "synthetic voice" not in rep
+
+
+def test_provenance_requires_a_voice_entry_when_a_voice_exists(tmp_path):
+    ep = tmp_path / "ep"
+    run_script("provenance.py", "init", "--episode", ep, "--director", "d")
+    (ep / "spans.json").write_text("[]")
+    bm = tmp_path / "bm.json"
+    bm.write_text(json.dumps({"beats": []}))
+    r = run_script("provenance.py", "check", "--episode", ep, "--beatmap", bm)
+    assert r.returncode == 1 and "voice" in r.stderr
+
+
+def test_probe_reports_the_ai_models_it_can_see():
+    rep = json.loads(run_script("capability_probe.py").stdout)
+    ai = rep["ai_models"]
+    assert set(ai) >= {"local", "hosted_hints", "director", "tool_models"} and ai["director"] is None
+    for row in ai["local"]:
+        assert {"id", "role", "runs", "note"} <= set(row) and row["runs"] in ("local", "hosted")
+
+
+@pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg needed")
+def test_voice_check_marks_a_system_voice_as_draft_however_it_scores(tmp_path):
+    wav = tmp_path / "tone.wav"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "sine=frequency=220:duration=2", str(wav)], check=True)
+    r = run_script("voice_check.py", "--audio", wav, "--text", "hello world", "--kind", "system")
+    rep = json.loads(r.stdout)
+    assert rep["verdict"] == "draft" and "draft" in rep["why"] and r.returncode in (0, 1, 3)
+    assert rep["duration_s"] == pytest.approx(2.0, abs=0.1) and rep["lufs"] is not None
+
+
+@pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg needed")
+def test_pacing_fails_a_long_shot_only_when_nothing_moves(tmp_path):
+    static, moving = tmp_path / "static.mp4", tmp_path / "moving.mp4"
+    for out, src in ((static, "color=c=0x224466:s=270x480:r=30:d=7"), (moving, "testsrc2=s=270x480:r=30:d=7")):
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", src, "-f", "lavfi", "-i", "sine=frequency=300:duration=7",
+                        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(out)], check=True)
+    pacing = {}
+    for name, path in (("static", static), ("moving", moving)):
+        r = run_script("qc_master.py", path, "--platform", "tiktok")
+        pacing[name] = json.loads(r.stdout[r.stdout.index("{"):])["checks"]["pacing"]
+    assert pacing["static"]["pass"] is False and pacing["static"]["static_holds"]
+    assert pacing["moving"]["pass"] is True and not pacing["moving"]["static_holds"]
+
+
+def test_new_scripts_print_their_help_and_the_skill_lists_them():
+    for name in ("host_assemble.py", "render_html.py", "mix_audio.py", "voice_check.py", "provenance.py"):
+        r = run_script(name, "--help")
+        assert r.returncode == 0 and name.split(".")[0] in r.stdout, name
+    text = (ROOT / "SKILL.md").read_text()
+    for needle in ("Operating mode", "Know your models", "The bar: would a top creator post this?", "Decision record"):
+        assert needle in text, needle
+    for ref in ("17-ai-models-and-tools.md",):
+        assert (ROOT / "references" / ref).is_file()
+
+
+def test_ledger_keeps_its_gates_by_default_so_autonomy_is_an_explicit_choice(tmp_path):
+    ep = tmp_path / "ep"
+    run_script("ledger.py", "init", "--episode", ep, "--budget", "10")
+    assert run_script("ledger.py", "spend", "--episode", ep, "--kind", "ai_image", "--usd", "1", "--beat", "1").returncode == 4
+    ep2 = tmp_path / "ep2"
+    run_script("ledger.py", "init", "--episode", ep2, "--budget", "10", "--autonomous")
+    assert run_script("ledger.py", "spend", "--episode", ep2, "--kind", "ai_image", "--usd", "1", "--beat", "1").returncode == 0

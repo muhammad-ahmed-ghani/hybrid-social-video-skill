@@ -13,7 +13,22 @@ Here the guard lives in the script that records each paid call (`scripts/ledger.
 - [AI presenters on regulated topics](#ai-presenters-on-regulated-topics) · [Synthetic data and made-up subjects](#synthetic-data-and-made-up-subjects)
 - [Series](#series) · [Independent review](#independent-review) · [Resuming](#resuming) · [Failures seen in the wild](#failures-seen-in-the-wild)
 
-## The gates
+## Authorisation and autonomy
+
+The default is to ask nothing (`SKILL.md`, operating mode). What keeps that safe is that every paid call still passes the ledger.
+Authorisation comes from the user, once, in any of these forms: a budget in the request; a standing note in the project or
+user instructions; a tool the user told you to use ("use the ImagineArt MCP for the voice"); "go". From it you set a cap inside
+what they said, record where it came from in `meta.notes`, and initialise the ledger with `--autonomous` so no further gate
+waits on a human. With none of these, the plan is the best free version and the paid upgrade is one line with its measured
+cost. A plan that spends nothing needs no ledger.
+
+What still stops the run, because only the user can answer or because the host decides: a real person's likeness or voice, a
+regulated-topic AI presenter, a credential, a vendor refusal, and any permission the host denies. A denial is a boundary: stop that
+step, finish what does not depend on it, report what you wanted and why. Never split a call to slip under a threshold, never edit
+a guard or a ledger to get past it, never retry a denied call with disguised input. The one allowed repeat is the same call after the user
+has said, in their own words, that they want it.
+
+## The gates## The gates
 
 Gate count should scale with the cost of an error. Users approve about 93% of
 permission prompts and fatigue sets in; five or six blocking approvals to
@@ -101,10 +116,12 @@ say "estimated" in the report when you cannot.
 
 ## Provenance and disclosure
 
-Keep four records in the episode directory: `beatmap.json` (claims, layers, anchors),
-`ledger.jsonl` (what was generated, by which model), `spans.json` (timing), and the
-final QC report. From these you can state, for any frame, whether it is real, stock,
-code or AI, and where every number came from.
+Keep five records in the episode directory: `beatmap.json` (claims, layers, anchors),
+`ledger.jsonl` (what was paid for), `provenance.json` (which AI models and tools made what, written at the moment of use with
+`scripts/provenance.py`), `spans.json` (timing), and the final QC report. From these you can state, for any frame, whether it is real, stock,
+code or AI, which model made it, and where every number came from. `provenance.py report` prints the AI-use statement and a
+disclosure verdict derived from the entries; `provenance.py check` must pass before delivery. Count the director (the model that
+wrote the plan and code), speech recognition used for timings, and any synthetic voice.
 
 Disclosure decision. The trigger is realism, not "AI".
 

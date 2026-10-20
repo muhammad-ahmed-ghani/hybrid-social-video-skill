@@ -98,6 +98,16 @@ The number alone misleads. Put these in the entry, because each one has produced
 - **Length limits per call.** `max_seconds` for a clip or an avatar call: the plan raises a question when a beat needs more,
   or when the avatar call that covers the whole voice-over exceeds it.
 
+## Providers that bill in credits
+
+Some providers (an MCP server wrapping a creative suite, for one) bill in credits and expose a balance read, not a price list.
+Keep the unit honest. Read the balance before and after the smallest representative call; the difference is a measured price
+(source type `ledger`, confidence `reported` until a second call agrees). Record it per unit (per second of clip, per image, per
+character of speech) with the unit written as credits, and plan from it. Use a credits ledger in its own directory: the ledger
+takes a number, so the amount is credits and every `--note` says so. Never convert credits to money without a source for the
+rate. Estimate the whole plan from one measured call per kind before the batch, check the ledger one call at a time, and
+report the totals in credits.
+
 ## Unknown is an answer
 
 If no source gives a price, the entry does not exist and the card shows `MISSING PRICE` with the quantity needed. Then:

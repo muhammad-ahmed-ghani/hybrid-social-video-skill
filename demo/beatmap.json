@@ -1,0 +1,271 @@
+{
+  "schema": "hybrid-beatmap/1",
+  "meta": {
+    "topic": "Make reels and explainers: point your agent at the hybrid-social-video repo",
+    "thesis": "To make social reels or explainer videos, open the hybrid-social-video repository and tell your agent to use the skill.",
+    "intent": "mechanism",
+    "misconception_note": "The hook flips the belief that one AI video tool should make the whole reel; beat 1 names it, beats 2 to 5 show the layered mechanism that replaces it.",
+    "format": "host-broll",
+    "tier": "R3",
+    "assembly": "L",
+    "platform": [
+      "tiktok",
+      "reels",
+      "shorts"
+    ],
+    "aspect": "9:16",
+    "fps": 30,
+    "target_seconds": 36,
+    "language": "English",
+    "language_tag": "en",
+    "wps": 2.477,
+    "rate_source": "measured",
+    "regulated_topic": "none",
+    "data_origin": "real",
+    "acronyms": [
+      "AI"
+    ],
+    "disclose": true,
+    "budget_usd": 0,
+    "style": {
+      "name": "blueprint",
+      "family": "blueprint"
+    },
+    "notes": "v2 (2026-10-21), built by the skill itself. Human host: one fictional portrait (nano-banana-pro) animated by veo-3.1-fast, one clip per beat or run of beats, the host's own speech is the master clock (host_assemble.py). Overlays: HTML page over host frames, rendered with render_html.py (route L, no HyperFrames). Mix: mix_audio.py (host audio untouched, synthesised bed and cues). Transitions: a morph from full frame to a circular bubble, no flashes. Authorisation: the user said to use the ImagineArt MCP and asked for a human host; cap 4500 credits set by the agent, spent 3278 credits (credits ledger, amounts are credits). AI-content label: ON, an AI-generated photoreal presenter appears (provenance.json). The repo URL on screen points to the public repository. Accepted lint warnings: host-broll's 1.2-3.5 s beat band is exceeded (4.4-6.1 s per beat) because each beat is one thought spoken in one clip, and the pace is carried by an overlay change about every second; beat 4 is marked allow_long. Beat 6 shows its 5 words as kinetic type over a silent-looking pause.",
+    "rate_sample": {
+      "seconds": 35.12,
+      "units": 87,
+      "audio": "vo.wav",
+      "measured": "2026-10-20"
+    },
+    "visual_anchor": "A fictional presenter in his early 30s, charcoal overshirt, tidy studio with softly blurred shelves and a deep blue practical light; no flags, logos, brands or text."
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The skill mixes 4 layers: code-rendered graphics, AI imagery and video, stock or real footage, and a host or recurring cast, giving each beat to the layer that is reliable for it.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md",
+      "date": "2026-10-20"
+    },
+    {
+      "id": "c2",
+      "text": "Code draws numbers, labels, diagrams and equations exactly; a generative model never renders them.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, iron rule 4",
+      "date": "2026-10-20"
+    },
+    {
+      "id": "c3",
+      "text": "The skill picks 1 of 15 formats and writes a linted beat map.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md",
+      "date": "2026-10-20"
+    },
+    {
+      "id": "c4",
+      "text": "Every paid generation is priced from the environment and the ledger refuses it until the plan gate is approved and the budget cap allows it.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, iron rule 1",
+      "date": "2026-10-20"
+    },
+    {
+      "id": "c5",
+      "text": "Install from the repo (the .skill file, the plugin marketplace, or a clone), then ask the agent to use hybrid-social-video; the user gets master.mp4 after approving the plan.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video README",
+      "date": "2026-10-20"
+    },
+    {
+      "id": "c6",
+      "text": "Code gives exactness, AI gives atmosphere, real footage gives proof, and a host gives a human reason to stay.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, introduction",
+      "date": "2026-10-20"
+    }
+  ],
+  "beats": [
+    {
+      "id": 1,
+      "role": "hook",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "Making a reel? Stop asking one AI tool to do everything.",
+      "visual": "a single box labelled TOOL sprouts four tangled arrows, shakes, and a red strike slashes through it",
+      "device": "overload-strike",
+      "on_screen_text": [
+        "Not one tool."
+      ],
+      "mute_proof": true,
+      "misconception": true,
+      "zone": "center",
+      "claim_refs": [
+        "c1"
+      ],
+      "sfx": [
+        "hit@2.92"
+      ],
+      "depicts_real": "none",
+      "label_synthetic": true
+    },
+    {
+      "id": 2,
+      "role": "context",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "Great videos mix 4 layers: code, AI, real footage, and a host.",
+      "visual": "four labelled bands stack up one by one into a tower, CODE, AI, REAL, HOST",
+      "device": "layer-stack",
+      "overlays": [
+        {
+          "kind": "count-up",
+          "content": "4 layers"
+        }
+      ],
+      "on_screen_text": [
+        "4 layers"
+      ],
+      "zone": "center",
+      "claim_refs": [
+        "c1",
+        "c6"
+      ],
+      "depicts_real": "none"
+    },
+    {
+      "id": 3,
+      "role": "build",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "Code draws every number and label, so they are never wrong.",
+      "visual": "a small bar chart builds and its labels type in letter by letter; a green tick lands on each",
+      "device": "label-check",
+      "on_screen_text": [
+        "Labels never drift"
+      ],
+      "zone": "center",
+      "claim_refs": [
+        "c2"
+      ],
+      "depicts_real": "none"
+    },
+    {
+      "id": 4,
+      "role": "build",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "This skill is the director. It picks 1 of 15 formats, then writes the plan.",
+      "visual": "a grid of 15 small tiles fills in, one lights up and expands into a plan card",
+      "device": "format-grid",
+      "overlays": [
+        {
+          "kind": "count-up",
+          "content": "15 formats"
+        }
+      ],
+      "on_screen_text": [
+        "15 formats"
+      ],
+      "zone": "center",
+      "claim_refs": [
+        "c3"
+      ],
+      "depicts_real": "none",
+      "allow_long": true
+    },
+    {
+      "id": 5,
+      "role": "build",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "It prices every beat, and asks you before spending a cent.",
+      "visual": "a ledger row reads PLAN with a closed padlock; a thumb-tick approves it and the padlock opens",
+      "device": "gate-lock",
+      "on_screen_text": [
+        "You approve first"
+      ],
+      "zone": "center",
+      "claim_refs": [
+        "c4"
+      ],
+      "sfx": [
+        "tick@3.24"
+      ],
+      "depicts_real": "none"
+    },
+    {
+      "id": 6,
+      "role": "turn",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "So how do you use it?",
+      "visual": "the diagram dims to nothing and the question sits alone, a cursor blinking after it",
+      "device": "kinetic-type",
+      "on_screen_text": [
+        "How do you use it?"
+      ],
+      "zone": "center",
+      "hold_seconds": 0.5,
+      "depicts_real": "none"
+    },
+    {
+      "id": 7,
+      "role": "reveal",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "Open this repository, give it to your agent, and say: use hybrid-social-video.",
+      "visual": "a terminal card types the repo path, then a second line: use hybrid-social-video",
+      "device": "terminal-type",
+      "overlays": [
+        {
+          "kind": "stat",
+          "content": "github.com/muhammad-ahmed-ghani/hybrid-social-video-skill"
+        }
+      ],
+      "on_screen_text": [
+        "use hybrid-social-video"
+      ],
+      "zone": "center",
+      "claim_refs": [
+        "c5"
+      ],
+      "sfx": [
+        "tick@0.2",
+        "tick@4.1"
+      ],
+      "depicts_real": "none"
+    },
+    {
+      "id": 8,
+      "role": "payoff",
+      "layer": "host",
+      "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
+      "text": "Describe the reel. Approve the plan. Get the video.",
+      "visual": "three step chips slide in, DESCRIBE, APPROVE, VIDEO, then the repo name settles beneath",
+      "device": "checklist",
+      "on_screen_text": [
+        "Describe",
+        "Approve",
+        "Video"
+      ],
+      "zone": "center",
+      "claim_refs": [
+        "c5"
+      ],
+      "sfx": [
+        "hit@3.18"
+      ],
+      "depicts_real": "none"
+    }
+  ],
+  "audio": {
+    "music_brief": "a quiet synthesised pad, ducked under the host; soft ticks and one hit",
+    "voice": "the host's own native speech from the video model"
+  }
+}
