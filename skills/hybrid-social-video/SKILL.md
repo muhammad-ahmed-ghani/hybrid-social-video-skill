@@ -12,9 +12,9 @@ description: >-
   vertical video", "Vox or 3Blue1Brown style short", "a comedy, cartoon or
   tech-explainer series", "episode 3 of my show". Not for a single AI clip, an ad, a
   music video, or timeline editing.
-compatibility: Needs python3 and ffmpeg/ffprobe for the scripts (Pillow for the sheet and animatic; Playwright for the HTML compose route). Layer skills (HyperFrames, a Manim skill, explainer-reel-skill) and any image, video, voice or music tools (fal, an MCP server such as ImagineArt) are used when present; references/11-routing.md says how to degrade.
+compatibility: Needs python3 and ffmpeg/ffprobe for the scripts (Pillow for the sheet and animatic; Playwright for the HTML compose route). Layer skills (HyperFrames first, via its local skills or its hosted MCP; a Manim skill; explainer-reel-skill) and any image, video, voice or music tools (fal, an MCP server such as ImagineArt) are used when present; references/11-routing.md says how to degrade.
 metadata:
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Hybrid Social Video
@@ -44,8 +44,8 @@ captions only on existing footage (`/embedded-captions`); cutting footage on a t
 
 The default is to run the whole pipeline in one go. A question costs the user attention and breaks
 automation, so the working rule is: **if you can decide it, decide it, record it, and say it in the last
-message.** Never ask about format, length, language, platforms, voice, music, captions, look, tier,
-renderer or whether to install a helper. Pick the best option the environment supports, write each choice
+message.** Never ask about format, length, language, platforms, voice, music, captions, look, tier
+or renderer. Getting a helper such as HyperFrames is an action, not a question: attempt it and let the host's permission prompt be the consent. Pick the best option the environment supports, write each choice
 and its reason into `meta.notes` of the beat map (the decision record), and show the record once, at the
 end, with the one-line way to change each item.
 
@@ -94,6 +94,8 @@ note to add.
   code-drawn overlays on top of or beside them. Go faceless only when the story needs it (numbers first, a
   quiet documentary) or the user asked. See `references/formats/host-broll.md` and the verified build in
   `references/17-ai-models-and-tools.md`.
+- **Motion design by the best tool.** HyperFrames (HeyGen) carries a far deeper motion-design craft than this skill's own templates. When it is reachable it
+  draws the motion graphics and renders; ours is the plainer fallback (`references/19-hyperframes.md`).
 - **A voice people believe.** Ladder, best first: the user's own recording; host-native speech from a video
   model; a neural or human-grade text-to-speech voice; a system voice (macOS `say`, espeak, a small local
   model) is **draft only**. Ship a draft voice only if nothing better is reachable, and say so as a defect with
@@ -128,10 +130,26 @@ python3 scripts/build_video.py  --episode $EP --voice $EP/vo.wav --qc        # l
 python3 scripts/provenance.py check --episode $EP --beatmap $EP/beatmap.json && python3 scripts/provenance.py report --episode $EP
 ```
 
-`build_video.py` records the speech recogniser and the voice (draft, with the upgrade named) in `provenance.json` and writes the look it
+With HyperFrames reachable, hand the picture to it instead (`references/19-hyperframes.md`); `build_video.py` is the fallback. `build_video.py` records the speech recogniser and the voice (draft, with the upgrade named) in `provenance.json` and writes the look it
 picked into `meta.style`. Then open the contact sheet (`contact_sheet.py episode/master.mp4 --beatmap episode/beatmap.json`), fix what the bar says is wrong
 (re-run `build_video.py`: it is free), add `captions.srt`, the decision record and the AI-use statement to the final message. With a
 budget authorised, take the host route instead (`references/17-ai-models-and-tools.md`, `examples/host-overlay-composition/`).
+
+## Motion design: HyperFrames first
+
+Motion design and rendering go to HyperFrames whenever it is reachable; this skill's own `build_video.py` template and host-overlay page are the
+fallback and look plainer. At G-1 read the probe's `HyperFrames:` line (and your skill and tool lists), and:
+
+- **Reachable** (its skills installed: `/hyperframes`, `/talking-head-recut`, `/faceless-explainer` ...): write the brief with
+  `scripts/beatmap_to_brief.py` (add `--host-video` when a host speaks) and hand over, using `/talking-head-recut` for a host on screen (the host's own audio stays
+  the master clock) and `/faceless-explainer` or `/general-video` for the rest. You keep the claims, cost, ledger, provenance and QC.
+- **Not reachable:** get it, without stopping to ask. In an agent with a filesystem (Claude Code, Cursor, Codex) run `npx skills add heygen-com/hyperframes`:
+  the host's permission prompt is the user's consent, and `npx hyperframes doctor` confirms it. In a chat client with no filesystem connect the hosted MCP by
+  reading https://hyperframes.heygen.com/guides/mcp (endpoint `https://mcp.heygen.com/mcp/hyperframes/`, a HeyGen sign-in only the user can complete). The hosted
+  MCP refuses `compose` and `render_video` for local CLI and IDE agents (verified 2026-10-21), so there the local skills are the way. If it cannot be had, take the fallback
+  and give the user the one-line install in the final note.
+- Never copy HyperFrames' skills into this skill or re-teach them: read their `SKILL.md` at run time, because they change. Details, the workflow table and
+  the hand-off: `references/19-hyperframes.md`.
 
 ## The model: story, format, tier, series
 
@@ -354,8 +372,8 @@ is judged against the canonical sheet, never against the previous episode.
 
 No video model: stills with parallax and grain in code. No image model: code, stock and real. No
 voice model: use the best reachable voice, mark it draft, deliver script, captions and animatic too. No host:
-voice-over format. No HyperFrames: route L (your own renderer plus ffmpeg, `references/11-routing.md`); mention
-HyperFrames as an optional upgrade in the final note and never stop to ask about installing it. No way to read
+voice-over format. No HyperFrames: try to get it (`references/19-hyperframes.md`); if it is unreachable or declined, route L (your own renderer plus ffmpeg,
+`references/11-routing.md`), call the motion design the plainer route under accepted defects, and give the one-line install in the final note. Never stop the run to ask. No way to read
 prices (offline, no catalog, no key): plan R0 and list what is unpriced. A voice, transcriber or avatar route
 with no record for the video's language: transcribe a sample back and compare. Never fake a missing layer, and
 never fill a missing price with a guess.
@@ -413,6 +431,7 @@ the cost, the sources, the decision record and one line on anything accepted or 
 | `references/14-cost-scout.md` | pricing the plan from this environment: probe, sources, pricebook, credits and balance, the questions |
 | `references/15-series.md` | any series: frame and payload, the series record, the cast, routes for characters, comedy, memory |
 | `references/16-attention-prediction-sota.md` | only when asked to predict or test a cut's attention or retention before publishing: the research, the evidence and a build recommendation |
+| `references/19-hyperframes.md` | motion design and rendering: connecting HyperFrames (local skills, hosted MCP), which workflow for which video, the hand-off |
 | `references/18-reference-scan.md` | the automatic look at public reels on the topic: how to run it, what to take, the limits |
 | `references/17-ai-models-and-tools.md` | finding and using AI models and tools; what to record; the verified talking-host recipe; consent and disclosure |
 | `scripts/` | `beatmap_lint`, `capability_probe`, `cost_plan`, `ledger`, `provenance`, `reference_scan`, `voice_render`, `voice_check`, `speech_align`, `host_assemble`, `build_video`, `render_html`, `mix_audio`, `encode_master`, `captions`, `layout_check`, `textscript`, `speech_rate`, `style_lock`, `beatmap_to_brief`, `storyboard`, `animatic`, `ui_labels`, `contact_sheet`, `qc_master`, `series` |

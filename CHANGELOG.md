@@ -2,6 +2,18 @@
 
 All notable changes to this skill. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.0] - 2026-10-21
+
+### Changed
+- **HyperFrames first.** Motion design and rendering go to HyperFrames whenever it is reachable, because its skills carry a far deeper craft than this skill's
+  own template (the faceless output of 1.4 was judged plain next to it). `SKILL.md` has a "Motion design: HyperFrames first" section;
+  `references/19-hyperframes.md` gives the verified ways to get it (the local skills for agents with a filesystem, the hosted MCP and its guide for chat
+  clients, and the fact that the hosted MCP refuses compose and render from CLI agents), the workflow per kind of video, and the hand-off. The skill references
+  HyperFrames and never copies its skills. The built-in route is now the stated fallback.
+- `beatmap_to_brief.py` writes each beat's `scene` as a design ask with its seconds, and `--host-video` makes the brief a `talking-head-recut` over the host's
+  existing footage (its own audio stays the master clock). `capability_probe.py` reports whether HyperFrames is reachable and how to get it.
+- The README plays the demo as an animated WebP (GitHub does not render a video tag from the repo, nor preview the mp4), with a download link for the sound.
+
 ## [1.4.0] - 2026-10-21
 
 Found by two independent trials in which fresh agents used the skill, with no paid tools, to make a heat-pump explainer and a Spanish

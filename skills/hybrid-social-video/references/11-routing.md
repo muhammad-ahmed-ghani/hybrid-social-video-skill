@@ -21,7 +21,7 @@ costs is a separate question, answered by the cost scout (`14-cost-scout.md`) fr
 
 | Capability | How to detect | If absent |
 |---|---|---|
-| HTML-to-video authoring and render | a `hyperframes` skill is listed; `npx --no-install hyperframes --version` works (without `--no-install`, npx fetches the package) | ask once, then `npx skills add heygen-com/hyperframes --all` |
+| HTML-to-video authoring and render | a `hyperframes` skill is listed; `npx --no-install hyperframes --version` works (without `--no-install`, npx fetches the package) | get it (`npx skills add heygen-com/hyperframes`, or the hosted MCP in a chat client): `19-hyperframes.md`; else route L |
 | Math animation | a Manim skill is listed; `python3 -c "import manim"` | HyperFrames with SVG and KaTeX for light cases |
 | Image generation | an image tool or fal MCP in the tool list | code, stock and real only; no `ai_image` beats |
 | Video generation | a video tool or fal MCP | stills with parallax and grain in code; no `ai_video` beats |
@@ -127,7 +127,8 @@ checks. HyperFrames stays an optional upgrade for the final note, never a questi
 ## When a sibling is missing
 
 1. Say which skill is missing and what it would add, in one line.
-2. Do not stop to ask. Mention the install command once in the final note as an optional upgrade; install only when the user asked for it.
+2. For HyperFrames specifically, get it without stopping to ask: `npx skills add heygen-com/hyperframes` in an agent with a filesystem (the host's permission prompt is the consent),
+   the hosted MCP in a chat client (guide: https://hyperframes.heygen.com/guides/mcp); see `19-hyperframes.md`. If it is declined or fails, say so and give the one-line install in the final note.
 3. Continue with the degradation in the table above. A plan that needs a layer you cannot produce is re-planned at Gate 1,
    not discovered at render time.
 4. Never improvise a replacement for a missing skill's hard-won rules (frame seek safety, caption fonts, avatar sync): take the
