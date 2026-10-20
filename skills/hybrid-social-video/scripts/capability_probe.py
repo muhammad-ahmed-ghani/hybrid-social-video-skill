@@ -96,6 +96,24 @@ def _run_all(cmd: list[str], timeout: int = 20) -> list[str]:
         return []
 
 
+def _voice_routes() -> dict:
+    """Offline voice routes: the best local voice per language and any high-quality (Premium, Enhanced, Siri) voices."""
+    try:
+        from voice_render import list_voices
+        voices = list_voices()
+    except Exception:
+        return {"engine": None, "voices": 0}
+    if not voices:
+        return {"engine": None, "voices": 0}
+    best: dict[str, str] = {}
+    for v in sorted((x for x in voices if x["quality"] != "novelty"), key=lambda x: x["score"]):
+        best[v["locale"].split("_")[0]] = f"{v['name']} [{v['locale']}]"
+    return {"engine": voices[0]["engine"], "voices": len(voices), "offline": True,
+            "high_quality": [v["name"] for v in voices if v["quality"] == "system-hq"], "best_by_language": best,
+            "note": "system voices are DRAFT quality unless listed in high_quality; Premium and Enhanced voices can be added in "
+                    "System Settings > Accessibility > Spoken Content > System Voice > Manage Voices (free, offline)"}
+
+
 def probe() -> dict:
     out: dict = {"generated": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "local": {}, "credentials_present": {},
                  "agent_tools": [], "skills": [], "usage_windows": None}
@@ -138,18 +156,18 @@ def probe() -> dict:
     for m in loc["modules"]:
         if m in AI_MODULES:
             role, runs, note = AI_MODULES[m]
-            ai.append({"id": m, "kind": "python module", "role": role, "runs": runs, "note": note})
+            ai.append({"id": m, "kind": "python module", "role": role, "runs": runs, "offline": runs == "local", "note": note})
     for b in loc["binaries"]:
         if b in AI_BINARIES:
             role, runs, note = AI_BINARIES[b]
-            ai.append({"id": b, "kind": "binary", "role": role, "runs": runs, "note": note})
+            ai.append({"id": b, "kind": "binary", "role": role, "runs": runs, "offline": runs == "local", "note": note})
     for name, folders in caches.items():
         for f in folders:
             if f.startswith("models--"):
-                ai.append({"id": f[len("models--"):].replace("--", "/"), "kind": f"{name} cache", "role": "model", "runs": "local",
+                ai.append({"id": f[len("models--"):].replace("--", "/"), "kind": f"{name} cache", "role": "model", "runs": "local", "offline": True,
                            "note": "cached weights: confirm what it does before relying on it"})
     out["ai_models"] = {"local": ai, "hosted_hints": sorted(set(out["credentials_present"].values())),
-                        "director": None, "tool_models": []}
+                        "director": None, "tool_models": [], "voice_routes": _voice_routes()}
     if "fc-list" in loc["binaries"]:
         loc["installed_font_files"] = len(_run_all(["fc-list"]))
     out["notes"] = [
@@ -165,7 +183,7 @@ def probe() -> dict:
 
 
 def main(argv: list[str]) -> int:
-    _, opt = parse_args(argv, flags={"help", "h"})
+    _, opt = parse_args(argv, flags={"help", "h", "json"})
     if opt.get("help") or opt.get("h"):
         print(__doc__)
         return 0
@@ -176,6 +194,18 @@ def main(argv: list[str]) -> int:
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(text)
         eprint(f"[probe] wrote {p}")
+        if not opt.get("json"):
+            loc, ai = rep["local"], rep["ai_models"]
+            vr = ai["voice_routes"]
+            print(f"[probe] ffmpeg {'yes' if 'ffmpeg' in loc['binaries'] else 'NO'} | playwright {'yes' if 'playwright' in loc['modules'] else 'no'} | "
+                  f"HyperFrames {'yes' if loc.get('hyperframes_cli') else 'no'} | yt-dlp {'yes' if 'yt-dlp' in loc['binaries'] else 'no'} | "
+                  f"{loc['cpu_count']} cpus, {loc['free_disk_gb']} GB free")
+            print(f"[probe] voices: {vr.get('engine') or 'none'} ({vr.get('voices', 0)}); high-quality local: {', '.join(vr.get('high_quality') or []) or 'none'}; "
+                  f"best by language: " + "; ".join(f"{k}: {(vr.get('best_by_language') or {})[k]}" for k in ("en", "es", "fr", "de", "pt", "it", "ar", "hi", "ur", "ja", "zh", "ko") if k in (vr.get("best_by_language") or {})))
+            print("[probe] AI models here: " + ", ".join(f"{m['id']} ({m['role']}, {'offline' if m['offline'] else 'online'})" for m in ai["local"] if m["role"] != "runtime") + "; "
+                  f"hosted hints: {', '.join(ai['hosted_hints']) or 'none'}; provider profiles: {', '.join(rep['provider_profiles_present']) or 'none'}")
+            print(f"[probe] full detail: {p} (use --json to print it all)")
+            return 0
     print(text)
     return 0
 

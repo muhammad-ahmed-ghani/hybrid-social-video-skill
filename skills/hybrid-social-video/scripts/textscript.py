@@ -166,7 +166,7 @@ def beatmap_texts(bm: dict) -> list[str]:
 
 def main(argv: list[str]) -> int:
     from hx_common import eprint, load_json, parse_args
-    pos, opt = parse_args(argv)
+    pos, opt = parse_args(argv, flags={"fonts-all"})
     if opt.get("text"):
         texts = [str(opt["text"])]
     elif pos:
@@ -180,7 +180,8 @@ def main(argv: list[str]) -> int:
     cps = needed_codepoints(texts)
     rep["code_points"] = len(cps)
     fonts = fonts_covering(cps, opt.get("fonts") if isinstance(opt.get("fonts"), str) else None)
-    rep["fonts_covering_all"] = fonts
+    rep["fonts_covering_total"] = None if fonts is None else len(fonts)
+    rep["fonts_covering_all"] = fonts if (opt.get("fonts-all") or fonts is None) else fonts[:5]    # the full list can be hundreds of files
     print(json.dumps(rep, indent=2, ensure_ascii=False))
     eprint(f"[script] {rep['dominant_script']} | {rep['direction']} | count in {rep['unit_mode']} | "
            + ("fontconfig missing: cannot check fonts" if fonts is None else

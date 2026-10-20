@@ -14,7 +14,7 @@ description: >-
   music video, or timeline editing.
 compatibility: Needs python3 and ffmpeg/ffprobe for the scripts (Pillow for the sheet and animatic; Playwright for the HTML compose route). Layer skills (HyperFrames, a Manim skill, explainer-reel-skill) and any image, video, voice or music tools (fal, an MCP server such as ImagineArt) are used when present; references/11-routing.md says how to degrade.
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Hybrid Social Video
@@ -64,6 +64,20 @@ recommended default:
    blocked and why you wanted it. Never work around a denial, split a call to slip under a threshold, or edit
    a guard to get past it.
 
+Defaults that replace the usual questions (decide, record, report):
+
+- **Offline first.** Use a network route only when the user's tools or authorisation allow it; never rely on an unofficial hosted
+  endpoint (it can be blocked at any time). A free local route is always reachable.
+- **Market and locale.** The voice's own locale wins; write it into `meta.language_tag` and match currency, numbers and spelling.
+- **A draft voice is a valid end state** for a zero-spend run when nothing better is reachable: record it (`provenance.py add --draft
+  true --upgrade ...`), name the upgrade in the final note, and list the voice item of the bar under accepted defects. Faceless with
+  the best reachable voice satisfies the human-presence item when no host is authorised.
+- **Accepted defects.** Any bar item you knowingly miss goes in the decision record with the reason and the upgrade, never silently.
+- **Unverified sources.** Offline, cite the user's text (`confidence: "user"`) or the source you could not open with `verified: false`;
+  the linter surfaces it and the final note says so.
+- **A QC check that is wrong** about a video that plainly passes is waived with a reason (`qc_master.py --waive pacing --why ...`),
+  never satisfied by changing the picture for the check's sake.
+
 The reference scan (a look at 5 to 10 public reels on the topic, `references/18-reference-scan.md`) and the look pick
 (`style_lock.py pick`) run by themselves and feed the decision record; neither is ever a question.
 
@@ -93,6 +107,30 @@ note to add.
   beat, captions that follow the host's own words.
 - **Look like a viewer.** Open a contact sheet and three full-size frames, read the caption timeline, and ask
   whether you would stop scrolling. Fix, then deliver.
+
+## Fast path: a faceless, zero-spend video in 10 commands
+
+For a simple video (a topic or a pasted article, no authorised host, no paid tool) read only this file and `references/03-beat-map.md`
+(plus the format file if you want its grammar), then run, from the skill folder, with the episode in `episode/`:
+
+```bash
+python3 scripts/capability_probe.py --out episode/capabilities.json          # a 5-line summary; detail in the file
+python3 scripts/provenance.py init --episode episode --director "<the model you run as>"
+python3 scripts/reference_scan.py find --topic "<topic>" --n 8 --out episode/references.json   # optional: one attempt, then skip it
+#  write episode/beatmap.json: the story, claims, a `scene` per explanatory beat (references/03-beat-map.md)
+python3 scripts/cost_plan.py init --out episode/pricebook.json --free        # local voice, recognition, music, effects at price 0
+python3 scripts/beatmap_lint.py episode/beatmap.json --pricebook episode/pricebook.json --require-pricebook
+python3 scripts/voice_render.py --beatmap episode/beatmap.json --out episode/vo.wav --target-seconds <N>   # best local voice, fitted length
+python3 scripts/voice_check.py  --audio episode/vo.wav --beatmap episode/beatmap.json --text-file episode/vo.txt --kind system
+python3 scripts/build_video.py  --episode episode --voice episode/vo.wav --qc   # look, timing, frames, mix, encode, captions, QC
+python3 scripts/layout_check.py --page episode/build/index.html              # text size, safe box, collisions
+python3 scripts/provenance.py add --episode episode --role tts --tool say --model "<voice>" --provider local --runs local --used-for "narration" --draft true --upgrade "a neural or host-native voice"
+python3 scripts/provenance.py check --episode episode --beatmap episode/beatmap.json && python3 scripts/provenance.py report --episode episode
+```
+
+Then open the contact sheet (`contact_sheet.py episode/master.mp4 --beatmap episode/beatmap.json`), fix what the bar says is wrong
+(re-run `build_video.py`: it is free), add `captions.srt`, the decision record and the AI-use statement to the final message. With a
+budget authorised, take the host route instead (`references/17-ai-models-and-tools.md`, `examples/host-overlay-composition/`).
 
 ## The model: story, format, tier, series
 
@@ -215,6 +253,7 @@ Fill these in yourself, in the user's language, and put them in `meta.notes`. Sh
 > Voice route and why | Host: none, AI-generated (disclosed), or the user's own | Music and sound source | Renderer route (H, F or L)
 > Sources | AI-content label decision and its reason | The models and tools used (from `provenance.json`)
 > Look and why (`style_lock.py pick`, never a default) | Reference scan: how many public reels, and what it changed
+> Accepted defects: bar items knowingly missed, the reason and the upgrade (a draft voice, no host, an unverified source)
 
 Run G-1 (the capability probe and your tool list) first, so the record only contains what this environment can
 produce.
@@ -267,7 +306,7 @@ python3 scripts/capability_probe.py --out episode/capabilities.json          # l
 python3 scripts/provenance.py init  --episode episode --director "<the model you run as>"
 python3 scripts/reference_scan.py find --topic "<topic>" --n 8 --out episode/references.json   # then analyze, summarize (references/18)
 python3 scripts/textscript.py   episode/beatmap.json                         # script, direction, counting unit, covering fonts
-python3 scripts/cost_plan.py init --out episode/pricebook.json                # the scout fills it: cost_plan.py add ...
+python3 scripts/cost_plan.py init --out episode/pricebook.json [--free]       # --free: the zero-spend path; else the scout fills it: cost_plan.py add ...
 python3 scripts/cost_plan.py plan --beatmap episode/beatmap.json --pricebook episode/pricebook.json   # work list, then the cost card
 python3 scripts/beatmap_lint.py episode/beatmap.json --pricebook episode/pricebook.json --require-pricebook
 python3 scripts/storyboard.py   episode/beatmap.json --lint --pricebook episode/pricebook.json --out episode/board.html [--labels labels.json]
@@ -280,7 +319,11 @@ python3 scripts/ledger.py estimate --pricebook episode/pricebook.json --kind ai_
 python3 scripts/ledger.py check --episode episode --need <that estimate>      # before EVERY paid call, one call at a time
 python3 scripts/ledger.py spend --episode episode --kind ai_image --usd <the estimate> --beat 3 --request-id <id> --model <id>
 python3 scripts/provenance.py add --episode episode --role image --tool <tool> --model <id> --provider <vendor> --runs hosted --used-for "<what>" --beats 3 --request-id <id>
-python3 scripts/voice_check.py  --audio vo.wav --text "<the script>" [--max-wer 0.1]   # round-trip transcription, pace, loudness
+python3 scripts/voice_render.py --beatmap episode/beatmap.json --out episode/vo.wav --target-seconds <N>   # free local voice: best by language, fitted length
+python3 scripts/voice_check.py  --audio vo.wav --beatmap episode/beatmap.json --text-file episode/vo.txt [--kind system|system-hq|neural] # round trip, pace, level, rank
+python3 scripts/speech_align.py spans --audio vo.wav --beatmap episode/beatmap.json --out episode/   # spans.json, words.json, timing.json for any voice-over
+python3 scripts/build_video.py --episode episode --voice episode/vo.wav --qc     # faceless route: scenes -> frames -> mix -> encode -> captions
+python3 scripts/layout_check.py --page episode/build/index.html                  # Q1 text size, Q4 safe box, Q5 collisions, from the DOM
 python3 scripts/speech_rate.py measure --audio sample.wav --beatmap episode/beatmap.json --write
 python3 scripts/host_assemble.py --beatmap episode/beatmap.json --clips episode/clips.json --out episode/build   # host clips -> trimmed track + word timings
 python3 scripts/beatmap_to_brief.py episode/beatmap.json --out episode/hf --spans episode/spans.json [--series series/]
@@ -371,6 +414,7 @@ the cost, the sources, the decision record and one line on anything accepted or 
 | `references/16-attention-prediction-sota.md` | only when asked to predict or test a cut's attention or retention before publishing: the research, the evidence and a build recommendation |
 | `references/18-reference-scan.md` | the automatic look at public reels on the topic: how to run it, what to take, the limits |
 | `references/17-ai-models-and-tools.md` | finding and using AI models and tools; what to record; the verified talking-host recipe; consent and disclosure |
-| `scripts/` | `beatmap_lint`, `capability_probe`, `cost_plan`, `ledger`, `provenance`, `reference_scan`, `voice_check`, `speech_align`, `host_assemble`, `render_html`, `mix_audio`, `textscript`, `speech_rate`, `style_lock`, `beatmap_to_brief`, `storyboard`, `animatic`, `ui_labels`, `contact_sheet`, `qc_master`, `series` |
+| `scripts/` | `beatmap_lint`, `capability_probe`, `cost_plan`, `ledger`, `provenance`, `reference_scan`, `voice_render`, `voice_check`, `speech_align`, `host_assemble`, `build_video`, `render_html`, `mix_audio`, `encode_master`, `captions`, `layout_check`, `textscript`, `speech_rate`, `style_lock`, `beatmap_to_brief`, `storyboard`, `animatic`, `ui_labels`, `contact_sheet`, `qc_master`, `series` |
 | `data/` | `formats.json`, `intents.json`, `identities.json`, `platforms.json`: thresholds live here. Prices do not: they are per episode |
-| `examples/` | beat maps that lint clean (`host-broll-skill-demo.json` is the plan of the demo video); `host-overlay-composition/` is the host-plus-overlay page; `tests/` pins the invariants |
+| `templates/faceless/` | the page `build_video.py` fills in: scenes, fitted text, captions; read it only to extend a scene type |
+| `examples/` | beat maps that lint clean (`host-broll-skill-demo.json` is the plan of the demo video, `faceless-money-guard.json` a faceless one with scene specs); `host-overlay-composition/` is the host-plus-overlay page; `tests/` pins the invariants |

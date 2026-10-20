@@ -1,0 +1,300 @@
+{
+  "schema": "hybrid-beatmap/1",
+  "meta": {
+    "topic": "How an AI agent spends your money without overspending",
+    "thesis": "An agent can spend safely because every price is read, every call is checked against a cap, and every asset gets one respend.",
+    "intent": "mechanism",
+    "misconception_note": "The hook names the fear that an agent can overspend; beat 2 corrects the belief that a remembered price is good enough.",
+    "format": "diagram-mechanism",
+    "tier": "R0",
+    "assembly": "L",
+    "platform": [
+      "tiktok",
+      "reels",
+      "shorts"
+    ],
+    "aspect": "9:16",
+    "fps": 30,
+    "target_seconds": 30,
+    "language": "English",
+    "language_tag": "en",
+    "wps": 2.7,
+    "rate_source": "prior",
+    "regulated_topic": "none",
+    "data_origin": "real",
+    "acronyms": [
+      "AI"
+    ],
+    "disclose": false,
+    "budget_usd": 0,
+    "style": {
+      "name": "picked by style_lock.py pick",
+      "family": "see style.json"
+    },
+    "notes": "Example plan for the faceless route: every beat has a `scene` spec that scripts/build_video.py draws. Voice: a local system voice (draft) unless a better one is reachable."
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Every price is read from the environment's own tools and recorded with its source; a price is never remembered.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, iron rule 1",
+      "date": "2026-10-21",
+      "verified": true
+    },
+    {
+      "id": "c2",
+      "text": "Before each paid call the ledger is checked, and a call that would pass the cap is refused.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, iron rule 1",
+      "date": "2026-10-21",
+      "verified": true
+    },
+    {
+      "id": "c3",
+      "text": "An asset gets 1 respend, only for a content defect, and only after the prompt changes.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, iron rule 3",
+      "date": "2026-10-21",
+      "verified": true
+    },
+    {
+      "id": "c4",
+      "text": "The user authorises a budget, the cap is enforced either way, and the ledger report matches what the user is told.",
+      "confidence": "primary",
+      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
+      "source_name": "hybrid-social-video SKILL.md, execution contract",
+      "date": "2026-10-21",
+      "verified": true
+    }
+  ],
+  "beats": [
+    {
+      "id": 1,
+      "role": "hook",
+      "layer": "code",
+      "layer_why": "typography needs no footage and reads on mute",
+      "text": "Can an AI agent spend your money without overspending?",
+      "visual": "two big lines of type land one after the other",
+      "device": "kinetic-type",
+      "on_screen_text": [
+        "AGENT + MONEY",
+        "= RISK?"
+      ],
+      "mute_proof": true,
+      "misconception": true,
+      "scene": {
+        "type": "kinetic",
+        "lines": [
+          {
+            "text": "AGENT + MONEY",
+            "at": "agent"
+          },
+          {
+            "text": "= RISK?",
+            "at": "overspending"
+          }
+        ]
+      },
+      "claim_refs": [
+        "c2"
+      ]
+    },
+    {
+      "id": 2,
+      "role": "context",
+      "layer": "code",
+      "layer_why": "a two-column comparison is exact and labelled",
+      "text": "A price from memory goes stale, so every price is read from the tool.",
+      "visual": "two columns fill in: remembered price against read price",
+      "device": "comparison",
+      "on_screen_text": [
+        "Read, never remembered"
+      ],
+      "scene": {
+        "type": "compare",
+        "left": {
+          "title": "FROM MEMORY",
+          "items": [
+            {
+              "text": "goes stale",
+              "at": "stale"
+            },
+            {
+              "text": "no source",
+              "at": "goes"
+            }
+          ]
+        },
+        "right": {
+          "title": "FROM THE TOOL",
+          "items": [
+            {
+              "text": "read live",
+              "at": "read"
+            },
+            {
+              "text": "source and date",
+              "at": "tool"
+            }
+          ]
+        }
+      },
+      "claim_refs": [
+        "c1"
+      ]
+    },
+    {
+      "id": 3,
+      "role": "build",
+      "layer": "code",
+      "layer_why": "a three-node chain is a drawn flow",
+      "text": "It estimates, checks the ledger, and only then spends once.",
+      "visual": "three boxes connect with arrows, one highlighted at a time",
+      "device": "flow",
+      "on_screen_text": [
+        "Estimate, check, spend"
+      ],
+      "scene": {
+        "type": "flow",
+        "nodes": [
+          {
+            "text": "ESTIMATE",
+            "at": "estimates"
+          },
+          {
+            "text": "CHECK LEDGER",
+            "at": "checks"
+          },
+          {
+            "text": "SPEND ONCE",
+            "at": "spends"
+          }
+        ]
+      },
+      "claim_refs": [
+        "c1",
+        "c2"
+      ]
+    },
+    {
+      "id": 4,
+      "role": "build",
+      "layer": "code",
+      "layer_why": "a command line shows the real refusal",
+      "text": "If a call would pass the cap, the ledger refuses it.",
+      "visual": "a terminal types a check and the refusal",
+      "device": "terminal",
+      "on_screen_text": [
+        "BLOCKED"
+      ],
+      "scene": {
+        "type": "terminal",
+        "lines": [
+          {
+            "text": "ledger.py check --need 4.60",
+            "at": "call"
+          },
+          {
+            "text": "BLOCKED: over the cap",
+            "at": "refuses"
+          }
+        ]
+      },
+      "claim_refs": [
+        "c2"
+      ]
+    },
+    {
+      "id": 5,
+      "role": "turn",
+      "layer": "code",
+      "layer_why": "one exact number is the hero",
+      "text": "And each asset gets 1 respend, only for a content defect.",
+      "visual": "a huge 1 with its label",
+      "device": "stat",
+      "on_screen_text": [
+        "1 respend"
+      ],
+      "scene": {
+        "type": "stat",
+        "value": "1",
+        "label": "respend per asset",
+        "sub": "only for a content defect",
+        "at": "1"
+      },
+      "claim_refs": [
+        "c3"
+      ]
+    },
+    {
+      "id": 6,
+      "role": "reveal",
+      "layer": "code",
+      "layer_why": "three numbered steps are a list the code draws exactly",
+      "text": "You authorise a budget, the cap is enforced, and you get the receipt.",
+      "visual": "three numbered chips appear in turn",
+      "device": "steps",
+      "on_screen_text": [
+        "Budget, cap, receipt"
+      ],
+      "scene": {
+        "type": "steps",
+        "items": [
+          {
+            "text": "You authorise a budget",
+            "at": "authorise"
+          },
+          {
+            "text": "The cap is enforced",
+            "at": "enforced"
+          },
+          {
+            "text": "You get the receipt",
+            "at": "receipt"
+          }
+        ]
+      },
+      "claim_refs": [
+        "c4"
+      ]
+    },
+    {
+      "id": 7,
+      "role": "payoff",
+      "layer": "code",
+      "layer_why": "closing type echoes the hook",
+      "text": "Fast for you, and safe for your money.",
+      "visual": "two lines of type close the loop",
+      "device": "kinetic-type",
+      "on_screen_text": [
+        "Fast for you.",
+        "Safe for your money."
+      ],
+      "scene": {
+        "type": "kinetic",
+        "lines": [
+          {
+            "text": "Fast for you.",
+            "at": "fast"
+          },
+          {
+            "text": "Safe for your money.",
+            "at": "safe"
+          }
+        ]
+      },
+      "hold_seconds": 0.3,
+      "claim_refs": [
+        "c4"
+      ]
+    }
+  ],
+  "audio": {
+    "music_brief": "a quiet synthesised pad with soft ticks on each reveal",
+    "voice": "a clear local voice, draft quality unless a better route is reachable"
+  }
+}

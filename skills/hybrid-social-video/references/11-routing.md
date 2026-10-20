@@ -130,8 +130,8 @@ checks. HyperFrames stays an optional upgrade for the final note, never a questi
 2. Do not stop to ask. Mention the install command once in the final note as an optional upgrade; install only when the user asked for it.
 3. Continue with the degradation in the table above. A plan that needs a layer you cannot produce is re-planned at Gate 1,
    not discovered at render time.
-4. Never improvise a replacement for a missing skill's hard-won rules (frame seek safety, caption fonts, avatar sync).
-   Asking is cheaper than rebuilding.
+4. Never improvise a replacement for a missing skill's hard-won rules (frame seek safety, caption fonts, avatar sync): take the
+   shipped route (`scripts/render_html.py`, `host_assemble.py`, `build_video.py`), record the gap in `meta.notes`, and report it.
 
 ## Characters and voices in a series
 

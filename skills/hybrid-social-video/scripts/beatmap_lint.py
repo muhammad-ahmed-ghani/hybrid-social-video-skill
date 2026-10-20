@@ -307,7 +307,7 @@ def lint(bm: dict, pricebook: dict | None = None, require_pricebook: bool = Fals
             for digits, suffixed in _number_tokens(text):
                 if not (digits in known_digits or (suffixed and any(k.startswith(digits) for k in known_digits))):
                     rep.warn("E054", f"the number {digits} in `text` does not appear in the claims this beat cites "
-                             f"({', '.join(refs)}): a wrong figure would pass unnoticed", bid,
+                             f"({', '.join(refs)}; numbers found there: {', '.join(sorted(known_digits)) or 'none'}): a wrong figure would pass unnoticed", bid,
                              "fix the figure, fix the claim, or cite the claim that holds it")
                     break
         nr = data("formats").get("number_rules", {})
@@ -420,14 +420,18 @@ def lint(bm: dict, pricebook: dict | None = None, require_pricebook: bool = Fals
     inferred = 0
     for cid, c in claims.items():
         conf = c.get("confidence")
-        if conf not in ("primary", "secondary", "inference", "computed"):
-            rep.err("E050", f"claim {cid}: confidence must be primary|secondary|inference|computed")
+        if conf not in ("primary", "secondary", "inference", "computed", "user"):
+            rep.err("E050", f"claim {cid}: confidence must be primary|secondary|inference|computed|user "
+                            "(user = text the user supplied, cited as such, no URL needed)")
         if conf == "computed":
             if not (c.get("method") or c.get("source")):
                 rep.err("E050", f"claim {cid} is 'computed' but states no method/assumptions",
                         fix="add method: the formula and every assumption (rate, period, fees)")
-        elif conf != "inference" and not c.get("source"):
-            rep.err("E050", f"claim {cid} has no source", fix="add a real URL or mark inference")
+        elif conf not in ("inference", "user") and not c.get("source"):
+            rep.err("E050", f"claim {cid} has no source", fix="add a real URL, mark inference, or confidence \"user\" for text the user supplied")
+        if c.get("verified") is False or conf == "user":
+            rep.warn("E059", f"claim {cid} is {'supplied by the user' if conf == 'user' else 'cited but not verified'}: "
+                     "check it against a source before publishing when one is reachable", fix="open the source and set verified: true, or leave the note in meta.notes")
         if conf == "inference":
             inferred += 1
         if conf in ("primary", "secondary") and not c.get("date"):

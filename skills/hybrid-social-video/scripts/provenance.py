@@ -5,13 +5,15 @@
     python3 provenance.py add    --episode ep --role image --tool <tool> --model <id> --provider <vendor> --runs hosted \\
                                  --used-for "host portrait" [--beats 1,2] [--request-id ID] [--asset path] \\
                                  [--data-sent "text prompt"] [--realism photoreal|stylised|none] [--depicts fictional|real|none] \\
-                                 [--licence "..."] [--ai false] [--in-output false] [--note "..."]
+                                 [--licence "..."] [--ai false] [--in-output false] [--draft true --upgrade "<the better route>"] [--note "..."]
     python3 provenance.py report --episode ep [--json]       # the AI-use statement and the disclosure verdict
     python3 provenance.py check  --episode ep [--beatmap beatmap.json]   # exit 1 on a gap
 
 Roles: script, code, image, video, host, tts, stt, music, sfx, captions, human-voice, reference (public reels analysed), other. An entry says what ran
 (tool, model id, provider, local or hosted), what it was used for, which beats, the request id, what data left the
-machine, how realistic the output is and whether it depicts a real person. `--in-output false` records a test or an asset that is not in the delivered video (it is listed but
+machine, how realistic the output is and whether it depicts a real person. `--draft true` marks a voice (or any asset) as draft quality, with `--upgrade` naming the better route: the report then prints a
+DRAFT line, and `check` warns until it is in the final note (a draft voice is a valid end state when nothing better is reachable,
+never a silent one). `--in-output false` records a test or an asset that is not in the delivered video (it is listed but
 leaves the disclosure verdict). `--ai false` records a non-AI tool or a
 human contribution (a real recording) so the statement is complete both ways. The director (the model that wrote the
 plan, script and code) is recorded once at init, and a speech recogniser used only for timings counts as an AI model.
@@ -59,6 +61,9 @@ def verdict(entries: list[dict]) -> list[str]:
         out.append("REQUIRED: photoreal AI of a real person or event. Do not present it as footage; use the platform AI label and an on-screen label.")
     elif person:
         out.append("LABEL: photoreal AI-generated people or scenes appear (a fictional presenter). Turn on the platform's AI-content label and say so in the description.")
+    for e in entries:
+        if e.get("draft") and e.get("in_output", True):
+            out.append(f"DRAFT: {e.get('role')} '{e.get('model') or e.get('tool')}' is draft quality; the final note names the upgrade: {e.get('upgrade') or 'a neural or human voice'}.")
     synth_voice = [e for e in ai if e.get("role") == "tts"]
     if any(e.get("role") == "host" for e in ai):
         out.append("NOTE: the host's face and speech are AI-generated; say so in the description (the platform label covers the face, the line covers the voice).")
@@ -97,7 +102,7 @@ def check(data: dict, beatmap: dict | None, ep: str) -> list[str]:
     rows = data.get("entries", [])
     for i, e in enumerate(rows):
         miss = [k for k in ("role", "model", "provider", "runs", "used_for") if not e.get(k)]
-        if e.get("role") == "human-voice" or e.get("ai") is False:
+        if e.get("role") in ("human-voice", "reference") or e.get("ai") is False:
             miss = [k for k in miss if k not in ("model", "provider", "runs")]
         if miss:
             problems.append(f"entry {i + 1} ({e.get('role', '?')}) lacks {', '.join(miss)}")
@@ -158,6 +163,10 @@ def main(argv: list[str]) -> int:
                          ("depicts", "depicts"), ("licence", "licence"), ("note", "note")):
             if opt.get(k_opt) not in (None, True):
                 e[k] = opt[k_opt]
+        if opt.get("draft") not in (None, True):
+            e["draft"] = _truthy(opt["draft"])
+        if opt.get("upgrade") not in (None, True):
+            e["upgrade"] = opt["upgrade"]
         if opt.get("in-output") not in (None, True):
             e["in_output"] = _truthy(opt["in-output"])
         if opt.get("beats") not in (None, True):
@@ -177,9 +186,12 @@ def main(argv: list[str]) -> int:
         if opt.get("beatmap") not in (None, True):
             bm = json.loads(Path(opt["beatmap"]).read_text(encoding="utf-8"))
         problems = check(data, bm, ep)
-        print(json.dumps({"ok": not problems, "problems": problems, "entries": len(data.get("entries", []))}))
+        drafts = [e for e in data.get("entries", []) if e.get("draft") and e.get("in_output", True)]
+        print(json.dumps({"ok": not problems, "problems": problems, "entries": len(data.get("entries", [])), "drafts": len(drafts)}))
         for p in problems:
             eprint(f"[provenance] {p}")
+        for e in drafts:
+            eprint(f"[provenance] draft {e.get('role')} recorded: name the upgrade ({e.get('upgrade') or 'a better route'}) in the final note")
         return 1 if problems else 0
     eprint(f"unknown command '{cmd}'")
     return 2

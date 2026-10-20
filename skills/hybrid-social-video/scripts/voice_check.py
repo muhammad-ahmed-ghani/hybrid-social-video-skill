@@ -2,13 +2,18 @@
 """voice_check.py - audition a voice without a human: do the words come back right, is the pace and level sane?
 
     python3 voice_check.py --audio vo.wav --text "the script" [--text-file script.txt] [--max-wer 0.1]
-                           [--kind system|neural|host|human] [--wps-range 1.8,3.6] [--lang en]
+                           [--beatmap episode/beatmap.json] [--kind system|system-hq|neural|host|human] [--wps-range 1.8,3.6] [--lang es]
 
 Round-trip: transcribe the audio with a local speech recogniser (faster-whisper, else the whisper module), then compare
 the transcript with the script by word error rate (digits and spoken numbers are treated as equal for 0-999). Also
 reports speaking pace (words per second over the audible span), integrated loudness and true peak (ffmpeg ebur128).
+The language comes from `--lang`, else from `--beatmap` (meta.language_tag), else English; an English-only model is never used on
+another language, and digits and percent signs are normalised for English and Spanish (other languages compare them as written).
 `--kind system` marks a system voice (macOS say, espeak, a small local model): the verdict is `draft` however well it
-scores, because the skill ships a system voice only when nothing better is reachable (SKILL.md, the bar).
+scores, because the skill ships a system voice only when nothing better is reachable (SKILL.md, the bar). `--kind system-hq` is a
+Premium, Enhanced or Siri local voice (voice_render.py reports it): a neural voice, judged like any other. Every run prints a
+`rank` (higher is better: word accuracy, pace, level) so that routes of the same kind, including draft ones, can still be ordered:
+the best-ranked system voice is the one to ship when nothing better is reachable.
 Use it to choose between routes yourself instead of asking the user to listen: render the same 2 to 3 lines on each
 reachable route, run this on each, keep the best that is not `draft`. It cannot judge warmth; it removes the routes that
 mispronounce, rush, clip or clip-distort. Exit 0 pass | 1 fail | 3 no recogniser (the numbers are still printed).
@@ -23,7 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from hx_common import eprint, parse_args  # noqa: E402
-from speech_align import tokens, wer  # noqa: E402
+from speech_align import _model_for, tokens, wer  # noqa: E402
 
 
 def _ffprobe_duration(path: str) -> float:
@@ -41,8 +46,7 @@ def _loudness(path: str) -> tuple[float | None, float | None]:
 
 def transcribe(path: str, lang: str) -> list[tuple[str, float, float]] | None:
     try:
-        from faster_whisper import WhisperModel
-        model = WhisperModel("base.en" if lang == "en" else "base", device="cpu", compute_type="int8")
+        model = _model_for(lang)                       # an English-only model is never used for another language
         segs, _ = model.transcribe(path, word_timestamps=True, language=lang)
         return [(w.word, float(w.start), float(w.end)) for s in segs for w in s.words]
     except Exception:
@@ -67,10 +71,13 @@ def main(argv: list[str]) -> int:
         eprint("--text or --text-file is required")
         return 2
     audio = opt["audio"]
-    lang = str(opt.get("lang", "en"))
+    lang = opt.get("lang") if opt.get("lang") not in (None, True) else None
+    if not lang and opt.get("beatmap") not in (None, True):
+        lang = json.loads(Path(opt["beatmap"]).read_text(encoding="utf-8")).get("meta", {}).get("language_tag")
+    lang = str(lang or "en")[:2].lower()
     lo, hi = (float(x) for x in str(opt.get("wps-range", "1.8,3.6")).split(","))
     max_wer = float(opt.get("max-wer", 0.1))
-    exp = tokens(text, numbers=(lang == "en"))
+    exp = tokens(text, numbers=(lang in ("en", "es")), lang=lang)
     rep: dict = {"audio": audio, "duration_s": round(_ffprobe_duration(audio), 2), "kind": opt.get("kind", "unknown")}
     lufs, tp = _loudness(audio)
     rep["lufs"], rep["true_peak_dbfs"] = lufs, tp
@@ -80,7 +87,7 @@ def main(argv: list[str]) -> int:
         rep["transcribed"] = False
         issues.append("no local speech recogniser (faster_whisper or whisper) to round-trip the words")
     else:
-        heard = [t for w, _, _ in words for t in tokens(w, numbers=(lang == "en"))]
+        heard = [t for w, _, _ in words for t in tokens(w, numbers=(lang in ("en", "es")), lang=lang)]
         rep["transcribed"] = True
         rep["wer"] = round(wer(exp, heard), 3)
         span = (words[-1][2] - words[0][1]) if words else 0.0
@@ -94,6 +101,12 @@ def main(argv: list[str]) -> int:
     if lufs is not None and lufs < -32:
         issues.append(f"integrated loudness {lufs} LUFS is very quiet")
     rep["issues"] = issues
+    rep["lang"] = lang
+    pace_pen = 0.0
+    if rep.get("words_per_s"):
+        mid = (lo + hi) / 2
+        pace_pen = min(0.3, abs(rep["words_per_s"] - mid) / (hi - lo))
+    rep["rank"] = round(max(0.0, 1.0 - float(rep.get("wer", 0.5)) - pace_pen - (0.2 if (tp is not None and tp > -0.5) else 0.0)), 3)
     if rep["kind"] == "system":
         rep["verdict"] = "draft"
         rep["why"] = "a system voice is draft quality: use a neural, host-native or human voice when any is reachable"

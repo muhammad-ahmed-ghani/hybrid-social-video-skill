@@ -1,0 +1,138 @@
+<!doctype html>
+<!-- Faceless route-L composition: a pure function of time. Reads window.VIDEO (data.js, written by scripts/build_video.py) and draws one
+     scene per beat from its `scene` spec, with captions that follow the voice's own word times. Contract for scripts/render_html.py:
+     window.render(t) and window.DUR. No timers, no wall clock, no randomness. All text is measured and fitted inside the safe box. -->
+<html><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;padding:0;background:#000}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+  svg{position:absolute;left:0;top:0;width:1080px;height:1920px}
+  #cap{position:absolute;left:120px;width:768px;top:1112px;display:flex;justify-content:center}
+  #cap .pill{border-radius:14px;padding:12px 20px;font-weight:700;font-size:48px;line-height:1.15;text-align:center;white-space:nowrap}
+</style></head>
+<body><div id="stage">
+<svg id="bg" viewBox="0 0 1080 1920"></svg>
+<svg id="art" viewBox="0 0 1080 1920"></svg>
+<div id="cap"></div>
+</div>
+<script src="data.js"></script>
+<script>
+const V=window.VIDEO,B=V.beats,D=V.duration,ST=V.style,TK=ST.tokens,FH=ST.fonts.hero_stack,FB=ST.fonts.body_stack,FM=ST.fonts.mono_stack;
+const SAFE=ST.safe||{x:120,y:288,w:768,h:960},CX=SAFE.x+SAFE.w/2;
+const ART={x:SAFE.x+24,y:372,w:SAFE.w-48,h:700};   // narrower than the safe box so the slow push never crosses its edge
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=x=>{x=clamp(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+const eo=x=>1-Math.pow(1-clamp(x),3);
+const pr=(t,a,d)=>clamp((t-a)/d);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const vs=B.map((b,i)=>i===0?0:Math.max(b.s-0.2,0)),ve=B.map((b,i)=>i===B.length-1?D:Math.max(vs[i+1],vs[i]+0.4));
+const cv=document.createElement('canvas').getContext('2d');
+const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'');
+
+// ---- text: measured, wrapped, shrunk to fit; never overflows the safe box ----
+function wrap(text,size,weight,stack,maxW){cv.font=`${weight} ${size}px ${stack}`;const out=[];let cur='';
+  for(const w of String(text).split(/\s+/)){const test=cur?cur+' '+w:w;if(!cur||cv.measureText(test).width<=maxW)cur=test;else{out.push(cur);cur=w}}
+  if(cur)out.push(cur);return out}
+function fit(text,size,min,weight,stack,maxW,maxLines=2,prefer='lines'){
+  const ok=(sz,n)=>{const l=wrap(text,sz,weight,stack,maxW);return l.length<=n&&l.every(x=>cv.measureText(x).width<=maxW)?{size:sz,lines:l}:null};
+  if(prefer==='size'){for(let s=size;s>=min;s-=4){const r=ok(s,maxLines);if(r)return r}}
+  else for(let n=1;n<=maxLines;n++)for(let s=size;s>=min;s-=4){const r=ok(s,n);if(r)return r}     // fewest lines first: a label is better small and whole than big and wrapped
+  return{size:min,lines:wrap(text,min,weight,stack,maxW)}}
+let BID=0;
+function tx(x,y,text,o={}){const bid=BID++;const stack=o.stack||FB,w=o.w||700,f=fit(text,o.size||48,o.min||40,w,stack,o.maxW||ART.w,o.maxLines||2,o.prefer);
+  const lh=f.size*1.12,a=o.a||'middle',y0=o.vc?y-(f.lines.length-1)*lh/2+f.size*0.34:y;   // vc: y is the vertical centre of the block
+  return f.lines.map((l,i)=>`<text data-b="${bid}" x="${x}" y="${y0+i*lh}" font-family='${stack}' font-size="${f.size}" font-weight="${w}" fill="${o.fill||TK.ink}" text-anchor="${a}" opacity="${o.op==null?1:o.op}">${esc(l)}</text>`).join('')+'';}
+function th(text,o){const f=fit(text,o.size||48,o.min||40,o.w||700,o.stack||FB,o.maxW||ART.w,o.maxLines||2,o.prefer);return f.lines.length*f.size*1.12}
+const rect=(x,y,w,h,o={})=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx==null?14:o.rx}" fill="${o.fill||'none'}" stroke="${o.stroke||'none'}" stroke-width="${o.sw||0}" opacity="${o.op==null?1:o.op}"/>`;
+const line=(x1,y1,x2,y2,o={})=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${o.stroke||TK.muted}" stroke-width="${o.sw||4}" stroke-linecap="round" opacity="${o.op==null?1:o.op}"/>`;
+const circ=(x,y,r,o={})=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${o.fill||'none'}" stroke="${o.stroke||'none'}" stroke-width="${o.sw||0}" opacity="${o.op==null?1:o.op}"/>`;
+
+// ---- timing: when does an item appear? `at` is a word index, a word, or omitted (spread across the beat) ----
+function when(b,item,k,n){const at=item&&item.at;if(b===B[0]&&k===0)return 0.05;
+  if(typeof at==='number'&&b.words[at])return b.words[at].s;
+  if(typeof at==='string'){const key=norm(at);const w=b.words.find(w=>norm(w.word)===key||norm(w.word).includes(key));if(w)return w.s}
+  return b.s+(k/Math.max(n,1))*Math.max(0.5,(b.e-b.s)*0.8)}
+const items=(sc,key)=>(sc[key]||[]).map(x=>typeof x==='string'?{text:x}:x);
+
+// ---- count-up: "$24K", "72%", "1,250" keep their prefix, suffix and digits ----
+function parseVal(v){const m=String(v).match(/^([^0-9\-]*)(-?[\d,]*\.?\d+)(.*)$/);if(!m)return null;
+  const numstr=m[2],dec=(numstr.split('.')[1]||'').length;return{pre:m[1],num:parseFloat(numstr.replace(/,/g,'')),dec,comma:numstr.includes(','),suf:m[3]}}
+function fmt(p,n){let s=n.toFixed(p.dec);if(p.comma){const [a,b]=s.split('.');s=a.replace(/\B(?=(\d{3})+(?!\d))/g,',')+(b?'.'+b:'')}return p.pre+s+p.suf}
+function count(v,t,t0,dur=1.1){const p=parseVal(v);if(!p)return String(v);return fmt(p,p.num*eo(pr(t,t0,dur)))}
+
+// ---- shine: a soft light sweeping across the active element, so a long beat never goes still ----
+let SID=0;
+function shine(x,y,w,h,t,rx=14,phase=0){const id='sh'+(SID++),c=((t+phase)%2.2)/1.5,p=clamp(c),px=x-110+(w+220)*ease(p);
+  return `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"/></clipPath><g clip-path="url(#${id})" opacity="${p>0&&p<1?0.34:0}"><rect x="${px}" y="${y-10}" width="90" height="${h+20}" fill="#fff" transform="skewX(-16)" transform-origin="${px} ${y}"/></g>`}
+
+// ---- scenes: each returns SVG for the art area; items obey the QA sizes (labels >= 40 px, hero >= 140 px) ----
+const scenes={
+stat(b,sc,t){const t0=when(b,sc,0,1),p=eo(pr(t,t0,0.4));let a='';
+  const val=count(sc.value,t,t0),f=fit(String(sc.value),Math.min(300,sc.size||300),140,800,FH,ART.w,1);
+  a+=tx(CX,ART.y+300,val,{size:f.size,min:140,w:800,stack:FH,fill:TK.accent2,maxLines:1,op:p});
+  if(sc.label)a+=tx(CX,ART.y+440,sc.label,{size:60,min:44,w:700,fill:TK.ink,op:eo(pr(t,t0+0.3,0.4))});
+  if(sc.sub)a+=tx(CX,ART.y+440+th(sc.label||'',{size:60,min:44})+50,sc.sub,{size:44,min:40,w:600,fill:TK.muted,op:eo(pr(t,t0+0.6,0.4))});
+  return a+shine(ART.x,ART.y+110,ART.w,230,t,20,0)},
+steps(b,sc,t){const L=items(sc,'items').slice(0,5),n=L.length;let a='';const rh=Math.min(130,(ART.h-20)/Math.max(n,1)),last=L.reduce((m,it,k)=>t>=when(b,it,k,n)?k:m,-1);
+  L.forEach((it,k)=>{const t0=when(b,it,k,n),p=eo(pr(t,t0,0.4));if(p<=0)return;const y=ART.y+30+k*rh,x=ART.x-(1-p)*60,act=k===last;
+    a+=`<g opacity="${p*(act?1:.62)}">`+rect(x,y,ART.w,rh-16,{fill:TK.surface,stroke:act?TK.accent2:TK.muted,sw:act?5:3})
+      +circ(x+52,y+(rh-16)/2,34,{fill:act?TK.accent2:TK.accent})+tx(x+52,y+(rh-16)/2,String(k+1),{size:48,min:40,w:800,fill:TK.bg,maxW:60,vc:true})
+      +tx(x+110,y+(rh-16)/2,it.text,{size:52,min:40,a:'start',maxW:ART.w-140,maxLines:2,fill:act?TK.accent2:TK.ink,vc:true})+(act?shine(x,y,ART.w,rh-16,t,14,k*0.4):'')+`</g>`});return a},
+compare(b,sc,t){const cols=[sc.left||{},sc.right||{}],w=(ART.w-48)/2;let a='';let k=0;const tot=cols.length*2;
+  cols.forEach((c,ci)=>{const x=ART.x+ci*(w+48),t0=when(b,c,k++,tot),p=eo(pr(t,t0,0.4));
+    const thh=th(c.title||'',{size:52,min:40,w:800,maxW:w-40,maxLines:2});a+=`<g opacity="${p}">`+rect(x,ART.y+20,w,620,{fill:TK.surface,stroke:ci?TK.accent2:TK.accent,sw:5})+tx(x+w/2,ART.y+92,c.title||'',{size:52,min:40,w:800,maxW:w-40,fill:ci?TK.accent2:TK.accent})+line(x+30,ART.y+92+thh-30,x+w-30,ART.y+92+thh-30,{stroke:TK.muted,sw:3})+`</g>`;
+    items(c,'items').slice(0,3).forEach((it,j)=>{const q=eo(pr(t,when(b,it,k++,tot),0.4));
+      a+=tx(x+w/2,ART.y+92+thh+60+j*150,it.text,{size:44,min:40,maxW:w-50,maxLines:3,op:q})})});
+  return a+tx(CX,ART.y+345,'vs',{size:40,min:40,w:800,fill:TK.muted,op:eo(pr(t,when(b,cols[1],1,2),0.3))})},
+flow(b,sc,t){const L=items(sc,'nodes').slice(0,4),n=L.length;let a='';const bh=116,gap=Math.min(60,(ART.h-bh*n)/Math.max(n-1,1)),last=L.reduce((m,it,k)=>t>=when(b,it,k,n)?k:m,-1);
+  L.forEach((it,k)=>{const t0=when(b,it,k,n),p=eo(pr(t,t0,0.4)),y=ART.y+30+k*(bh+gap);if(p<=0)return;const act=k===last;
+    if(k>0)a+=`<g opacity="${p}">`+line(CX,y-gap+4,CX,y-8,{stroke:TK.accent,sw:6})+`<path d="M ${CX-14} ${y-20} L ${CX} ${y-4} L ${CX+14} ${y-20}" fill="none" stroke="${TK.accent}" stroke-width="6" stroke-linecap="round"/></g>`;
+    a+=`<g opacity="${p}">`+rect(ART.x+60,y,ART.w-120,bh,{fill:act?TK.accent2:TK.surface,stroke:act?TK.accent2:TK.accent,sw:4})+tx(CX,y+bh/2,it.text,{size:52,min:40,w:800,maxW:ART.w-170,fill:act?TK.bg:TK.ink,vc:true})+(act?shine(ART.x+60,y,ART.w-120,bh,t,14,k*0.4):'')+`</g>`});return a},
+bars(b,sc,t){const L=items(sc,'items').slice(0,5),n=L.length,mx=Math.max(...L.map(x=>+x.value||0),1);let a='';const rh=Math.min(140,(ART.h-20)/Math.max(n,1));
+  L.forEach((it,k)=>{const t0=when(b,it,k,n),p=eo(pr(t,t0,0.9)),y=ART.y+20+k*rh;if(pr(t,t0,0.2)<=0)return;const bw=(ART.w-20)*(+it.value/mx)*p;
+    a+=tx(ART.x,y+40,it.label,{size:44,min:40,a:'start',maxW:ART.w,maxLines:1,fill:TK.muted})+rect(ART.x,y+54,Math.max(bw,4),rh-80,{fill:k%2?TK.accent2:TK.accent,rx:10})
+      +tx(Math.min(ART.x+bw+14,ART.x+ART.w-10),y+54+(rh-80)/2+16,count(String(it.value)+(sc.unit||''),t,t0,0.9),{size:48,min:40,a:bw>ART.w-260?'end':'start',w:800,maxW:260,maxLines:1,fill:TK.ink})});
+  return a+line(ART.x,ART.y+10,ART.x,ART.y+ART.h-40,{stroke:TK.muted,sw:3})},
+kinetic(b,sc,t){const L=(sc.lines||[]).slice(0,4).map(l=>typeof l==='string'?{text:l}:l);let a='';
+  const hs=L.map(l=>th(l.text,{size:130,min:90,w:800,stack:FH,maxLines:2,prefer:'size'})),gap=34,total=hs.reduce((m,h)=>m+h,0)+gap*(L.length-1);let y=ART.y+ART.h/2-total/2;
+  L.forEach((it,k)=>{const f=fit(it.text,130,90,800,FH,ART.w,2,'size'),p=eo(pr(t,when(b,it,k,L.length),0.3)),cy=y+hs[k]/2;y+=hs[k]+gap;if(p<=0)return;
+    a+=tx(CX,cy+(1-p)*30,it.text,{size:130,min:90,w:800,stack:FH,maxLines:2,prefer:'size',op:p,fill:k===L.length-1&&L.length>1?TK.accent2:TK.ink,vc:true});
+    if(k===L.length-1&&t>when(b,it,k,L.length))a+=shine(ART.x,cy-hs[k]/2,ART.w,hs[k],t,20,0)});return a},
+terminal(b,sc,t){const L=(sc.lines||[]).slice(0,6);let a='';const x=ART.x,w=ART.w,h=70+L.length*66;
+  a+=rect(x,ART.y+20,w,h,{fill:TK.surface,stroke:TK.accent,sw:4})+[0,1,2].map(i=>circ(x+34+i*32,ART.y+50,9,{fill:[TK.accent2,TK.accent,TK.muted][i]})).join('');
+  L.forEach((l,k)=>{const t0=when(b,{at:l.at},k,L.length),txt=typeof l==='string'?l:l.text,p=pr(t,t0,0.9);if(p<=0)return;
+    a+=tx(x+28,ART.y+130+k*66,(k===L.length-1?'> ':'')+txt.slice(0,Math.ceil(txt.length*p)),{size:40,min:40,a:'start',stack:FM,maxW:w-56,maxLines:1,w:600,fill:k===L.length-1?TK.accent2:TK.ink})});return a},
+quote(b,sc,t){const p=eo(pr(t,when(b,sc,0,1),0.5));let a=tx(ART.x+20,ART.y+150,'“',{size:200,min:200,a:'start',stack:FH,w:800,fill:TK.accent,op:p,maxLines:1});
+  a+=tx(CX,ART.y+280,sc.text||'',{size:64,min:44,w:700,stack:FH,maxLines:5,op:p,prefer:'size'});
+  if(sc.by)a+=tx(CX,ART.y+620,'— '+sc.by,{size:44,min:40,w:600,fill:TK.muted,op:eo(pr(t,when(b,sc,0,1)+0.5,0.4))});return a}
+};
+
+// ---- frame ----
+function bgSvg(t){let s='';if(ST.texture==='grid'){const ox=-(t*4)%240,oy=-(t*2)%240;
+  for(let x=ox-240;x<1320;x+=48){const mj=Math.round((x-ox)/48)%5===0;s+=line(x,0,x,1920,{stroke:'#fff',sw:mj?2:1,op:mj?.14:.06})}
+  for(let y=oy-240;y<2160;y+=48){const mj=Math.round((y-oy)/48)%5===0;s+=line(0,y,1080,y,{stroke:'#fff',sw:mj?2:1,op:mj?.14:.06})}}return s}
+function chunks(b){const out=[];let cur=[],len=0;b.words.forEach(w=>{if(cur.length&&(cur.length>=4||len+w.word.length+1>22)){out.push(cur);cur=[];len=0}cur.push(w);len+=w.word.length+1;if(/[.,?:!;¿¡…]$/.test(w.word)){out.push(cur);cur=[];len=0}});
+  if(cur.length)out.push(cur);return out}
+const CH=B.map(chunks);
+function caption(t,i){let cur=null;for(const c of CH[i])if(t>=c[0].s-0.02)cur=c;if(!cur||t>B[i].e+0.5)return '';
+  return `<span class="pill" style="background:${TK.panel||'rgba(0,0,0,.6)'};border:3px solid ${TK.muted};color:${TK.ink};font-family:${FB.replace(/"/g,"'")}">`+cur.map(w=>`<span style="color:${t>=w.s?TK.accent2:TK.ink}">${esc(w.word)}</span>`).join(' ')+'</span>'}
+
+function sceneOf(b){return b.scene||{type:'kinetic',lines:[b.words.map(w=>w.word).join(' ')]}}
+function artFor(i,t){const b=B[i],sc=sceneOf(b),fn=scenes[sc.type]||scenes.kinetic;let a='';
+  if(sc.title&&sc.type!=='kinetic')a+=tx(CX,SAFE.y+60,sc.title,{size:56,min:44,w:800,stack:FH,fill:TK.accent,maxLines:2});
+  return a+fn(b,sc,t)}
+async function render(t){
+  t=Math.min(Math.max(t,0),D-1/60);let i=0;for(let k=0;k<B.length;k++)if(t>=vs[k])i=k;const u=t-vs[i];
+  document.getElementById('stage').style.background=`radial-gradient(circle at 50% 38%, ${TK.surface} 0%, ${TK.bg} 62%)`;
+  document.getElementById('bg').innerHTML=bgSvg(t);
+  // a slow push toward the active part of the scene, alternating side per beat (a reframe, not a flash)
+  const dur=ve[i]-vs[i],k=1+0.035*ease(u/Math.max(dur,0.5)),sx=(i%2?-1:1)*10*ease(u/Math.max(dur,0.5));
+  const pivot=`translate(${CX+sx} 720) scale(${k}) translate(${-CX} -720)`;
+  const inP=ease(u/0.3);let art='';
+  if(u<0.3&&i>0)art+=`<g opacity="${1-inP}" transform="translate(0 ${-24*inP})">${artFor(i-1,vs[i]-0.001)}</g>`;
+  art+=`<g opacity="${i>0?inP:eo(pr(u,0.1,0.3))}" transform="translate(0 ${(1-(i>0?inP:1))*24})"><g transform="${pivot}">${artFor(i,t)}</g></g>`;
+  if(new URLSearchParams(location.search).get('guides'))art+=rect(SAFE.x,SAFE.y,SAFE.w,SAFE.h,{stroke:'#f0f',sw:2});
+  document.getElementById('art').innerHTML=art;
+  document.getElementById('cap').innerHTML=V.captions===false?'':caption(t,i);return i}
+window.render=render;window.DUR=D;window.SCENES=Object.keys(scenes);
+</script></body></html>

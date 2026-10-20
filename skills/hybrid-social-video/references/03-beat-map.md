@@ -49,7 +49,7 @@ linter something to enforce.
     "series": {"id": "slug", "episode": 3}, // a series episode; series.py writes it
     "cast": ["ana", "ben"],           // character ids in this episode
     "extra_stills": 0,                // stills the plan will generate beyond the beats (the cost card counts them)
-    "budget_usd": 1.0,                // hard cap the ledger enforces; the user's answer to the cost card, never a default
+    "budget_usd": 1.0,                // hard cap the ledger enforces, set inside the user's authorisation (0 for a free plan); never a guess
     "visual_anchor": "...",           // REQUIRED when any AI layer is used (see below)
     "acronyms": ["NASA"],             // ALL-CAPS words that are legitimately caps
     "disclose": false,                // AI-content label decision, with the reason in notes
@@ -136,6 +136,29 @@ linter something to enforce.
 - **`est_seconds` / `hold_seconds`**: words set duration (`words / wps`); holds
   add deliberate silence (a turn, a reveal). Never retime audio to fit.
 
+## The `scene` spec (what `build_video.py` draws)
+
+For the faceless route each beat carries a `scene`: the picture, as data, so no page has to be written. `scripts/build_video.py` turns it
+into frames with the text fitted inside the safe box at the QA sizes, a slow reframe per beat, captions from the voice's own word
+times, and no flash transitions. An item appears at its `at`: a word of the beat (`"stale"`), a word index, or omitted (spread across
+the beat). A beat with no `scene` gets kinetic type from its `on_screen_text`.
+
+| `type` | Fields | Shows |
+|---|---|---|
+| `kinetic` | `lines`: up to 4 strings or `{text, at}` | big type, one line at a time (hook, turn, payoff) |
+| `stat` | `value` ("$24K", "72%", "1,250"), `label`, `sub`, `at` | one huge number that counts up from 0 |
+| `steps` | `items`: up to 5 `{text, at}`, optional `title` | numbered chips, the latest highlighted |
+| `flow` | `nodes`: up to 4 `{text, at}` | boxes joined by arrows, the latest highlighted |
+| `compare` | `left`, `right`: `{title, items: up to 3 {text, at}}` | two columns |
+| `bars` | `items`: up to 5 `{label, value, at}`, `unit` | exact bars from zero, values counting up |
+| `terminal` | `lines`: up to 6 `{text, at}` | a typed command window |
+| `quote` | `text`, `by`, `at` | a large quotation |
+
+Rules: every figure in a scene comes from a claim (the code layer draws it, a model never does); keep each item to a few words; the first
+item of the first beat appears at once (the hook must work at 0.4 s); a beat longer than about 5 s needs an item or a change every few
+seconds, or `qc_master.py` will report a static stretch. A hosted video uses the host-plus-overlay page instead
+(`examples/host-overlay-composition/`). See `examples/faceless-money-guard.json`.
+
 ## Assigning a layer to a beat
 
 Walk this top to bottom; the first match wins. Details and the failure modes of
@@ -180,7 +203,8 @@ the base only.
 
 Every fact the video leans on gets a `claims[]` entry and a `claim_refs` link.
 `primary` = the original source (filing, paper, official data, the person's own
-words); `secondary` = reputable reporting of it; `computed` = you derived it
+words); `secondary` = reputable reporting of it; `user` = text the user supplied (cite it as such, no URL needed; the linter notes it
+as unverified); `verified: false` marks a claim you could not open at the time (offline), which the linter surfaces (E059); `computed` = you derived it
 (state the formula and every assumption in `method`); `inference` = your own
 reasoning (hedge it in the script: "likely", "suggests"). More than ~30%
 inference is a script problem. Dates matter: a 2023 figure presented as current

@@ -8,7 +8,7 @@ with its source and timestamp. This script computes the plan's cost from that pr
 emits the questions a human must answer. An unknown price is an answer: it is reported as
 missing and never guessed.
 
-    cost_plan.py init  --out episode/pricebook.json
+    cost_plan.py init  --out episode/pricebook.json [--free]     # --free: local voice, recognition, music and effects at price 0
     cost_plan.py add   --pricebook P --capability ai_video --provider <p> --model <m> --unit second \\
                        --usd 0.10 --source-type api --source-ref <url-or-tool> [--qualifier 720p] \\
                        [--expires 2026-10-31] [--limits max_seconds=10,concurrency=1] [--select] \\
@@ -290,8 +290,18 @@ def main(argv: list[str]) -> int:
     if cmd == "init":
         out = Path(opt.get("out", "pricebook.json"))
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(new_pricebook(), indent=2))
-        print(str(out))
+        pb0 = new_pricebook()
+        if opt.get("free"):
+            # the zero-spend path: voice, transcription, music and effects on this machine cost compute, not credits
+            now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            for cap, what in (("tts", "a local voice (macOS say, espeak-ng or a local neural model)"), ("stt", "local speech recognition for word timings"),
+                              ("music", "a synthesised bed made with ffmpeg and numpy"), ("sfx", "synthesised cues")):
+                pb0["entries"].append({"id": f"{cap}-local", "capability": cap, "provider": "local", "model": "this machine", "qualifier": None,
+                                       "unit": UNITS[cap], "usd_per_unit": 0.0, "source": {"type": "local", "ref": what}, "fetched_at": now,
+                                       "expires": None, "confidence": "live", "limits": {}, "selected": True,
+                                       "notes": "seeded by init --free: compute only, no credits", "supports_language": []})
+        out.write_text(json.dumps(pb0, indent=2))
+        print(str(out) + (" (free path: local voice, recognition, music and effects priced 0)" if opt.get("free") else ""))
         return 0
     pbp = opt.get("pricebook")
     if not pbp or not Path(pbp).is_file():
@@ -335,7 +345,7 @@ def main(argv: list[str]) -> int:
                     e["selected"] = False
         pb["entries"] = [e for e in pb["entries"] if e["id"] != entry["id"]] + [entry]
         Path(pbp).write_text(json.dumps(pb, indent=2))
-        print(json.dumps(entry))
+        print(f"{entry['id']}: {entry['provider']} {entry['model']} {entry['usd_per_unit']}/{entry['unit']} ({stype})")
         return 0
     if cmd == "set":
         retries = {}

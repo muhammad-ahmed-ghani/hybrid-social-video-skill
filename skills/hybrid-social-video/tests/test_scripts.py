@@ -530,7 +530,8 @@ def test_contact_sheet_builds_png_with_beat_midpoints(sample_video, tmp_path):
     r = run_script("contact_sheet.py", sample_video, "--beatmap", BASE_EXAMPLE, "--out", out)
     assert r.returncode == 0 and out.is_file() and out.stat().st_size > 5_000
     info = json.loads(r.stdout)
-    assert len(info["frames"]) == len(load(BASE_EXAMPLE)["beats"])
+    assert info["frames"][0]["label"] == "hook 0.4s" and info["frames"][0]["t"] == pytest.approx(0.4, abs=0.01)   # Q11: the hook frame leads
+    assert len(info["frames"]) == len(load(BASE_EXAMPLE)["beats"]) + 1
 
 
 @pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg not installed")
@@ -1681,3 +1682,197 @@ def test_the_reference_scan_is_documented_with_its_limits():
     doc = (ROOT / "references" / "18-reference-scan.md").read_text()
     for needle in ("Never bypass a wall", "No personal data", "Technique, not content", "deleted"):
         assert needle in doc, needle
+
+
+# ---------------------------------------------------------------- v1.4: faceless route, voice route, trial fixes
+def _tone(path, seconds=4):
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"sine=frequency=220:duration={seconds}", str(path)], check=True)
+
+
+def test_spanish_numbers_percent_and_accents_are_normalised():
+    from speech_align import tokens
+    assert tokens("Un 2 % de 25 años", True, "es") == ["un", "dos", "por", "ciento", "de", "veinticinco", "anos"]
+    assert tokens("100 y 130", True, "es") == ["cien", "y", "ciento", "treinta"]
+    assert tokens("about 3 percent", True, "en") == ["about", "three", "percent"]
+    assert tokens("12 mois", True, "fr") == ["12", "mois"]                      # no table: the digits stay as written
+
+
+def test_beat_timings_snap_a_beat_start_to_the_real_pause():
+    from speech_align import beat_timings
+    bm = {"beats": [{"id": 1, "text": "hello there"}, {"id": 2, "text": "second beat here"}]}
+    heard = [("hello", 0.0, 0.4), ("there", 0.45, 0.9), ("second", 1.2, 1.6), ("beat", 1.65, 2.0), ("here", 2.05, 2.4)]
+    res = beat_timings(bm, heard, "en", [(0.95, 1.3)])                         # a pause from 0.95 to 1.3 s: the recogniser began beat 2 early
+    assert res["matched"] == 5 and res["beats"][0]["e"] <= 0.95 and res["beats"][1]["s"] == pytest.approx(1.3)
+    assert [w["word"] for w in res["beats"][1]["words"]] == ["second", "beat", "here"]
+
+
+def test_captions_break_after_punctuation_and_write_srt_and_vtt(tmp_path):
+    timing = {"beats": [{"id": 1, "words": [{"word": "Hello,", "s": 0.0, "e": 0.4}, {"word": "this", "s": 0.5, "e": 0.8}, {"word": "is", "s": 0.85, "e": 1.0},
+                                              {"word": "a", "s": 1.05, "e": 1.1}, {"word": "test.", "s": 1.15, "e": 1.6}]}], "duration": 2.0}
+    tj = tmp_path / "timing.json"
+    tj.write_text(json.dumps(timing))
+    out = tmp_path / "c.srt"
+    r = run_script("captions.py", "--timing", tj, "--out", out, "--vtt")
+    assert r.returncode == 0 and json.loads(r.stdout)["cues"] == 2
+    srt = out.read_text()
+    assert "00:00:00,000 --> 00:00:00,500\nHello," in srt and "this is a test." in srt
+    assert out.with_suffix(".vtt").read_text().startswith("WEBVTT")
+
+
+def test_the_voice_route_picks_by_language_and_never_a_novelty_voice():
+    from voice_render import pick_voice, script_text
+    voices = [{"engine": "say", "name": "Bad News", "locale": "en_US", "quality": "novelty", "score": -9},
+              {"engine": "say", "name": "Samantha (English (US))", "locale": "en_US", "quality": "system", "score": 2.5},
+              {"engine": "say", "name": "Ava (Premium)", "locale": "en_US", "quality": "system-hq", "score": 4},
+              {"engine": "say", "name": "Paulina", "locale": "es_MX", "quality": "system", "score": 2.2},
+              {"engine": "say", "name": "Monica", "locale": "es_ES", "quality": "system", "score": 2.3}]
+    assert pick_voice(voices, "en")["name"] == "Ava (Premium)"                   # a high-quality local voice outranks the standard one
+    assert pick_voice(voices, "es-MX")["name"] == "Paulina"                      # the exact locale wins
+    assert pick_voice(voices, "es")["name"] == "Monica"
+    assert pick_voice(voices, "ja") is None
+    txt = script_text({"beats": [{"text": "One.", "hold_seconds": 0.5}, {"text": "Two."}]})
+    assert txt == "One. [[slnc 760]] Two."
+
+
+def test_a_zero_spend_plan_lints_clean_with_the_free_pricebook(tmp_path):
+    pb = tmp_path / "pricebook.json"
+    assert run_script("cost_plan.py", "init", "--out", pb, "--free").returncode == 0
+    r = run_script("beatmap_lint.py", ROOT / "examples" / "faceless-money-guard.json", "--pricebook", pb, "--require-pricebook")
+    assert r.returncode == 0, r.stderr
+    bare = run_script("cost_plan.py", "init", "--out", tmp_path / "bare.json")
+    assert run_script("beatmap_lint.py", ROOT / "examples" / "faceless-money-guard.json", "--pricebook", tmp_path / "bare.json", "--require-pricebook").returncode == 1
+
+
+def test_user_supplied_claims_need_no_url_and_unverified_ones_are_surfaced():
+    bm = base()
+    bm["claims"][0]["confidence"] = "user"
+    bm["claims"][0].pop("source", None)
+    rep = beatmap_lint.lint(bm)
+    assert rep["ok"] and "E059" in codes(rep, "warnings")
+    bm2 = base()
+    bm2["claims"][1]["verified"] = False
+    assert "E059" in codes(beatmap_lint.lint(bm2), "warnings")
+    bm3 = base()
+    bm3["claims"][0]["confidence"] = "primary"
+    bm3["claims"][0].pop("source", None)
+    assert "E050" in codes(beatmap_lint.lint(bm3))                                 # a non-user claim still needs a source
+
+
+def test_the_picker_respects_the_formats_allowed_looks_and_builds_resolve_fonts(tmp_path):
+    ids = [p["id"] for p in _pick("--topic", "inflation and savings", "--intent", "finance", "--format", "kinetic-type-essay", "--n", "5")["picks"]]
+    assert "newsroom" not in ids and set(ids) <= set(data("formats")["formats"]["kinetic-type-essay"]["looks"])
+    r = run_script("style_lock.py", "build", "--identity", "editorial-serif", "--out", tmp_path)
+    style = json.loads((tmp_path / "style.json").read_text())
+    for role in ("hero", "body", "numbers"):
+        assert style["fonts_resolved"][role]["stack"].count(",") >= 1
+    css_text = (tmp_path / "style.css").read_text()
+    assert "--font-hero:" in css_text and "sans-serif;" not in css_text.split("--font-hero:")[1].split("\n")[0] or "serif" in css_text.split("--font-hero:")[1].split("\n")[0]
+    assert r.returncode == 0
+
+
+def test_a_draft_voice_is_recorded_reported_and_warned_about(tmp_path):
+    ep = tmp_path / "ep"
+    run_script("provenance.py", "init", "--episode", ep, "--director", "d")
+    run_script("provenance.py", "add", "--episode", ep, "--role", "tts", "--tool", "say", "--model", "Samantha", "--provider", "local", "--runs", "local",
+               "--used-for", "narration", "--draft", "true", "--upgrade", "a neural voice")
+    run_script("provenance.py", "add", "--episode", ep, "--role", "reference", "--tool", "reference_scan.py", "--used-for", "8 reels analysed", "--ai", "false")
+    rep = run_script("provenance.py", "report", "--episode", ep).stdout
+    assert "DRAFT: tts 'Samantha'" in rep and "a neural voice" in rep
+    chk = run_script("provenance.py", "check", "--episode", ep)
+    assert chk.returncode == 0 and "draft tts recorded" in chk.stderr             # a reference entry needs no model or provider
+
+
+def test_the_probe_prints_a_short_summary_when_it_writes_a_file(tmp_path):
+    r = run_script("capability_probe.py", "--out", tmp_path / "c.json")
+    assert r.returncode == 0 and r.stdout.count("\n") <= 6 and "[probe] ffmpeg" in r.stdout
+    assert "ai_models" in json.loads((tmp_path / "c.json").read_text())
+
+
+@pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg needed")
+def test_qc_can_waive_a_false_alarm_with_a_reason_and_never_silently(tmp_path):
+    static = tmp_path / "static.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x224466:s=270x480:r=30:d=6", "-f", "lavfi", "-i", "sine=frequency=300:duration=6",
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(static)], check=True)
+    assert json.loads(run_script("qc_master.py", static).stdout)["checks"]["pacing"]["pass"] is False
+    assert run_script("qc_master.py", static, "--waive", "pacing").returncode == 2           # a reason is required
+    rep = json.loads(run_script("qc_master.py", static, "--waive", "pacing", "--why", "a deliberate held title card").stdout)
+    assert rep["checks"]["pacing"]["pass"] is True and rep["waivers"][0]["why"] == "a deliberate held title card"
+
+
+@pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg needed")
+def test_dark_brand_backgrounds_are_not_reported_as_black_frames(tmp_path):
+    v = tmp_path / "navy.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x001372:s=270x480:r=30:d=4", "-f", "lavfi", "-i", "sine=frequency=300:duration=4",
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(v)], check=True)
+    assert json.loads(run_script("qc_master.py", v).stdout)["checks"]["dead_frames"]["black_segments"] == []
+
+
+@pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg needed")
+def test_encode_master_uses_the_delivery_profile(tmp_path):
+    PIL = pytest.importorskip("PIL.Image")
+    fr = tmp_path / "frames"
+    fr.mkdir()
+    for k in range(30):
+        PIL.new("RGB", (270, 480), (k * 8, 40, 90)).save(fr / f"{k:05d}.png")
+    wav = tmp_path / "a.wav"
+    _tone(wav, 1)
+    r = run_script("encode_master.py", "--frames", fr, "--audio", wav, "--out", tmp_path / "m.mp4")
+    assert r.returncode == 0 and json.loads(r.stdout)["audio_kbps"] == "384k"
+    info = json.loads(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_name,profile,pix_fmt,color_space", "-of", "json", str(tmp_path / "m.mp4")],
+                                     capture_output=True, text=True).stdout)
+    v = next(s for s in info["streams"] if s.get("codec_name") == "h264")
+    assert v["profile"] == "High" and v["pix_fmt"] == "yuv420p" and v.get("color_space") == "bt709"
+
+
+def _have_browser():
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            p.chromium.launch().close()
+        return True
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not (HAVE_FFMPEG and _have_browser()), reason="ffmpeg and a Playwright Chromium needed")
+def test_build_video_makes_a_checked_master_from_a_beat_map_and_timings(tmp_path):
+    ep = tmp_path / "episode"
+    ep.mkdir()
+    bm = load(ROOT / "examples" / "faceless-money-guard.json")
+    bm["beats"] = bm["beats"][:3]
+    (ep / "beatmap.json").write_text(json.dumps(bm))
+    words = [("Can", 0.0), ("an", 0.3), ("AI", 0.5), ("agent", 0.8), ("spend", 1.1), ("your", 1.4), ("money", 1.7), ("without", 2.0), ("overspending?", 2.4),
+             ("A", 3.2), ("price", 3.4), ("from", 3.7), ("memory", 4.0), ("goes", 4.3), ("stale,", 4.6), ("so", 5.0), ("every", 5.2), ("price", 5.5), ("is", 5.8),
+             ("read", 6.0), ("from", 6.3), ("the", 6.5), ("tool.", 6.7), ("It", 7.5), ("estimates,", 7.7), ("checks", 8.3), ("the", 8.6), ("ledger,", 8.8),
+             ("and", 9.3), ("only", 9.5), ("then", 9.8), ("spends", 10.0), ("once.", 10.4)]
+    texts = [b["text"].split() for b in bm["beats"]]
+    flat = [w for w, _ in words]
+    assert [w for t in texts for w in t] == flat
+    timing, k = [], 0
+    for b, t in zip(bm["beats"], texts):
+        ws = [{"word": w, "s": words[k + i][1], "e": words[k + i][1] + 0.28} for i, w in enumerate(t)]
+        k += len(t)
+        timing.append({"id": b["id"], "s": ws[0]["s"], "e": ws[-1]["e"], "words": ws})
+    (ep / "timing.json").write_text(json.dumps({"beats": timing, "duration": 11.0}))
+    voice = tmp_path / "vo.wav"
+    _tone(voice, 11)
+    r = run_script("build_video.py", "--episode", ep, "--voice", voice, "--fps", "10", "--qc")
+    assert r.returncode == 0, r.stderr
+    res = json.loads(r.stdout.strip().splitlines()[-1])
+    assert res["scenes"] == ["kinetic", "compare", "flow"] and Path(res["master"]).is_file() and (ep / "captions.srt").is_file()
+    assert res["seconds"] == pytest.approx(11.9, abs=0.5) and (ep / "style.json").is_file()
+    lay = run_script("layout_check.py", "--page", ep / "build" / "index.html")
+    assert lay.returncode == 0, lay.stderr
+
+
+def test_the_docs_no_longer_tell_an_autonomous_agent_to_ask():
+    refs = ROOT / "references"
+    banned = ("cost card asks the user", "have the user listen at the gate", "Asking is cheaper than rebuilding", "the user's answer to the cost card, never a default",
+              "put the questions to the user in one message")
+    for f in refs.rglob("*.md"):
+        text = f.read_text()
+        for phrase in banned:
+            assert phrase not in text, (f.name, phrase)
+    skill = (ROOT / "SKILL.md").read_text()
+    assert "## Fast path" in skill and "build_video.py" in skill and "layout_check.py" in skill and "Accepted defects" in skill
+    assert (ROOT / "templates" / "faceless" / "index.html").is_file()

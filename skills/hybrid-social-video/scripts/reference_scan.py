@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """reference_scan.py - look at how people make public reels on a topic, to choose a hook, length and pace with evidence.
 
-    python3 reference_scan.py find      --topic "compound interest" [--n 8] [--max-seconds 90] [--any-shape] --out episode/references.json
+    python3 reference_scan.py find      --topic "compound interest" [--n 8] [--max-seconds 90] [--any-shape] [--budget 75] --out episode/references.json
     python3 reference_scan.py add       --urls urls.txt --out episode/references.json     # urls from your own web search (any platform)
     python3 reference_scan.py analyze   --refs episode/references.json [--limit 8] [--no-download] [--keep-channel]
     python3 reference_scan.py summarize --refs episode/references.json [--json]
@@ -22,7 +22,11 @@ deleted; nothing is redistributed; the output is technique (hook type, pace, len
 refuses is not retried in a loop. Network access and yt-dlp are needed for `find`/`analyze`; without them the scan is skipped and
 the skip is written into `meta.notes`, never a question.
 
-Exit 0 ok | 2 usage | 3 yt-dlp or network missing for a command that needs it.
+`find` makes one attempt per page inside a time budget (--budget seconds, default 75) and stops at the first sign of a wall
+(three unreadable pages and nothing read): it prints the count of unreadable pages and exits 3, so an agent can tell a wall from
+a bug and move on in under two minutes.
+
+Exit 0 ok | 2 usage | 3 yt-dlp or network missing, or nothing readable (a wall).
 """
 from __future__ import annotations
 
@@ -158,13 +162,24 @@ def cmd_find(opt: dict) -> int:
         eprint("the search returned nothing (offline, rate limited or blocked): skipping, not retrying in a loop")
         return 3
     added = 0
+    failed = 0
+    t_start = time.time()
+    budget = float(opt.get("budget", 75))                    # one attempt, a time budget, then stop: never a retry loop
     for url in dict.fromkeys(cands):
         if url in have:
             continue
+        if time.time() - t_start > budget:
+            eprint(f"[scan] time budget of {budget:g} s used: stopping with what was read")
+            break
         got = _run_json(["yt-dlp", "--dump-json", "--skip-download", "--no-warnings", url], timeout=45)
         meta = got[0] if got else {}
+        if not meta:
+            failed += 1
+            if failed >= 3 and added == 0:                    # three refusals in a row and nothing read: a wall, not bad luck
+                break
+            continue
         d = meta.get("duration")
-        if not meta or (d and d > max_s):
+        if d and d > max_s:
             continue
         doc["items"].append(_item(url, meta, bool(opt.get("keep-channel"))))
         have.add(url)
@@ -172,7 +187,11 @@ def cmd_find(opt: dict) -> int:
         if added >= n:
             break
     _save(opt["out"], doc)
-    print(json.dumps({"added": added, "items": len(doc["items"]), "out": opt["out"]}))
+    print(json.dumps({"added": added, "items": len(doc["items"]), "unreadable": failed, "out": opt["out"]}))
+    if added == 0 and failed:
+        eprint(f"[scan] {failed} page(s) could not be read (a bot or sign-in wall, rate limit or no network): the scan is skipped, never bypassed. "
+               "Write the skip into meta.notes and carry on.")
+        return 3
     return 0
 
 

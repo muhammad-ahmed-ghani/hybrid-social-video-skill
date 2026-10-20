@@ -15,11 +15,13 @@ inference (I) unless marked V. A native reviewer signs off every language before
 
 ## The rule
 
-1. **The default is the language the user wrote to you in.** Ask only if the request itself is ambiguous: it mixes
-   languages without saying which to use, or it names an audience that reads another language. Ask about the market or
-   dialect only when it changes the wording (see Locale choices). Never fall back to
-   English. A user who names two ("Urdu with some English") has chosen a code-switched register (below).
-2. **You talk to the user in that language too:** the intake card, the cost card's questions, the gate messages,
+1. **The default is the language the user wrote to you in.** Decide, do not ask (`SKILL.md`, operating mode). When the request
+   mixes languages without saying which to use, take the language of the sentence that carries the task and record it; when it names an
+   audience that reads another language, use that audience's language. For the market or dialect the **voice's own locale wins**: pick
+   the best local voice for the language (`voice_render.py`) and write its region (es-MX, pt-BR, en-GB) into `meta.language_tag`, then
+   keep currency, number style, units and spelling to match, and avoid terms that exist only in another region (name the thing
+   generically, as "unit of currency", when the text does not fix a market). Never fall back to English. A user who names two ("Urdu with some English") has chosen a code-switched register (below).
+2. **You talk to the user in that language too:** the decision record, the cost lines, the final note,
    the notes. The board and the animatic take translated interface strings (`--labels labels.json`, keys in
    `scripts/ui_labels.py`). Script output (lint codes, errors) is for you and stays as it is.
 3. `meta.language` holds the language exactly as the user gave it. Optionally `meta.language_tag` holds a BCP 47 tag;
@@ -50,8 +52,11 @@ says so when it is missing.
 
 Whether a voice, a transcriber or an avatar engine supports a language is read from the tool's own catalog by the cost
 scout and recorded in the pricebook entry (`cost_plan.py add --supports-language "<the language as written>"`). When the
-entry has no record, the cost card asks the user; it is never assumed. Even when a tool lists a language, quality varies
-and nobody has measured most pairs: play a short sample in the language and have the user listen at the gate.
+entry has no record, it is never assumed: transcribe a sample back with `voice_check.py` (it reads the language from
+`meta.language_tag` and never uses an English-only model on another language) and compare it with the script. Even when a tool
+lists a language, quality varies and nobody has measured most pairs, so the round-trip word error and pace are the test, not a
+human listening at a gate. Digits and percent signs are normalised for English and Spanish; for another language list its number
+words in `meta.number_words` (or write the numbers as words in `tts_text`) so the comparison is fair.
 
 ## Fields in the beat map
 

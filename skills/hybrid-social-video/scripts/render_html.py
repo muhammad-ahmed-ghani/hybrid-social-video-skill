@@ -10,8 +10,10 @@ without a seed, so any frame can be rendered alone and twice gives the same pixe
 pre-extracted frame (`ffmpeg -i host.mp4 -vf fps=30,scale=1080:1920 hf/h%05d.jpg`) and awaiting `img.decode()`, never by
 a playing <video>.
 With --times it renders only those instants (for a quick look: file names t<seconds>.png); otherwise every frame as
-NNNNN.png. Unless --no-check, frame 500 (or the middle frame) is rendered a second time in a fresh browser and the
-hashes compared: a mismatch means the page is not deterministic and the output must not be trusted.
+NNNNN.png. Unless --no-check, frame 500 (or the middle frame) is rendered twice more in fresh browsers: those two must be
+byte-identical, and each must match the batch-rendered file to within anti-aliasing noise (at most 8 levels of 255 on at most 0.01 % of
+the pixels; text glyph caching differs by a few levels between a long-running page and a fresh one). A larger difference means the
+page is not deterministic and the output must not be trusted.
 Encode afterwards: ffmpeg -framerate 30 -i frames/%05d.png -i mix.wav -c:v libx264 -pix_fmt yuv420p -crf 18 -c:a aac out.mp4
 Needs Playwright with a Chromium. Exit 0 ok | 2 usage | 3 Playwright missing | 5 not deterministic.
 """
@@ -83,15 +85,29 @@ def main(argv: list[str]) -> int:
     print(f"frames rendered: {done} of {total} -> {out}")
     if not opt.get("no-check"):
         k = 500 if total > 500 else total // 2
-        hs = []
+        shots = []
         for _ in range(2):
             with sync_playwright() as p:
                 b, pg = _open(p, page)
                 pg.evaluate("t => window.render(t)", k / fps)
-                hs.append(hashlib.sha256(pg.screenshot()).hexdigest())
+                shots.append(pg.screenshot())
                 b.close()
-        same = hs[0] == hs[1] and hs[0] == hashlib.sha256((out / f"{k:05d}.png").read_bytes()).hexdigest()
-        print(f"determinism check on frame {k}: {'ok' if same else 'MISMATCH'}")
+        same = hashlib.sha256(shots[0]).hexdigest() == hashlib.sha256(shots[1]).hexdigest()
+        note = ""
+        if same:
+            batch = (out / f"{k:05d}.png").read_bytes()
+            if hashlib.sha256(batch).hexdigest() != hashlib.sha256(shots[0]).hexdigest():
+                try:
+                    import io
+                    from PIL import Image, ImageChops
+                    d = ImageChops.difference(Image.open(io.BytesIO(batch)).convert("RGB"), Image.open(io.BytesIO(shots[0])).convert("RGB"))
+                    mx = max(d.getextrema(), key=lambda e: e[1])[1]
+                    changed = sum(1 for px in d.convert("L").getdata() if px > 0)
+                    same = mx <= 8 and changed <= 0.0001 * d.width * d.height
+                    note = f" (batch vs fresh differ by at most {mx} levels on {changed} px: anti-aliasing noise)" if same else ""
+                except ImportError:
+                    same = False                     # no Pillow to measure the difference: stay strict
+        print(f"determinism check on frame {k}: {'ok' if same else 'MISMATCH'}{note}")
         if not same:
             eprint("[render] the page is not deterministic: remove timers, wall-clock reads and unseeded randomness")
             return 5

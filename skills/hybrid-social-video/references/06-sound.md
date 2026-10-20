@@ -60,6 +60,21 @@ Best first, and the skill picks without asking the user:
 4. A system voice (macOS `say`, espeak, a small local model): **draft only**. It is acceptable for an animatic and as the last
    resort when nothing better is reachable; then the final note says it is a draft and names the upgrade.
 
+Rules the ladder needs in practice:
+
+- **Offline first.** A route that needs the network is used only when the user's tools or authorisation allow it, and an unofficial
+  hosted endpoint (a free web voice the vendor does not sanction, such as `edge_tts`) is never relied on: it can be blocked at any
+  time, has no published terms or price, and sends the script to a third party. Treat it as not reachable.
+- **Premium, Enhanced and Siri voices are free, offline and neural.** `voice_render.py --list` marks them `system-hq`: they count
+  as the neural rung, not as draft. If none is installed, say in the final note that adding one (System Settings > Accessibility >
+  Spoken Content > System Voice > Manage Voices) is the free upgrade.
+- **Novelty and classic robotic voices are never chosen** (`voice_render.py` excludes them).
+- **Pace.** `say -r` is quantised (nearby values give the identical file) and `say -f file` ignores it, so use
+  `voice_render.py --target-seconds N`, which passes the text as an argument and searches a few rates to land near the length.
+- **A draft voice is a valid terminal state** for a zero-spend run when nothing better is reachable: record it
+  (`provenance.py add --role tts --draft true --upgrade "<route>"`), put the upgrade line in the final note, and count the voice item of
+  the bar as knowingly missed in the decision record. It is a defect only when a better route was reachable and not used.
+
 Audition by measurement, not by asking: render the same two or three lines on each reachable route and run
 `scripts/voice_check.py` (round-trip word error, pace, level). Drop what fails, keep the best that is not `draft`. If the
 user later says a voice is robotic or wrong, that is a defect: move up the ladder and re-run assembly (it is free); only the

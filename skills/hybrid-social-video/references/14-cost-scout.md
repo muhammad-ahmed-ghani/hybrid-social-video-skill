@@ -55,9 +55,10 @@ The scout spends nothing on generation. A price lookup that itself costs money n
    `meta.reuse_music: true`, which counts no music track.
    Record it with `cost_plan.py set --retries ai_video=<x>,... --retries-basis "<where it came from>"`. A pricebook with
    no multiplier leaves the high band unknown, and the card says so.
-6. **Plan and ask.** Run `cost_plan.py plan` again, render the board, and put the questions to the user in one message,
-   in the language they write in: the questions come back as English data and the board's labels take `--labels`.
-   Nothing generative runs until Gate 1 is approved and `ledger.py init` has been given the cap the user chose.
+6. **Plan and decide.** Run `cost_plan.py plan` again and render the board. The questions below come back as data; in autonomous
+   mode (`SKILL.md`) answer each with its default, record the answer in `meta.notes`, and show the cost card in the final note. Ask the
+   user only for money nobody authorised. Nothing generative runs until the ledger is initialised with a cap inside the authorisation
+   (`--autonomous`), or, with no authorisation, the plan is the free one (`cost_plan.py init --free`).
 
 ## Where a price may come from
 
@@ -132,23 +133,26 @@ tell you what the user would rather spend.
 
 ## The questions
 
-`cost_plan.py` generates them from the plan. Put them to the user together, at Gate 1, with the plan cost beside each
-option, and use the host's question tool if it has one. Only ask what changes the plan:
+`cost_plan.py` generates them from the plan. **In autonomous mode you answer them yourself** with the defaults in the right-hand
+column, record each answer, and ask the user nothing unless the default is "ask" (money nobody authorised, a real person's likeness).
+When a user is in the loop (gates on), put them together at Gate 1 with the plan cost beside each option. Only these change the plan:
 
 | Question | Why it is asked |
 |---|---|
-| which route for each capability that has more than one | the human picks between a cheaper and a better route, with the plan cost shown |
-| a price that is missing | unknown prices are never guessed |
-| a price that is stale, expiring, reported or illustrative | a spend decision rests on it; offer refresh or accept |
-| how many paid takes per item to assume | sets the high band, and so the cap |
-| the spend cap | the ledger refuses anything beyond it; show low and high as the options |
-| the single-call amount that triggers a spend card | proposed as half the cap, a ratio; the user may choose otherwise |
-| a beat whose clip is longer than the model's limit | split it, shorten it or choose another model |
-| a sound-effects source | free library or a priced generator |
-| the tier, or the downgrade | the plan can turn every AI clip into its still with motion in code; the card shows what that saves |
+| Question | Why it is asked | Autonomous default |
+|---|---|---|
+| which route for each capability that has more than one | a cheaper and a better route, with the plan cost shown | the best route that meets the bar and fits the cap; never a system voice when a better one is reachable |
+| a price that is missing | unknown prices are never guessed | measure it with the smallest call, or take a route that needs none |
+| a price that is stale, expiring, reported or illustrative | a spend decision rests on it | refresh it with one read; else flag it on the card |
+| how many paid takes per item to assume | sets the high band, and so the cap | 1.5 for stills and clips, 1.3 for a host, basis "default, no history" |
+| the spend cap | the ledger refuses anything beyond it | inside the authorisation; the user's own number when they gave one |
+| the single-call amount that triggers a spend card | half the cap, a ratio | the ratio |
+| a beat whose clip is longer than the model's limit | split it, shorten it or choose another model | split it |
+| a sound-effects source | free library or a priced generator | synthesised cues (`mix_audio.py`) |
+| the tier, or the downgrade | turn every AI clip into its still with motion in code | the highest tier the cap pays for |
 
-Also ask, when it applies and the card cannot decide it: consent to a paid lookup, commercial-use needs, and whether a
-real person's likeness or voice is involved (`08-governance.md`).
+Ask the user, whatever the mode, only: money nobody authorised, whether a real person's likeness or voice is involved
+(`08-governance.md`), and a paid lookup that itself costs money.
 
 ## Sub-agent brief
 
