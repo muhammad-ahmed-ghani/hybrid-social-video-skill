@@ -1,219 +1,232 @@
 {
-  "schema": "hybrid-provenance/1",
-  "director": "claude-sonnet-5-5 (Claude Sonnet 5.5)",
-  "created": "2026-10-21T00:11:36+0500",
-  "entries": [
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "image",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_image",
-      "model": "nano-banana-pro",
-      "provider": "ImagineArt",
-      "runs": "hosted",
-      "used_for": "host portrait",
-      "request_id": "8603f31a-4373-4d47-a482-40027e8cffc3",
-      "data_sent": "text prompt",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15aa2-9181-7a91-aef9-bbe689d29f15",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        1
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15aa6-e11d-7062-80e1-98c67bd9e4b4",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        2
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15aa6-ebdd-7cf3-827f-79e7d228ad00",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        3
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15aa6-f3d4-7443-925e-4f3a58bddf73",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        4
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15aa6-fbec-7a90-bc9a-6acc6d1a2eb5",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        5
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15ab4-d410-71d3-b5ec-cfde49932f59",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        6,
-        7
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "host",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_video",
-      "model": "veo-3.1-fast",
-      "provider": "ImagineArt (Google Veo)",
-      "runs": "hosted",
-      "used_for": "talking host clip, native speech",
-      "request_id": "01a15aa7-035d-7ca3-89bb-f49dc842fee3",
-      "data_sent": "portrait image, spoken line",
-      "realism": "photoreal",
-      "depicts": "fictional",
-      "beats": [
-        8
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "tts",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_speech",
-      "model": "ElevenLabs v3 (Roger)",
-      "provider": "ImagineArt",
-      "runs": "hosted",
-      "used_for": "voice test only, not in the final video",
-      "request_id": "01a15aa1-ad91-7e52-a509-650670023823",
-      "data_sent": "one sentence of the script",
-      "in_output": false
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "stt",
-      "ai": true,
-      "tool": "faster-whisper",
-      "model": "Systran/faster-whisper-base.en",
-      "provider": "local",
-      "runs": "local",
-      "used_for": "word timings and clip trimming from the host audio",
-      "beats": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
-      ]
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "music",
-      "ai": false,
-      "tool": "ffmpeg and numpy",
-      "provider": "local",
-      "runs": "local",
-      "used_for": "synthesised pad, ticks, hit and whooshes (no samples)"
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "code",
-      "ai": true,
-      "tool": "claude-sonnet-5-5",
-      "model": "claude-sonnet-5-5",
-      "provider": "Anthropic",
-      "runs": "hosted",
-      "used_for": "beat map, script, overlay page, build scripts",
-      "data_sent": "the request and project files"
-    },
-    {
-      "ts": "2026-10-21T00:11:36+0500",
-      "role": "image",
-      "ai": true,
-      "tool": "ImagineArt MCP generate_image",
-      "model": "gpt-image-2.5-flare",
-      "provider": "ImagineArt",
-      "runs": "hosted",
-      "used_for": "README mascot (not in the video)",
-      "request_id": "a47f68fe-fe05-40e4-9e50-0446f846da00",
-      "data_sent": "text prompt",
-      "realism": "stylised",
-      "depicts": "none",
-      "in_output": false
-    }
-  ]
+ "schema": "hybrid-provenance/1",
+ "director": "claude-sonnet-5-5 (Claude Sonnet 5.5)",
+ "created": "2026-10-21T00:11:36+0500",
+ "entries": [
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "image",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_image",
+   "model": "nano-banana-pro",
+   "provider": "ImagineArt",
+   "runs": "hosted",
+   "used_for": "host portrait",
+   "request_id": "8603f31a-4373-4d47-a482-40027e8cffc3",
+   "data_sent": "text prompt",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15aa2-9181-7a91-aef9-bbe689d29f15",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    1
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15aa6-e11d-7062-80e1-98c67bd9e4b4",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    2
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15aa6-ebdd-7cf3-827f-79e7d228ad00",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    3
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15aa6-f3d4-7443-925e-4f3a58bddf73",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    4
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15aa6-fbec-7a90-bc9a-6acc6d1a2eb5",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    5
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15ab4-d410-71d3-b5ec-cfde49932f59",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    6,
+    7
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "host",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_video",
+   "model": "veo-3.1-fast",
+   "provider": "ImagineArt (Google Veo)",
+   "runs": "hosted",
+   "used_for": "talking host clip, native speech",
+   "request_id": "01a15aa7-035d-7ca3-89bb-f49dc842fee3",
+   "data_sent": "portrait image, spoken line",
+   "realism": "photoreal",
+   "depicts": "fictional",
+   "beats": [
+    8
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "tts",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_speech",
+   "model": "ElevenLabs v3 (Roger)",
+   "provider": "ImagineArt",
+   "runs": "hosted",
+   "used_for": "voice test only, not in the final video",
+   "request_id": "01a15aa1-ad91-7e52-a509-650670023823",
+   "data_sent": "one sentence of the script",
+   "in_output": false
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "stt",
+   "ai": true,
+   "tool": "faster-whisper",
+   "model": "Systran/faster-whisper-base.en",
+   "provider": "local",
+   "runs": "local",
+   "used_for": "word timings and clip trimming from the host audio",
+   "beats": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "music",
+   "ai": false,
+   "tool": "ffmpeg and numpy",
+   "provider": "local",
+   "runs": "local",
+   "used_for": "synthesised pad, ticks, hit and whooshes (no samples)"
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "code",
+   "ai": true,
+   "tool": "claude-sonnet-5-5",
+   "model": "claude-sonnet-5-5",
+   "provider": "Anthropic",
+   "runs": "hosted",
+   "used_for": "beat map, script, motion-design generator (cards and timeline), build scripts",
+   "data_sent": "the request and project files"
+  },
+  {
+   "ts": "2026-10-21T00:11:36+0500",
+   "role": "image",
+   "ai": true,
+   "tool": "ImagineArt MCP generate_image",
+   "model": "gpt-image-2.5-flare",
+   "provider": "ImagineArt",
+   "runs": "hosted",
+   "used_for": "README mascot (not in the video)",
+   "request_id": "a47f68fe-fe05-40e4-9e50-0446f846da00",
+   "data_sent": "text prompt",
+   "realism": "stylised",
+   "depicts": "none",
+   "in_output": false
+  },
+  {
+   "ts": "2026-10-21T01:56:41+0500",
+   "role": "code",
+   "ai": false,
+   "tool": "HyperFrames CLI and talking-head-recut skill",
+   "model": "hyperframes (npx)",
+   "provider": "HeyGen",
+   "runs": "local",
+   "used_for": "motion design, caption track and render of the overlays over the host video",
+   "data_sent": "none",
+   "realism": "none",
+   "depicts": "none"
+  }
+ ]
 }

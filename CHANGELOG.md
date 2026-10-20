@@ -2,6 +2,15 @@
 
 All notable changes to this skill. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.1] - 2026-10-21
+
+### Changed
+- The demo reel is rebuilt with HyperFrames' `talking-head-recut` workflow over the same host footage: a round picture-in-picture host beside full-screen
+  data cards (a count-up, code-to-label rows, a 15-format grid, a plan that unlocks), word-highlighted captions, a terminal that types the repository
+  URL, and the mascot. It passes `qc_master.py` (-14.8 LUFS). The sources are in `demo/hyperframes/`; `demo/AI-USE.md` lists HyperFrames as a non-AI code tool.
+- `references/19-hyperframes.md` gains the lessons of that build: what its lint rejects (animating a clip element's visibility, tweening `left` and `top`) and the
+  transform and clip-path pattern that replaces it, and where to put captions so cards never collide with them.
+
 ## [1.5.0] - 2026-10-21
 
 ### Changed

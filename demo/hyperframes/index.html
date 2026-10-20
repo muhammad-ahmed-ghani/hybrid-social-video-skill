@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><style>
+@font-face{font-family:'Inter';src:url('fonts/Inter-400-latin.woff2') format('woff2');font-weight:400;font-display:block}
+@font-face{font-family:'Inter';src:url('fonts/Inter-700-latin.woff2') format('woff2');font-weight:700;font-display:block}
+:root{--bg:#0E1116;--text:#F4F1EA;--accent-0:#FFD166;--accent-1:#FF5D73;--accent-2:#3DDBB0;--accent-3:#7FDBFF;--accent-4:#A78BFA}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:'Inter',ui-sans-serif,system-ui,sans-serif}
+#stage{position:relative;width:100%;height:100%;overflow:hidden}
+.video-wrapper{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden;border-radius:0}
+.video-wrapper video{width:100%;height:100%;object-fit:cover;display:block}
+#pip-ring{position:absolute;left:48px;top:284px;width:316px;height:316px;border-radius:50%;border:7px solid #FFD166;box-shadow:0 0 0 7px rgba(255,209,102,.22),0 18px 50px rgba(0,0,0,.55);z-index:21;opacity:0;pointer-events:none}
+.card-host{position:absolute;pointer-events:none;overflow:hidden}
+.card-host .card{position:relative;width:100%;height:100%;overflow:hidden}
+#caps{position:absolute;left:156px;top:1330px;width:768px;z-index:40;pointer-events:none}
+.cap{position:absolute;left:0;top:0;width:768px;display:flex;justify-content:center;visibility:hidden}
+.pill{background:rgba(10,13,18,.9);border:3px solid rgba(169,180,198,.5);border-radius:14px;padding:12px 20px;font-weight:700;font-size:48px;line-height:1.15;white-space:nowrap;color:#F4F1EA;text-align:center}
+</style></head><body>
+<div id="stage" data-composition-id="talking-head-recut" data-start="0" data-duration="35.3667" data-fps="30" data-width="1080" data-height="1920">
+<div class="video-wrapper" id="video-wrap"><video id="bg-video" src="input-video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="35.3667" data-track-index="1"></video></div>
+<div id="h-card-01" class="card-host clip" data-card-id="card-01" data-start="0.1000" data-duration="3.6667" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-01"><style>
+.card[data-card-id="card-01"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-01"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-01"] .char{display:inline-block}
+.card[data-card-id="card-01"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-01"] .abs{position:absolute}
+
+.card[data-card-id="card-01"] .tag{width:290px;height:78px;line-height:78px;text-align:center;font-size:40px;font-weight:700;letter-spacing:1px;background:rgba(14,17,22,.9);border:4px solid #7FDBFF;border-radius:20px;color:#F4F1EA}
+.card[data-card-id="card-01"] .plaque{width:212px;height:190px;border-radius:24px;background:rgba(14,17,22,.94);border:5px solid #FFD166;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:56px;line-height:1.05;font-weight:700;color:#FFD166}
+.card[data-card-id="card-01"] .strike{width:800px;height:14px;border-radius:7px;background:#FF5D73;transform-origin:0 50%;transform:rotate(14deg);box-shadow:0 0 24px rgba(255,93,115,.7)}
+</style><div class="root">
+ <div id="c1-t1" class="abs tag" style="left:120px;top:872px">NUMBERS</div>
+ <div id="c1-t2" class="abs tag" style="left:670px;top:872px">VOICE</div>
+ <div id="c1-t3" class="abs tag" style="left:120px;top:984px">FOOTAGE</div>
+ <div id="c1-t4" class="abs tag" style="left:670px;top:984px">CAPTIONS</div>
+ <div id="c1-pl" class="abs plaque" style="left:434px;top:872px"><span>ONE</span><span>TOOL</span></div>
+ <div id="c1-st" class="abs strike" style="left:108px;top:858px"></div>
+</div></div></div>
+<div id="h-card-02" class="card-host clip" data-card-id="card-02" data-start="3.8000" data-duration="5.7000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-02"><style>
+.card[data-card-id="card-02"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-02"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-02"] .char{display:inline-block}
+.card[data-card-id="card-02"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-02"] .abs{position:absolute}
+
+.card[data-card-id="card-02"] .bgfx{position:absolute;left:0;top:0;width:1080px;height:1920px;background:radial-gradient(circle at 18% 14%,rgba(255,209,102,.16),rgba(255,209,102,0) 42%),radial-gradient(circle at 92% 62%,rgba(61,219,176,.10),rgba(61,219,176,0) 46%),linear-gradient(180deg,#0E1116 0%,#131925 100%);}
+.card[data-card-id="card-02"] .dots{position:absolute;left:0;top:0;width:1080px;height:1920px;opacity:.5;background-image:radial-gradient(rgba(244,241,234,.07) 2px,transparent 2px);background-size:54px 54px;}
+.card[data-card-id="card-02"] .kick{position:absolute;left:400px;top:318px;width:560px;font-size:34px;font-weight:700;letter-spacing:5px;color:#FFD166;text-transform:uppercase}
+
+.card[data-card-id="card-02"] .big{font-size:230px;line-height:1;font-weight:700;color:#FFD166}
+.card[data-card-id="card-02"] .lab{font-size:78px;font-weight:700;letter-spacing:2px;color:#F4F1EA}
+.card[data-card-id="card-02"] .bar{left:120px;width:768px;height:104px;border:5px solid;border-radius:22px;background:rgba(20,26,38,.92);display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-sizing:border-box}
+.card[data-card-id="card-02"] .bn{font-size:56px;font-weight:700}
+.card[data-card-id="card-02"] .bd{font-size:38px;font-weight:700;letter-spacing:2px;color:#A9B4C6}
+.card[data-card-id="card-02"] .dim{left:928px;top:650px;width:8px;height:0;background:#FFD166;border-radius:4px}
+</style><div class="root"><div class="bgfx"></div><div class="dots"></div>
+ <div class="abs kick">THE FRAME HAS</div>
+ <div id="c2-n" class="abs big" style="left:400px;top:352px">0</div><div id="c2-l" class="abs lab" style="left:560px;top:420px">LAYERS</div>
+ <div id="c2-b0" class="abs bar" style="top:650px;border-color:#A78BFA"><span class="bn" style="color:#A78BFA">HOST</span><span class="bd">HUMAN</span></div><div id="c2-b1" class="abs bar" style="top:772px;border-color:#7FDBFF"><span class="bn" style="color:#7FDBFF">REAL</span><span class="bd">PROOF</span></div><div id="c2-b2" class="abs bar" style="top:894px;border-color:#FF5D73"><span class="bn" style="color:#FF5D73">AI</span><span class="bd">ATMOSPHERE</span></div><div id="c2-b3" class="abs bar" style="top:1016px;border-color:#3DDBB0"><span class="bn" style="color:#3DDBB0">CODE</span><span class="bd">EXACT</span></div>
+ 
+</div></div></div>
+<div id="h-card-03" class="card-host clip" data-card-id="card-03" data-start="9.6000" data-duration="3.8000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-03"><style>
+.card[data-card-id="card-03"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-03"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-03"] .char{display:inline-block}
+.card[data-card-id="card-03"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-03"] .abs{position:absolute}
+
+.card[data-card-id="card-03"] .bgfx{position:absolute;left:0;top:0;width:1080px;height:1920px;background:radial-gradient(circle at 18% 14%,rgba(255,209,102,.16),rgba(255,209,102,0) 42%),radial-gradient(circle at 92% 62%,rgba(61,219,176,.10),rgba(61,219,176,0) 46%),linear-gradient(180deg,#0E1116 0%,#131925 100%);}
+.card[data-card-id="card-03"] .dots{position:absolute;left:0;top:0;width:1080px;height:1920px;opacity:.5;background-image:radial-gradient(rgba(244,241,234,.07) 2px,transparent 2px);background-size:54px 54px;}
+.card[data-card-id="card-03"] .kick{position:absolute;left:400px;top:318px;width:560px;font-size:34px;font-weight:700;letter-spacing:5px;color:#FFD166;text-transform:uppercase}
+
+.card[data-card-id="card-03"] .hh{font-size:84px;font-weight:700;line-height:1.04;color:#F4F1EA;width:600px}
+.card[data-card-id="card-03"] .row{left:120px;width:768px;height:132px;display:flex;align-items:center;gap:20px}
+.card[data-card-id="card-03"] .code{width:330px;height:132px;line-height:132px;font-size:40px;color:#A9B4C6;background:rgba(20,26,38,.95);border:4px solid #2A3345;border-radius:20px;text-align:center;box-sizing:border-box}
+.card[data-card-id="card-03"] .arr{font-size:52px;color:#7FDBFF;width:44px;text-align:center}
+.card[data-card-id="card-03"] .out{width:290px;height:132px;display:flex;align-items:center;justify-content:center;position:relative}
+.card[data-card-id="card-03"] .num{font-size:112px;font-weight:700;color:#FFD166}
+.card[data-card-id="card-03"] .chip{font-size:60px;font-weight:700;color:#7FDBFF;background:rgba(127,219,255,.12);border:4px solid #7FDBFF;border-radius:20px;height:112px;box-sizing:border-box}
+.card[data-card-id="card-03"] .axis i{position:absolute;left:0;right:0;top:56px;height:6px;background:#7FDBFF;border-radius:3px}
+.card[data-card-id="card-03"] .axis b{position:absolute;top:78px;font-size:40px;color:#A9B4C6;font-weight:700}
+.card[data-card-id="card-03"] .ok{font-size:58px;color:#3DDBB0;font-weight:700;width:60px}
+</style><div class="root"><div class="bgfx"></div><div class="dots"></div>
+ <div class="abs kick">LABELS</div><div id="c3-h" class="abs hh" style="left:400px;top:350px">NEVER DRIFT</div>
+ <div id="c3-r1" class="abs row" style="top:660px"><div class="code mono">number(15)</div><div class="arr">&#8594;</div><div id="c3-v1" class="out num">0</div><div class="ok">&#10003;</div></div>
+ <div id="c3-r2" class="abs row" style="top:828px"><div class="code mono">label("REEL")</div><div class="arr">&#8594;</div><div class="out chip">REEL</div><div class="ok">&#10003;</div></div>
+ <div id="c3-r3" class="abs row" style="top:996px"><div class="code mono">axis(0, 35)</div><div class="arr">&#8594;</div><div class="out axis"><i></i><b>0</b><b style="right:0">35s</b></div><div class="ok">&#10003;</div></div>
+</div></div></div>
+<div id="h-card-04" class="card-host clip" data-card-id="card-04" data-start="13.4000" data-duration="5.6000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-04"><style>
+.card[data-card-id="card-04"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-04"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-04"] .char{display:inline-block}
+.card[data-card-id="card-04"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-04"] .abs{position:absolute}
+
+.card[data-card-id="card-04"] .bgfx{position:absolute;left:0;top:0;width:1080px;height:1920px;background:radial-gradient(circle at 18% 14%,rgba(255,209,102,.16),rgba(255,209,102,0) 42%),radial-gradient(circle at 92% 62%,rgba(61,219,176,.10),rgba(61,219,176,0) 46%),linear-gradient(180deg,#0E1116 0%,#131925 100%);}
+.card[data-card-id="card-04"] .dots{position:absolute;left:0;top:0;width:1080px;height:1920px;opacity:.5;background-image:radial-gradient(rgba(244,241,234,.07) 2px,transparent 2px);background-size:54px 54px;}
+.card[data-card-id="card-04"] .kick{position:absolute;left:400px;top:318px;width:560px;font-size:34px;font-weight:700;letter-spacing:5px;color:#FFD166;text-transform:uppercase}
+
+.card[data-card-id="card-04"] .dirw{font-size:88px;font-weight:700;color:#FFD166;line-height:1}
+.card[data-card-id="card-04"] .big4{font-size:210px;line-height:1;font-weight:700;color:#FFD166}
+.card[data-card-id="card-04"] .lab4{font-size:60px;font-weight:700;color:#F4F1EA;letter-spacing:2px}
+.card[data-card-id="card-04"] .fc{width:246px;height:66px;line-height:66px;text-align:center;font-size:25px;font-weight:700;letter-spacing:0;white-space:nowrap;color:#C5CEDD;background:rgba(20,26,38,.95);border:3px solid #2A3345;border-radius:16px}
+.card[data-card-id="card-04"] .fc.me{color:#0E1116;background:#FFD166;border-color:#FFD166}
+.card[data-card-id="card-04"] .me2{font-size:38px;font-weight:700;color:#FFD166;white-space:nowrap;overflow:hidden;letter-spacing:2px}
+.card[data-card-id="card-04"] .pt{font-size:84px;font-weight:700;color:#FFD166}
+.card[data-card-id="card-04"] .pl{width:370px;height:92px;line-height:92px;font-size:40px;white-space:nowrap;font-weight:700;color:#F4F1EA;background:rgba(20,26,38,.95);border-left:10px solid #3DDBB0;border-radius:14px;padding-left:22px;box-sizing:border-box}
+.card[data-card-id="card-04"] .pl b{color:#3DDBB0;margin-right:12px}
+</style><div class="root"><div class="bgfx"></div><div class="dots"></div>
+ <div id="c4-dir" class="abs dirw" style="left:400px;top:330px">THE DIRECTOR</div>
+ <div id="c4-n" class="abs big4" style="left:400px;top:352px">0</div><div id="c4-l" class="abs lab4" style="left:660px;top:452px">FORMATS</div>
+ <div id="c4-f0" class="abs fc" style="left:120px;top:790px">DATA STORY</div><div id="c4-f1" class="abs fc" style="left:382px;top:790px">MANIM MATHS</div><div id="c4-f2" class="abs fc" style="left:644px;top:790px">KINETIC TYPE</div><div id="c4-f3" class="abs fc" style="left:120px;top:874px">DIAGRAM</div><div id="c4-f4" class="abs fc" style="left:382px;top:874px">SCREEN DEMO</div><div id="c4-f5" class="abs fc" style="left:644px;top:874px">CHAT</div><div id="c4-f6" class="abs fc" style="left:120px;top:958px">VOX COLLAGE</div><div id="c4-f7" class="abs fc" style="left:382px;top:958px">MAP</div><div id="c4-f8" class="abs fc" style="left:644px;top:958px">ARCHIVAL DOC</div><div id="c4-f9" class="abs fc" style="left:120px;top:1042px">FLAT VECTOR</div><div id="c4-f10" class="abs fc me" style="left:382px;top:1042px">HOST + B-ROLL</div><div id="c4-f11" class="abs fc" style="left:644px;top:1042px">TALKING HEAD</div><div id="c4-f12" class="abs fc" style="left:120px;top:1126px">NEWS BRIEF</div><div id="c4-f13" class="abs fc" style="left:382px;top:1126px">COMEDY SKETCH</div><div id="c4-f14" class="abs fc" style="left:644px;top:1126px">CARTOON</div>
+ <div id="c4-me" class="abs me2" style="left:120px;top:1218px;width:0">THIS VIDEO &#8593;</div>
+ <div id="c4-pt" class="abs pt" style="left:400px;top:344px">THE PLAN</div>
+ <div id="c4-p0" class="abs pl" style="left:130px;top:720px"><b>01</b> HOOK</div><div id="c4-p1" class="abs pl" style="left:520px;top:720px"><b>02</b> CONTEXT</div><div id="c4-p2" class="abs pl" style="left:130px;top:838px"><b>03</b> BUILD</div><div id="c4-p3" class="abs pl" style="left:520px;top:838px"><b>04</b> BUILD</div><div id="c4-p4" class="abs pl" style="left:130px;top:956px"><b>05</b> BUILD</div><div id="c4-p5" class="abs pl" style="left:520px;top:956px"><b>06</b> TURN</div><div id="c4-p6" class="abs pl" style="left:130px;top:1074px"><b>07</b> REVEAL</div><div id="c4-p7" class="abs pl" style="left:520px;top:1074px"><b>08</b> PAYOFF</div>
+</div></div></div>
+<div id="h-card-05" class="card-host clip" data-card-id="card-05" data-start="19.0000" data-duration="4.1000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-05"><style>
+.card[data-card-id="card-05"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-05"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-05"] .char{display:inline-block}
+.card[data-card-id="card-05"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-05"] .abs{position:absolute}
+
+.card[data-card-id="card-05"] .bgfx{position:absolute;left:0;top:0;width:1080px;height:1920px;background:radial-gradient(circle at 18% 14%,rgba(255,209,102,.16),rgba(255,209,102,0) 42%),radial-gradient(circle at 92% 62%,rgba(61,219,176,.10),rgba(61,219,176,0) 46%),linear-gradient(180deg,#0E1116 0%,#131925 100%);}
+.card[data-card-id="card-05"] .dots{position:absolute;left:0;top:0;width:1080px;height:1920px;opacity:.5;background-image:radial-gradient(rgba(244,241,234,.07) 2px,transparent 2px);background-size:54px 54px;}
+.card[data-card-id="card-05"] .kick{position:absolute;left:400px;top:318px;width:560px;font-size:34px;font-weight:700;letter-spacing:5px;color:#FFD166;text-transform:uppercase}
+
+.card[data-card-id="card-05"] .hh5{font-size:72px;font-weight:700;line-height:1.05;width:560px}
+.card[data-card-id="card-05"] .lrow{left:120px;width:768px;height:100px;border:4px solid #2A3345;border-radius:20px;background:rgba(20,26,38,.95);display:flex;align-items:center;box-sizing:border-box;padding:0 26px;gap:18px}
+.card[data-card-id="card-05"] .lk{position:relative;width:56px;height:56px}
+.card[data-card-id="card-05"] .lk u,.card[data-card-id="card-05"] .st u{position:absolute;left:0;top:0;text-decoration:none}
+.card[data-card-id="card-05"] .lo{opacity:0}
+.card[data-card-id="card-05"] .ln{font-size:44px;font-weight:700;width:250px}
+.card[data-card-id="card-05"] .pr{font-size:34px;font-weight:700;color:#A9B4C6;border:3px solid #3A465C;border-radius:30px;padding:6px 20px;opacity:0}
+.card[data-card-id="card-05"] .st{position:relative;margin-left:auto;width:170px;height:48px;font-size:36px;font-weight:700;text-align:right}
+.card[data-card-id="card-05"] .st u{right:0;left:auto;width:170px}
+.card[data-card-id="card-05"] .sl{color:#FF5D73}
+.card[data-card-id="card-05"] .so{color:#3DDBB0;opacity:0}
+.card[data-card-id="card-05"] .btn{width:620px;height:112px;border-radius:26px;border:5px solid #FFD166;display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:700;color:#FFD166;opacity:0;background:rgba(20,26,38,.95)}
+</style><div class="root"><div class="bgfx"></div><div class="dots"></div>
+ <div class="abs kick">BEFORE ANY SPEND</div><div id="c5-h" class="abs hh5" style="left:400px;top:350px">YOU APPROVE FIRST</div>
+ <div id="c5-r0" class="abs lrow" style="top:640px"><span class="lk"><u class="lc"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#FFD166"/><path d="M17 22v-6a7 7 0 0 1 14 0v6" fill="none" stroke="#FFD166" stroke-width="5" stroke-linecap="round"/></svg></u><u class="lo"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#3DDBB0"/><path d="M17 22v-6a7 7 0 0 1 14 0" fill="none" stroke="#3DDBB0" stroke-width="5" stroke-linecap="round"/></svg></u></span><span class="ln">PLAN</span><span class="pr" id="c5-p0">PRICED</span><span class="st"><u class="sl">LOCKED</u><u class="so">OPEN</u></span></div><div id="c5-r1" class="abs lrow" style="top:758px"><span class="lk"><u class="lc"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#FFD166"/><path d="M17 22v-6a7 7 0 0 1 14 0v6" fill="none" stroke="#FFD166" stroke-width="5" stroke-linecap="round"/></svg></u><u class="lo"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#3DDBB0"/><path d="M17 22v-6a7 7 0 0 1 14 0" fill="none" stroke="#3DDBB0" stroke-width="5" stroke-linecap="round"/></svg></u></span><span class="ln">AI IMAGES</span><span class="pr" id="c5-p1">PRICED</span><span class="st"><u class="sl">LOCKED</u><u class="so">OPEN</u></span></div><div id="c5-r2" class="abs lrow" style="top:876px"><span class="lk"><u class="lc"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#FFD166"/><path d="M17 22v-6a7 7 0 0 1 14 0v6" fill="none" stroke="#FFD166" stroke-width="5" stroke-linecap="round"/></svg></u><u class="lo"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#3DDBB0"/><path d="M17 22v-6a7 7 0 0 1 14 0" fill="none" stroke="#3DDBB0" stroke-width="5" stroke-linecap="round"/></svg></u></span><span class="ln">AI CLIPS</span><span class="pr" id="c5-p2">PRICED</span><span class="st"><u class="sl">LOCKED</u><u class="so">OPEN</u></span></div><div id="c5-r3" class="abs lrow" style="top:994px"><span class="lk"><u class="lc"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#FFD166"/><path d="M17 22v-6a7 7 0 0 1 14 0v6" fill="none" stroke="#FFD166" stroke-width="5" stroke-linecap="round"/></svg></u><u class="lo"><svg viewBox="0 0 48 48" width="56" height="56"><rect x="11" y="22" width="26" height="19" rx="4" fill="#3DDBB0"/><path d="M17 22v-6a7 7 0 0 1 14 0" fill="none" stroke="#3DDBB0" stroke-width="5" stroke-linecap="round"/></svg></u></span><span class="ln">HOST</span><span class="pr" id="c5-p3">PRICED</span><span class="st"><u class="sl">LOCKED</u><u class="so">OPEN</u></span></div>
+ <div id="c5-btn" class="abs btn" style="left:200px;top:1140px"><span>YOU APPROVE</span></div>
+</div></div></div>
+<div id="h-card-06" class="card-host clip" data-card-id="card-06" data-start="23.0000" data-duration="1.0000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-06"><style>
+.card[data-card-id="card-06"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-06"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-06"] .char{display:inline-block}
+.card[data-card-id="card-06"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-06"] .abs{position:absolute}
+
+.card[data-card-id="card-06"] .k1{width:900px;text-align:center;font-size:116px;line-height:1;font-weight:700;color:#F4F1EA;text-shadow:0 6px 30px rgba(0,0,0,.85),0 0 4px rgba(0,0,0,.9)}
+.card[data-card-id="card-06"] #c6-b{color:#FFD166}
+</style><div class="root">
+ <div id="c6-a" class="abs k1" style="left:90px;top:868px"><span class="wd"><span class="char">H</span><span class="char">O</span><span class="char">W</span></span> <span class="wd"><span class="char">D</span><span class="char">O</span></span> <span class="wd"><span class="char">Y</span><span class="char">O</span><span class="char">U</span></span></div>
+ <div id="c6-b" class="abs k1" style="left:90px;top:996px"><span class="wd"><span class="char">U</span><span class="char">S</span><span class="char">E</span></span> <span class="wd"><span class="char">I</span><span class="char">T</span><span class="char">?</span></span></div>
+</div></div></div>
+<div id="h-card-07" class="card-host clip" data-card-id="card-07" data-start="24.0000" data-duration="6.3000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-07"><style>
+.card[data-card-id="card-07"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-07"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-07"] .char{display:inline-block}
+.card[data-card-id="card-07"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-07"] .abs{position:absolute}
+
+.card[data-card-id="card-07"] .win{width:768px;height:262px;border-radius:24px;background:rgba(10,13,18,.95);border:4px solid #3DDBB0;box-shadow:0 12px 60px rgba(0,0,0,.6)}
+.card[data-card-id="card-07"] .hd{height:60px;border-bottom:3px solid #1E2736;position:relative}
+.card[data-card-id="card-07"] .hd i{position:absolute;top:21px;width:18px;height:18px;border-radius:9px}
+.card[data-card-id="card-07"] .hd i:nth-child(1){left:26px}.card[data-card-id="card-07"] .hd i:nth-child(2){left:56px}.card[data-card-id="card-07"] .hd i:nth-child(3){left:86px}
+.card[data-card-id="card-07"] .hd span{position:absolute;right:26px;top:12px;font-size:36px;color:#6B778C}
+.card[data-card-id="card-07"] .tl{font-size:42px;color:#F4F1EA;white-space:nowrap;line-height:1.1}
+.card[data-card-id="card-07"] .tl.y{color:#FFD166}
+.card[data-card-id="card-07"] .tl.big{font-size:44px}
+.card[data-card-id="card-07"] .dm{color:#7B879C;font-size:38px}
+</style><div class="root">
+ <div id="c7-w" class="abs win" style="left:120px;top:850px"><div class="hd"><i style="background:#FF5D73"></i><i style="background:#FFD166"></i><i style="background:#3DDBB0"></i><span class="mono">agent</span></div></div>
+ <div id="c7-l1" class="abs tl mono" style="left:150px;top:944px"><span class="wd"><span class="char">g</span><span class="char">i</span><span class="char">t</span><span class="char">h</span><span class="char">u</span><span class="char">b</span><span class="char">.</span><span class="char">c</span><span class="char">o</span><span class="char">m</span><span class="char">/</span></span></div>
+ <div id="c7-l2" class="abs tl mono" style="left:150px;top:996px"><span class="wd"><span class="char">m</span><span class="char">u</span><span class="char">h</span><span class="char">a</span><span class="char">m</span><span class="char">m</span><span class="char">a</span><span class="char">d</span><span class="char">-</span><span class="char">a</span><span class="char">h</span><span class="char">m</span><span class="char">e</span><span class="char">d</span><span class="char">-</span><span class="char">g</span><span class="char">h</span><span class="char">a</span><span class="char">n</span><span class="char">i</span><span class="char">/</span></span></div>
+ <div id="c7-l3" class="abs tl mono y" style="left:150px;top:1048px"><span class="wd"><span class="char">h</span><span class="char">y</span><span class="char">b</span><span class="char">r</span><span class="char">i</span><span class="char">d</span><span class="char">-</span><span class="char">s</span><span class="char">o</span><span class="char">c</span><span class="char">i</span><span class="char">a</span><span class="char">l</span><span class="char">-</span><span class="char">v</span><span class="char">i</span><span class="char">d</span><span class="char">e</span><span class="char">o</span><span class="char">-</span><span class="char">s</span><span class="char">k</span><span class="char">i</span><span class="char">l</span><span class="char">l</span></span></div>
+ <div id="c7-h" class="abs tl mono dm" style="left:150px;top:948px"># tell your agent</div>
+ <div id="c7-cm" class="abs tl mono y big" style="left:150px;top:1010px"><span class="wd"><span class="char">></span></span> <span class="wd"><span class="char">u</span><span class="char">s</span><span class="char">e</span></span> <span class="wd"><span class="char">h</span><span class="char">y</span><span class="char">b</span><span class="char">r</span><span class="char">i</span><span class="char">d</span><span class="char">-</span><span class="char">s</span><span class="char">o</span><span class="char">c</span><span class="char">i</span><span class="char">a</span><span class="char">l</span><span class="char">-</span><span class="char">v</span><span class="char">i</span><span class="char">d</span><span class="char">e</span><span class="char">o</span></span></div>
+</div></div></div>
+<div id="h-card-08" class="card-host clip" data-card-id="card-08" data-start="30.4000" data-duration="4.9000" data-track-index="2" style="left:0;top:0;width:1080px;height:1920px;z-index:10"><div class="card" data-card-id="card-08"><style>
+.card[data-card-id="card-08"] .root{position:absolute;left:0;top:0;width:1080px;height:1920px;font-family:'Inter',ui-sans-serif,system-ui,sans-serif;color:#F4F1EA;}
+.card[data-card-id="card-08"] .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+.card[data-card-id="card-08"] .char{display:inline-block}
+.card[data-card-id="card-08"] .wd{display:inline-block;white-space:nowrap}
+.card[data-card-id="card-08"] .abs{position:absolute}
+
+.card[data-card-id="card-08"] .stp{left:120px;width:700px;height:78px;border-radius:20px;background:rgba(14,17,22,.92);border:4px solid #7FDBFF;display:flex;align-items:center;box-sizing:border-box;padding-left:18px;gap:22px;font-size:44px;font-weight:700}
+.card[data-card-id="card-08"] .stp b{width:50px;height:50px;border-radius:25px;background:#FFD166;color:#0E1116;display:flex;align-items:center;justify-content:center;font-size:34px}
+.card[data-card-id="card-08"] .repo{left:120px;top:1136px;width:768px;height:144px;border-radius:22px;background:rgba(14,17,22,.95);border:4px solid #FFD166;text-align:center;opacity:0}
+.card[data-card-id="card-08"] .r1{font-size:46px;font-weight:700;color:#FFD166;margin-top:18px}
+.card[data-card-id="card-08"] .r2{font-size:34px;font-weight:700;color:#A9B4C6;margin-top:8px}
+</style><div class="root">
+ <div id="c8-s0" class="abs stp" style="top:850px"><b>1</b><span>DESCRIBE THE REEL</span></div><div id="c8-s1" class="abs stp" style="top:938px"><b>2</b><span>APPROVE THE PLAN</span></div><div id="c8-s2" class="abs stp" style="top:1026px"><b>3</b><span>GET THE VIDEO</span></div>
+ <img id="c8-mc" class="abs" src="img/slate.png" style="left:836px;top:896px;width:220px;height:220px"/>
+ <div id="c8-repo" class="abs repo"><div class="r1">hybrid-social-video-skill</div><div class="r2">github.com/muhammad-ahmed-ghani</div></div>
+</div></div></div>
+<div id="pip-ring"></div>
+<div id="caps" class="clip" data-start="0" data-duration="35.3667" data-track-index="3"><div id="cap0" class="cap"><span class="pill"><span class="cw" id="cap0w0">Making</span> <span class="cw" id="cap0w1">a</span> <span class="cw" id="cap0w2">reel?</span> </span></div>
+<div id="cap1" class="cap"><span class="pill"><span class="cw" id="cap1w0">Stop</span> <span class="cw" id="cap1w1">asking</span> <span class="cw" id="cap1w2">one</span> <span class="cw" id="cap1w3">AI</span> </span></div>
+<div id="cap2" class="cap"><span class="pill"><span class="cw" id="cap2w0">tool</span> <span class="cw" id="cap2w1">to</span> <span class="cw" id="cap2w2">do</span> </span></div>
+<div id="cap3" class="cap"><span class="pill"><span class="cw" id="cap3w0">everything.</span> </span></div>
+<div id="cap4" class="cap"><span class="pill"><span class="cw" id="cap4w0">Great</span> <span class="cw" id="cap4w1">videos</span> <span class="cw" id="cap4w2">mix</span> <span class="cw" id="cap4w3">4</span> </span></div>
+<div id="cap5" class="cap"><span class="pill"><span class="cw" id="cap5w0">layers:</span> <span class="cw" id="cap5w1">code,</span> </span></div>
+<div id="cap6" class="cap"><span class="pill"><span class="cw" id="cap6w0">AI,</span> <span class="cw" id="cap6w1">real</span> <span class="cw" id="cap6w2">footage,</span> </span></div>
+<div id="cap7" class="cap"><span class="pill"><span class="cw" id="cap7w0">and</span> <span class="cw" id="cap7w1">a</span> <span class="cw" id="cap7w2">host.</span> </span></div>
+<div id="cap8" class="cap"><span class="pill"><span class="cw" id="cap8w0">Code</span> <span class="cw" id="cap8w1">draws</span> <span class="cw" id="cap8w2">every</span> </span></div>
+<div id="cap9" class="cap"><span class="pill"><span class="cw" id="cap9w0">number</span> <span class="cw" id="cap9w1">and</span> <span class="cw" id="cap9w2">label,</span> </span></div>
+<div id="cap10" class="cap"><span class="pill"><span class="cw" id="cap10w0">so</span> <span class="cw" id="cap10w1">they</span> <span class="cw" id="cap10w2">are</span> <span class="cw" id="cap10w3">never</span> </span></div>
+<div id="cap11" class="cap"><span class="pill"><span class="cw" id="cap11w0">wrong.</span> </span></div>
+<div id="cap12" class="cap"><span class="pill"><span class="cw" id="cap12w0">This</span> <span class="cw" id="cap12w1">skill</span> <span class="cw" id="cap12w2">is</span> <span class="cw" id="cap12w3">the</span> </span></div>
+<div id="cap13" class="cap"><span class="pill"><span class="cw" id="cap13w0">director.</span> </span></div>
+<div id="cap14" class="cap"><span class="pill"><span class="cw" id="cap14w0">It</span> <span class="cw" id="cap14w1">picks</span> <span class="cw" id="cap14w2">1</span> <span class="cw" id="cap14w3">of</span> </span></div>
+<div id="cap15" class="cap"><span class="pill"><span class="cw" id="cap15w0">15</span> <span class="cw" id="cap15w1">formats,</span> </span></div>
+<div id="cap16" class="cap"><span class="pill"><span class="cw" id="cap16w0">then</span> <span class="cw" id="cap16w1">writes</span> <span class="cw" id="cap16w2">the</span> <span class="cw" id="cap16w3">plan.</span> </span></div>
+<div id="cap17" class="cap"><span class="pill"><span class="cw" id="cap17w0">It</span> <span class="cw" id="cap17w1">prices</span> <span class="cw" id="cap17w2">every</span> <span class="cw" id="cap17w3">beat,</span> </span></div>
+<div id="cap18" class="cap"><span class="pill"><span class="cw" id="cap18w0">and</span> <span class="cw" id="cap18w1">asks</span> <span class="cw" id="cap18w2">you</span> <span class="cw" id="cap18w3">before</span> </span></div>
+<div id="cap19" class="cap"><span class="pill"><span class="cw" id="cap19w0">spending</span> <span class="cw" id="cap19w1">a</span> <span class="cw" id="cap19w2">cent.</span> </span></div>
+<div id="cap20" class="cap"><span class="pill"><span class="cw" id="cap20w0">So</span> <span class="cw" id="cap20w1">how</span> <span class="cw" id="cap20w2">do</span> <span class="cw" id="cap20w3">you</span> </span></div>
+<div id="cap21" class="cap"><span class="pill"><span class="cw" id="cap21w0">use</span> <span class="cw" id="cap21w1">it?</span> </span></div>
+<div id="cap22" class="cap"><span class="pill"><span class="cw" id="cap22w0">Open</span> <span class="cw" id="cap22w1">this</span> <span class="cw" id="cap22w2">repository,</span> </span></div>
+<div id="cap23" class="cap"><span class="pill"><span class="cw" id="cap23w0">give</span> <span class="cw" id="cap23w1">it</span> <span class="cw" id="cap23w2">to</span> <span class="cw" id="cap23w3">your</span> </span></div>
+<div id="cap24" class="cap"><span class="pill"><span class="cw" id="cap24w0">agent,</span> <span class="cw" id="cap24w1">and</span> <span class="cw" id="cap24w2">say:</span> </span></div>
+<div id="cap25" class="cap"><span class="pill"><span class="cw" id="cap25w0">use</span> </span></div>
+<div id="cap26" class="cap"><span class="pill"><span class="cw" id="cap26w0">hybrid-social-video.</span> </span></div>
+<div id="cap27" class="cap"><span class="pill"><span class="cw" id="cap27w0">Describe</span> <span class="cw" id="cap27w1">the</span> <span class="cw" id="cap27w2">reel.</span> </span></div>
+<div id="cap28" class="cap"><span class="pill"><span class="cw" id="cap28w0">Approve</span> <span class="cw" id="cap28w1">the</span> <span class="cw" id="cap28w2">plan.</span> </span></div>
+<div id="cap29" class="cap"><span class="pill"><span class="cw" id="cap29w0">Get</span> <span class="cw" id="cap29w1">the</span> <span class="cw" id="cap29w2">video.</span> </span></div></div>
+<script src="vendor/gsap.min.js"></script>
+<script>
+(function(){
+var tl=window.gsap.timeline({paused:true});
+tl.set('#video-wrap',{zIndex:1,transformOrigin:'540px 480px',clipPath:'circle(1700px at 540px 480px)'},0);
+tl.fromTo('#bg-video',{scale:1.0,transformOrigin:'50% 30%'},{scale:1.07,duration:3.5,ease:'none'},0);
+tl.set('#video-wrap',{zIndex:20},3.5333);
+tl.to('#video-wrap',{x:-334,y:-38,scale:0.55,clipPath:'circle(273px at 540px 480px)',duration:0.65,ease:'power3.inOut'},3.5333);
+tl.to('#bg-video',{scale:1.0,duration:0.65,ease:'power3.inOut'},3.5333);
+tl.fromTo('#pip-ring',{opacity:0,scale:0.9},{opacity:1,scale:1,duration:0.5,ease:'power3.out'},4.0000);
+tl.to('#pip-ring',{opacity:0,duration:0.25},22.4000);
+tl.to('#video-wrap',{x:0,y:0,scale:1,clipPath:'circle(1700px at 540px 480px)',duration:0.6,ease:'power3.inOut'},22.5333);
+tl.set('#video-wrap',{zIndex:1},23.2000);
+tl.fromTo('#bg-video',{scale:1.0},{scale:1.06,duration:12.5,ease:'none'},23.2000);
+tl.fromTo('#h-card-01 .card',{opacity:0},{opacity:1,duration:0.25,ease:'power2.out'},0.1000);
+tl.to('#h-card-01 .card',{opacity:0,duration:0.25,ease:'power2.in'},3.5000);
+tl.fromTo('.card[data-card-id="card-01"] #c1-t1',{opacity:0,y:20,x:0},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},0.3667);
+tl.fromTo('.card[data-card-id="card-01"] #c1-t2',{opacity:0,y:20,x:0},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},1.0000);
+tl.fromTo('.card[data-card-id="card-01"] #c1-t3',{opacity:0,y:20,x:0},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},1.7000);
+tl.fromTo('.card[data-card-id="card-01"] #c1-t4',{opacity:0,y:20,x:0},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},2.0333);
+tl.fromTo('.card[data-card-id="card-01"] #c1-pl',{opacity:0,scale:0.55},{opacity:1,scale:1,duration:0.5,ease:'back.out(1.8)'},1.3333);
+tl.to('.card[data-card-id="card-01"] #c1-pl',{x:'+=6',duration:0.05,repeat:9,yoyo:true,ease:'none'},2.7667);
+tl.fromTo('.card[data-card-id="card-01"] #c1-st',{width:0,opacity:1},{width:800,duration:0.28,ease:'power3.in'},3.0000);
+tl.to('.card[data-card-id="card-01"] .tag, .card[data-card-id="card-01"] .plaque',{opacity:0.45,duration:0.3},3.1333);
+tl.fromTo('#h-card-02 .card',{opacity:0},{opacity:1,duration:0.25,ease:'power2.out'},3.8000);
+tl.to('#h-card-02 .card',{opacity:0,duration:0.25,ease:'power2.in'},9.2667);
+tl.fromTo('.card[data-card-id="card-02"] #c2-n',{opacity:0,y:0,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},4.7000);
+tl.fromTo('.card[data-card-id="card-02"] #c2-l',{opacity:0,y:0,x:30},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},4.9000);
+(function(){var o={v:0};tl.to(o,{v:4,duration:0.55,ease:'power2.out',onUpdate:function(){var e=document.querySelector('.card[data-card-id="card-02"] #c2-n');if(e)e.textContent=o.v.toFixed(0);}},4.8000);})();
+tl.fromTo('.card[data-card-id="card-02"] #c2-b3',{opacity:0,y:0,x:-80},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},6.0333);
+tl.fromTo('.card[data-card-id="card-02"] #c2-b2',{opacity:0,y:0,x:-80},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},6.8333);
+tl.fromTo('.card[data-card-id="card-02"] #c2-b1',{opacity:0,y:0,x:-80},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},7.8000);
+tl.fromTo('.card[data-card-id="card-02"] #c2-b0',{opacity:0,y:0,x:-80},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},8.8667);
+tl.fromTo('#h-card-03 .card',{opacity:0},{opacity:1,duration:0.25,ease:'power2.out'},9.6000);
+tl.to('#h-card-03 .card',{opacity:0,duration:0.25,ease:'power2.in'},13.1333);
+tl.fromTo('.card[data-card-id="card-03"] #c3-h',{opacity:0,y:0,x:30},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},9.7333);
+tl.fromTo('.card[data-card-id="card-03"] #c3-r1',{opacity:0,y:0,x:-60},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},10.4333);
+tl.fromTo('.card[data-card-id="card-03"] #c3-r2',{opacity:0,y:0,x:-60},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},11.0333);
+tl.fromTo('.card[data-card-id="card-03"] #c3-r3',{opacity:0,y:0,x:-60},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},11.7333);
+(function(){var o={v:0};tl.to(o,{v:15,duration:0.8,ease:'power2.out',onUpdate:function(){var e=document.querySelector('.card[data-card-id="card-03"] #c3-v1');if(e)e.textContent=o.v.toFixed(0);}},10.8333);})();
+tl.fromTo('#h-card-04 .card',{opacity:0},{opacity:1,duration:0.25,ease:'power2.out'},13.4000);
+tl.to('#h-card-04 .card',{opacity:0,duration:0.25,ease:'power2.in'},18.7333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-dir',{opacity:0,y:0,x:30},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},14.3333);
+tl.to('.card[data-card-id="card-04"] #c4-dir',{opacity:0,duration:0.25},15.5000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-n',{opacity:0,y:0,x:0},{opacity:1,y:0,x:0,duration:0.25,ease:'power3.out'},15.5333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-l',{opacity:0,y:0,x:30},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.7000);
+(function(){var o={v:0};tl.to(o,{v:15,duration:0.9,ease:'power2.out',onUpdate:function(){var e=document.querySelector('.card[data-card-id="card-04"] #c4-n');if(e)e.textContent=o.v.toFixed(0);}},15.3000);})();
+tl.fromTo('.card[data-card-id="card-04"] #c4-f0',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.6000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f1',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.6333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f2',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.7000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f3',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.7333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f4',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.8000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f5',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.8333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f6',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.9000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f7',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},15.9333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f8',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.0000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f9',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.0333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f10',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.1000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f11',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.1333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f12',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.2000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f13',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.2333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-f14',{opacity:0,y:14,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},16.3000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-me',{width:0},{width:330,duration:0.5,ease:'power2.out'},16.5000);
+tl.to('.card[data-card-id="card-04"] .fc, .card[data-card-id="card-04"] #c4-n, .card[data-card-id="card-04"] #c4-l, .card[data-card-id="card-04"] #c4-me',{opacity:0,duration:0.3},17.6667);
+tl.fromTo('.card[data-card-id="card-04"] #c4-pt',{opacity:0,y:0,x:30},{opacity:1,y:0,x:0,duration:0.35,ease:'power3.out'},17.8333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p0',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},17.9333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p1',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.0000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p2',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.0333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p3',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.1000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p4',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.1667);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p5',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.2333);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p6',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.3000);
+tl.fromTo('.card[data-card-id="card-04"] #c4-p7',{opacity:0,y:0,x:-40},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},18.3333);
+tl.fromTo('#h-card-05 .card',{opacity:0},{opacity:1,duration:0.3,ease:'power2.out'},19.0000);
+tl.to('#h-card-05 .card',{opacity:0,duration:0.3,ease:'power2.in'},22.8000);
+tl.fromTo('.card[data-card-id="card-05"] #c5-h',{opacity:0,y:0,x:30},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},19.1000);
+tl.fromTo('.card[data-card-id="card-05"] #c5-r0',{opacity:0,y:0,x:-50},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},18.9667);
+tl.fromTo('.card[data-card-id="card-05"] #c5-p0',{opacity:0,y:8,x:0},{opacity:1,y:0,x:0,duration:0.35,ease:'power3.out'},19.4667);
+tl.fromTo('.card[data-card-id="card-05"] #c5-r1',{opacity:0,y:0,x:-50},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},19.0667);
+tl.fromTo('.card[data-card-id="card-05"] #c5-p1',{opacity:0,y:8,x:0},{opacity:1,y:0,x:0,duration:0.35,ease:'power3.out'},19.6333);
+tl.fromTo('.card[data-card-id="card-05"] #c5-r2',{opacity:0,y:0,x:-50},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},19.1667);
+tl.fromTo('.card[data-card-id="card-05"] #c5-p2',{opacity:0,y:8,x:0},{opacity:1,y:0,x:0,duration:0.35,ease:'power3.out'},19.8333);
+tl.fromTo('.card[data-card-id="card-05"] #c5-r3',{opacity:0,y:0,x:-50},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},19.2667);
+tl.fromTo('.card[data-card-id="card-05"] #c5-p3',{opacity:0,y:8,x:0},{opacity:1,y:0,x:0,duration:0.35,ease:'power3.out'},20.0000);
+tl.fromTo('.card[data-card-id="card-05"] #c5-btn',{opacity:0,y:26,x:0},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},20.5000);
+tl.to('.card[data-card-id="card-05"] #c5-btn',{backgroundColor:'#FFD166',color:'#0E1116',scale:0.96,duration:0.15,yoyo:true,repeat:1},21.5000);
+tl.to('.card[data-card-id="card-05"] #c5-r0 .lc, .card[data-card-id="card-05"] #c5-r0 .sl',{opacity:0,duration:0.2},21.7333);
+tl.to('.card[data-card-id="card-05"] #c5-r0 .lo, .card[data-card-id="card-05"] #c5-r0 .so',{opacity:1,duration:0.2},21.7333);
+tl.to('.card[data-card-id="card-05"] #c5-r1 .lc, .card[data-card-id="card-05"] #c5-r1 .sl',{opacity:0,duration:0.2},21.9333);
+tl.to('.card[data-card-id="card-05"] #c5-r1 .lo, .card[data-card-id="card-05"] #c5-r1 .so',{opacity:1,duration:0.2},21.9333);
+tl.to('.card[data-card-id="card-05"] #c5-r2 .lc, .card[data-card-id="card-05"] #c5-r2 .sl',{opacity:0,duration:0.2},22.1000);
+tl.to('.card[data-card-id="card-05"] #c5-r2 .lo, .card[data-card-id="card-05"] #c5-r2 .so',{opacity:1,duration:0.2},22.1000);
+tl.to('.card[data-card-id="card-05"] #c5-r3 .lc, .card[data-card-id="card-05"] #c5-r3 .sl',{opacity:0,duration:0.2},22.2667);
+tl.to('.card[data-card-id="card-05"] #c5-r3 .lo, .card[data-card-id="card-05"] #c5-r3 .so',{opacity:1,duration:0.2},22.2667);
+tl.fromTo('#h-card-06 .card',{opacity:0},{opacity:1,duration:0.2,ease:'power2.out'},23.0000);
+tl.to('#h-card-06 .card',{opacity:0,duration:0.2,ease:'power2.in'},23.8000);
+tl.from('.card[data-card-id="card-06"] #c6-a .char',{opacity:0,y:18,scale:0.8,duration:0.3,ease:'power2.out',stagger:0.03},23.2000);
+tl.from('.card[data-card-id="card-06"] #c6-b .char',{opacity:0,y:18,scale:0.8,duration:0.3,ease:'power2.out',stagger:0.04},23.5667);
+tl.fromTo('#h-card-07 .card',{opacity:0},{opacity:1,duration:0.25,ease:'power2.out'},24.0000);
+tl.to('#h-card-07 .card',{opacity:0,duration:0.25,ease:'power2.in'},30.0667);
+tl.from('.card[data-card-id="card-07"] #c7-w',{opacity:0,y:30,duration:0.4,ease:'power3.out'},23.9000);
+tl.from('.card[data-card-id="card-07"] #c7-l1 .char',{opacity:0,y:18,scale:0.8,duration:0.02,ease:'power2.out',stagger:0.04},24.0000);
+tl.from('.card[data-card-id="card-07"] #c7-l2 .char',{opacity:0,y:18,scale:0.8,duration:0.02,ease:'power2.out',stagger:0.04},24.7667);
+tl.from('.card[data-card-id="card-07"] #c7-l3 .char',{opacity:0,y:18,scale:0.8,duration:0.02,ease:'power2.out',stagger:0.035},25.7333);
+tl.to('.card[data-card-id="card-07"] #c7-l1, .card[data-card-id="card-07"] #c7-l2, .card[data-card-id="card-07"] #c7-l3',{opacity:0,duration:0.2},26.9000);
+tl.fromTo('.card[data-card-id="card-07"] #c7-h',{opacity:0,y:0,x:0},{opacity:1,y:0,x:0,duration:0.3,ease:'power3.out'},27.0000);
+tl.from('.card[data-card-id="card-07"] #c7-cm .char',{opacity:0,y:18,scale:0.8,duration:0.02,ease:'power2.out',stagger:0.052},27.4667);
+tl.fromTo('.card[data-card-id="card-07"] #c7-cm',{opacity:0},{opacity:1,duration:0.01},27.4333);
+tl.fromTo('#h-card-08 .card',{opacity:0},{opacity:1,duration:0.25,ease:'power2.out'},30.4000);
+tl.to('#h-card-08 .card',{opacity:0,duration:0.25,ease:'power2.in'},35.0667);
+tl.fromTo('.card[data-card-id="card-08"] #c8-s0',{opacity:0,y:0,x:-90},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},30.3333);
+tl.fromTo('.card[data-card-id="card-08"] #c8-s1',{opacity:0,y:0,x:-90},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},31.9333);
+tl.fromTo('.card[data-card-id="card-08"] #c8-s2',{opacity:0,y:0,x:-90},{opacity:1,y:0,x:0,duration:0.45,ease:'power3.out'},33.1667);
+tl.fromTo('.card[data-card-id="card-08"] #c8-mc',{opacity:0,scale:0.3,rotation:-14,transformOrigin:'50% 90%'},{opacity:1,scale:1,rotation:0,duration:0.7,ease:'back.out(1.9)'},33.2000);
+tl.to('.card[data-card-id="card-08"] #c8-mc',{y:-14,duration:0.6,yoyo:true,repeat:3,ease:'sine.inOut'},34.0000);
+tl.fromTo('.card[data-card-id="card-08"] #c8-repo',{opacity:0,y:20,x:0},{opacity:1,y:0,x:0,duration:0.4,ease:'power3.out'},33.9333);
+tl.set('#cap0',{visibility:'visible'},-0.0333);tl.set('#cap0',{visibility:'hidden'},0.9667);
+tl.set('#cap0w0',{color:'#FFD166'},0.0000);
+tl.set('#cap0w1',{color:'#FFD166'},0.2333);
+tl.set('#cap0w2',{color:'#FFD166'},0.3667);
+tl.set('#cap1',{visibility:'visible'},0.9667);tl.set('#cap1',{visibility:'hidden'},2.3333);
+tl.set('#cap1w0',{color:'#FFD166'},1.0000);
+tl.set('#cap1w1',{color:'#FFD166'},1.3333);
+tl.set('#cap1w2',{color:'#FFD166'},1.7000);
+tl.set('#cap1w3',{color:'#FFD166'},2.0333);
+tl.set('#cap2',{visibility:'visible'},2.3333);tl.set('#cap2',{visibility:'hidden'},2.9667);
+tl.set('#cap2w0',{color:'#FFD166'},2.3333);
+tl.set('#cap2w1',{color:'#FFD166'},2.7333);
+tl.set('#cap2w2',{color:'#FFD166'},2.8667);
+tl.set('#cap3',{visibility:'visible'},2.9667);tl.set('#cap3',{visibility:'hidden'},3.7333);
+tl.set('#cap3w0',{color:'#FFD166'},3.0000);
+tl.set('#cap4',{visibility:'visible'},3.7333);tl.set('#cap4',{visibility:'hidden'},5.2333);
+tl.set('#cap4w0',{color:'#FFD166'},3.7667);
+tl.set('#cap4w1',{color:'#FFD166'},4.0333);
+tl.set('#cap4w2',{color:'#FFD166'},4.4000);
+tl.set('#cap4w3',{color:'#FFD166'},4.8000);
+tl.set('#cap5',{visibility:'visible'},5.2333);tl.set('#cap5',{visibility:'hidden'},6.9667);
+tl.set('#cap5w0',{color:'#FFD166'},5.2667);
+tl.set('#cap5w1',{color:'#FFD166'},6.2000);
+tl.set('#cap6',{visibility:'visible'},6.9667);tl.set('#cap6',{visibility:'hidden'},8.8000);
+tl.set('#cap6w0',{color:'#FFD166'},7.0000);
+tl.set('#cap6w1',{color:'#FFD166'},7.9333);
+tl.set('#cap6w2',{color:'#FFD166'},8.0000);
+tl.set('#cap7',{visibility:'visible'},8.8000);tl.set('#cap7',{visibility:'hidden'},9.5333);
+tl.set('#cap7w0',{color:'#FFD166'},8.8000);
+tl.set('#cap7w1',{color:'#FFD166'},8.9333);
+tl.set('#cap7w2',{color:'#FFD166'},9.0000);
+tl.set('#cap8',{visibility:'visible'},9.5333);tl.set('#cap8',{visibility:'hidden'},10.6000);
+tl.set('#cap8w0',{color:'#FFD166'},9.5667);
+tl.set('#cap8w1',{color:'#FFD166'},9.8333);
+tl.set('#cap8w2',{color:'#FFD166'},10.1333);
+tl.set('#cap9',{visibility:'visible'},10.6000);tl.set('#cap9',{visibility:'hidden'},11.8333);
+tl.set('#cap9w0',{color:'#FFD166'},10.6333);
+tl.set('#cap9w1',{color:'#FFD166'},11.0000);
+tl.set('#cap9w2',{color:'#FFD166'},11.2333);
+tl.set('#cap10',{visibility:'visible'},11.8333);tl.set('#cap10',{visibility:'hidden'},12.5667);
+tl.set('#cap10w0',{color:'#FFD166'},11.8333);
+tl.set('#cap10w1',{color:'#FFD166'},11.9333);
+tl.set('#cap10w2',{color:'#FFD166'},12.1000);
+tl.set('#cap10w3',{color:'#FFD166'},12.2667);
+tl.set('#cap11',{visibility:'visible'},12.5667);tl.set('#cap11',{visibility:'hidden'},13.3333);
+tl.set('#cap11w0',{color:'#FFD166'},12.6000);
+tl.set('#cap12',{visibility:'visible'},13.3333);tl.set('#cap12',{visibility:'hidden'},14.3333);
+tl.set('#cap12w0',{color:'#FFD166'},13.3667);
+tl.set('#cap12w1',{color:'#FFD166'},13.6667);
+tl.set('#cap12w2',{color:'#FFD166'},13.9333);
+tl.set('#cap12w3',{color:'#FFD166'},14.2000);
+tl.set('#cap13',{visibility:'visible'},14.3333);tl.set('#cap13',{visibility:'hidden'},15.3333);
+tl.set('#cap13w0',{color:'#FFD166'},14.3333);
+tl.set('#cap14',{visibility:'visible'},15.3333);tl.set('#cap14',{visibility:'hidden'},16.1667);
+tl.set('#cap14w0',{color:'#FFD166'},15.3333);
+tl.set('#cap14w1',{color:'#FFD166'},15.3667);
+tl.set('#cap14w2',{color:'#FFD166'},15.6000);
+tl.set('#cap14w3',{color:'#FFD166'},16.0333);
+tl.set('#cap15',{visibility:'visible'},16.1667);tl.set('#cap15',{visibility:'hidden'},17.6000);
+tl.set('#cap15w0',{color:'#FFD166'},16.2000);
+tl.set('#cap15w1',{color:'#FFD166'},16.5000);
+tl.set('#cap16',{visibility:'visible'},17.6000);tl.set('#cap16',{visibility:'hidden'},18.9333);
+tl.set('#cap16w0',{color:'#FFD166'},17.6000);
+tl.set('#cap16w1',{color:'#FFD166'},17.7333);
+tl.set('#cap16w2',{color:'#FFD166'},18.1333);
+tl.set('#cap16w3',{color:'#FFD166'},18.4000);
+tl.set('#cap17',{visibility:'visible'},18.9333);tl.set('#cap17',{visibility:'hidden'},20.5000);
+tl.set('#cap17w0',{color:'#FFD166'},18.9667);
+tl.set('#cap17w1',{color:'#FFD166'},19.4667);
+tl.set('#cap17w2',{color:'#FFD166'},19.7000);
+tl.set('#cap17w3',{color:'#FFD166'},20.1667);
+tl.set('#cap18',{visibility:'visible'},20.5000);tl.set('#cap18',{visibility:'hidden'},21.7000);
+tl.set('#cap18w0',{color:'#FFD166'},20.5000);
+tl.set('#cap18w1',{color:'#FFD166'},20.9667);
+tl.set('#cap18w2',{color:'#FFD166'},21.2667);
+tl.set('#cap18w3',{color:'#FFD166'},21.5000);
+tl.set('#cap19',{visibility:'visible'},21.7000);tl.set('#cap19',{visibility:'hidden'},22.7333);
+tl.set('#cap19w0',{color:'#FFD166'},21.7333);
+tl.set('#cap19w1',{color:'#FFD166'},22.1000);
+tl.set('#cap19w2',{color:'#FFD166'},22.2333);
+tl.set('#cap20',{visibility:'visible'},22.7333);tl.set('#cap20',{visibility:'hidden'},23.6000);
+tl.set('#cap20w0',{color:'#FFD166'},22.7667);
+tl.set('#cap20w1',{color:'#FFD166'},23.2333);
+tl.set('#cap20w2',{color:'#FFD166'},23.4000);
+tl.set('#cap20w3',{color:'#FFD166'},23.5333);
+tl.set('#cap21',{visibility:'visible'},23.6000);tl.set('#cap21',{visibility:'hidden'},23.9667);
+tl.set('#cap21w0',{color:'#FFD166'},23.6333);
+tl.set('#cap21w1',{color:'#FFD166'},23.8667);
+tl.set('#cap22',{visibility:'visible'},23.9667);tl.set('#cap22',{visibility:'hidden'},25.1000);
+tl.set('#cap22w0',{color:'#FFD166'},24.0000);
+tl.set('#cap22w1',{color:'#FFD166'},24.5667);
+tl.set('#cap22w2',{color:'#FFD166'},24.8667);
+tl.set('#cap23',{visibility:'visible'},25.1000);tl.set('#cap23',{visibility:'hidden'},26.5000);
+tl.set('#cap23w0',{color:'#FFD166'},25.1333);
+tl.set('#cap23w1',{color:'#FFD166'},26.1000);
+tl.set('#cap23w2',{color:'#FFD166'},26.2667);
+tl.set('#cap23w3',{color:'#FFD166'},26.3667);
+tl.set('#cap24',{visibility:'visible'},26.5000);tl.set('#cap24',{visibility:'hidden'},27.4333);
+tl.set('#cap24w0',{color:'#FFD166'},26.5000);
+tl.set('#cap24w1',{color:'#FFD166'},26.8000);
+tl.set('#cap24w2',{color:'#FFD166'},27.2333);
+tl.set('#cap25',{visibility:'visible'},27.4333);tl.set('#cap25',{visibility:'hidden'},28.4000);
+tl.set('#cap25w0',{color:'#FFD166'},27.4667);
+tl.set('#cap26',{visibility:'visible'},28.4000);tl.set('#cap26',{visibility:'hidden'},30.3667);
+tl.set('#cap26w0',{color:'#FFD166'},28.4000);
+tl.set('#cap27',{visibility:'visible'},30.3667);tl.set('#cap27',{visibility:'hidden'},31.9667);
+tl.set('#cap27w0',{color:'#FFD166'},30.4000);
+tl.set('#cap27w1',{color:'#FFD166'},31.0667);
+tl.set('#cap27w2',{color:'#FFD166'},31.1667);
+tl.set('#cap28',{visibility:'visible'},31.9667);tl.set('#cap28',{visibility:'hidden'},33.1667);
+tl.set('#cap28w0',{color:'#FFD166'},32.0000);
+tl.set('#cap28w1',{color:'#FFD166'},32.1333);
+tl.set('#cap28w2',{color:'#FFD166'},32.3667);
+tl.set('#cap29',{visibility:'visible'},33.1667);tl.set('#cap29',{visibility:'hidden'},33.9333);
+tl.set('#cap29w0',{color:'#FFD166'},33.2000);
+tl.set('#cap29w1',{color:'#FFD166'},33.3667);
+tl.set('#cap29w2',{color:'#FFD166'},33.5333);
+window.__timelines=window.__timelines||{};window.__timelines["talking-head-recut"]=tl;
+})();
+</script></div></body></html>
