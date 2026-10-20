@@ -7,6 +7,7 @@ style.json that the beat map points at. Two layers drifting apart is how a hybri
 video ends up looking like a collage of tools.
 
     python3 style_lock.py list
+    python3 style_lock.py pick  --topic "compound interest for beginners" [--intent finance] [--format data-story] [--avoid blueprint] [--recent episodes/] [--brand "#E4572E"] [--n 3]
     python3 style_lock.py build --identity paper-collage --out episode/
     python3 style_lock.py build --identity swiss-grid --accent "#0057B8" --out episode/
     python3 style_lock.py build --identity blueprint --colormap "main=#7FDBFF,key=#FFD166,naive=#FF6B6B" --out episode/
@@ -18,6 +19,14 @@ it is exported as `--cm-<name>` CSS variables and `color_map` in style.json.
 `build --accent HEX` replaces the identity's accent with a brand colour. If that
 colour fails 4.5:1 as text on the background, a text-safe variant is derived (same
 hue, lightness stepped until it passes). The accent itself stays for fills.
+
+`pick` chooses a look for you, so the agent never has to ask and never defaults to the same one: it scores the identities by
+topic register (the groups in references/04-style-bible.md "Choosing"), fixes the look when the format defines it (vox-collage
+is paper-collage, flat-vector-motion is flat-vector), and then spreads videos apart: anything in `--avoid` or already used by a
+`style.json` under `--recent` is excluded, and a candidate whose background sits in the same colour family as the most recent
+look is penalised, so a run of videos does not drift into one palette. A brand colour (`--brand`) does not change the pick: it is
+the accent, applied with `build --accent`. The same topic always gets the same ranking; different topics spread. It prints the
+ranked picks with the reason for each; take the first and record it, with why, in `meta.notes`.
 
 Outputs in --out: style.json, style.css, art_style.json.
 Exit 0 ok | 2 usage / unknown identity.
@@ -116,6 +125,88 @@ def build(identity_id: str, accent: str | None = None, colormap: dict | None = N
     return ident
 
 
+# topic keyword groups -> identities, from references/04-style-bible.md "Choosing" (order = preference)
+REGISTERS = [
+    (("finance", "money", "economy", "economics", "news", "policy", "election", "law", "market", "invest", "interest", "tax", "inflation"),
+     ["newsroom", "editorial-serif", "swiss-grid"]),
+    (("software", "ai", "code", "developer", "security", "agent", "api", "github", "model", "cyber", "cloud", "data"),
+     ["tech-terminal", "glass-keynote", "neo-brutalist"]),
+    (("science", "how", "works", "mechanism", "biology", "space", "physics", "engineering", "energy", "body", "brain", "climate"),
+     ["flat-vector", "blueprint", "whiteboard-doodle"]),
+    (("culture", "history", "food", "art", "story", "people", "travel", "music", "language", "city"),
+     ["paper-collage", "risograph", "editorial-serif"]),
+    (("host", "opinion", "creator", "shorts", "startup", "hot", "take", "tips", "habit", "productivity", "career"),
+     ["creator-shorts", "neo-brutalist", "halftone-pop"]),
+    (("product", "premium", "luxury", "brand", "design", "fashion", "launch", "car", "watch"),
+     ["dark-luxe", "glass-keynote"]),
+    (("learn", "lesson", "tutorial", "step", "explain", "beginner", "basics", "school", "math"),
+     ["whiteboard-doodle", "flat-vector", "swiss-grid"]),
+]
+FORMAT_LOOK = {"vox-collage": "paper-collage", "flat-vector-motion": "flat-vector"}
+
+
+def hue_family(hexcolor: str) -> str:
+    """Coarse colour family of a background: dark, light, or a hue name. Used to spread consecutive videos apart."""
+    r, g, b = _rgb(hexcolor)
+    h, sat, v = colorsys.rgb_to_hsv(r, g, b)
+    if v < 0.16:
+        return "dark"
+    if sat < 0.12:
+        return "light" if v > 0.6 else "dark"
+    deg = h * 360
+    for name, lo, hi in (("red", 345, 360), ("red", 0, 20), ("orange", 20, 50), ("yellow", 50, 70), ("green", 70, 170), ("blue", 170, 265), ("purple", 265, 345)):
+        if lo <= deg < hi:
+            return name
+    return "other"
+
+
+def recent_identities(root: str | None) -> list[str]:
+    """Identity ids of the style.json files under `root`, newest first (the looks already used)."""
+    if not root:
+        return []
+    found = []
+    for p in Path(root).rglob("style.json"):
+        try:
+            found.append((p.stat().st_mtime, json.loads(p.read_text()).get("id")))
+        except (OSError, ValueError):
+            continue
+    return [i for _, i in sorted(found, reverse=True) if i]
+
+
+def pick(topic: str, intent: str = "", fmt: str = "", avoid: list[str] | None = None, recent: list[str] | None = None, n: int = 3) -> list[dict]:
+    import hashlib
+    ids = data("identities")["identities"]
+    avoid, recent = set(avoid or []), list(recent or [])
+    if fmt in FORMAT_LOOK:
+        return [{"id": FORMAT_LOOK[fmt], "score": 10.0, "why": f"the {fmt} format defines its look"}]
+    words = set(re.findall(r"[a-z]+", f"{topic} {intent} {fmt}".lower()))
+    last_family = hue_family(ids[recent[0]]["tokens"]["bg"]) if recent and recent[0] in ids else None
+    rows = []
+    for iid, ident in ids.items():
+        score, why = 0.0, []
+        for keys, prefs in REGISTERS:
+            hit = sorted(words & set(keys))
+            if hit and iid in prefs:
+                score += (3.0 - 0.6 * prefs.index(iid)) * min(len(hit), 2)
+                why.append(f"register match ({', '.join(hit)})")
+        reg = set(re.findall(r"[a-z]+", ident["register"].lower())) & words
+        if reg:
+            score += 0.8 * len(reg)
+            why.append("topic words in its register")
+        if iid in avoid:
+            continue
+        if iid in recent:
+            score -= 4.0
+            why.append("already used in a recent video")
+        if last_family and hue_family(ident["tokens"]["bg"]) == last_family:
+            score -= 3.5
+            why.append(f"same {last_family} colour family as the last look")
+        score += int(hashlib.sha256(f"{topic}|{iid}".encode()).hexdigest()[:6], 16) / 0xFFFFFF * 0.5  # spreads topics apart, repeatable
+        rows.append({"id": iid, "score": round(score, 2), "why": "; ".join(why) or "general fit"})
+    rows.sort(key=lambda r: -r["score"])
+    return rows[:max(1, n)]
+
+
 def css(ident: dict) -> str:
     t, f = ident["tokens"], ident["fonts"]
     lines = [":root {"]
@@ -179,6 +270,19 @@ def main(argv: list[str]) -> int:
         r = contrast(opt["fg"], opt["bg"])
         print(json.dumps({"ratio": round(r, 2), "aa_text": r >= 4.5, "aa_large_text": r >= 3.0,
                           "non_text_ui": r >= 3.0}))
+        return 0
+    if cmd == "pick":
+        if not (opt.get("topic") or opt.get("intent") or opt.get("format")):
+            eprint("--topic (or --intent / --format) is required")
+            return 2
+        avoid = [x for x in str(opt.get("avoid", "")).split(",") if x and x is not True]
+        recent = recent_identities(opt.get("recent") if opt.get("recent") is not True else None)
+        picks = pick(str(opt.get("topic", "")), str(opt.get("intent", "")), str(opt.get("format", "")), avoid, recent, int(opt.get("n", 3)))
+        out = {"picks": picks, "avoided": avoid, "recent": recent[:5]}
+        if opt.get("brand") not in (None, True):
+            out["brand_accent"] = opt["brand"].upper() if HEX.match(opt["brand"]) else None
+            out["note"] = "apply the brand colour with: style_lock.py build --identity <pick> --accent " + str(opt["brand"])
+        print(json.dumps(out, indent=2))
         return 0
     if cmd == "build":
         try:

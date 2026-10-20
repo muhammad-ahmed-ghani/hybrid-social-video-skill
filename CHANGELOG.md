@@ -2,6 +2,18 @@
 
 All notable changes to this skill. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] - 2026-10-21
+
+### Added
+- **Reference scan** (`scripts/reference_scan.py`, `references/18-reference-scan.md`): an automatic, optional look at 5 to 10 public reels on the
+  topic before the format and hook are chosen. `find` reads YouTube Shorts through the hashtag Shorts tab; `add` takes TikTok and Instagram
+  URLs from the agent's own web search; `analyze` measures each (length, cuts, average shot, loudness, hook text and type) in a temporary
+  download that is deleted; `summarize` names the overused opener, the typical pace and length. Public pages only, walls are never bypassed,
+  no personal data, technique not content. A `reference` role in `provenance.py` records that it ran.
+- **Look picker** (`style_lock.py pick`): ranks the 14 identities by topic register, fixes the look when the format defines it, and spreads
+  consecutive videos apart (recent looks and the same colour family are penalised). The skill had no rule against reusing one palette; now
+  no look is a default and support assets (mascot, host backdrop) follow the video's look.
+
 ## [1.2.0] - 2026-10-21
 
 ### Changed
