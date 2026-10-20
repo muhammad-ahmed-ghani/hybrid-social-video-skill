@@ -14,7 +14,7 @@ description: >-
   music video, or timeline editing.
 compatibility: Needs python3 and ffmpeg/ffprobe for the scripts (Pillow for the sheet and animatic; Playwright for the HTML compose route). Layer skills (HyperFrames, a Manim skill, explainer-reel-skill) and any image, video, voice or music tools (fal, an MCP server such as ImagineArt) are used when present; references/11-routing.md says how to degrade.
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Hybrid Social Video
@@ -63,6 +63,9 @@ recommended default:
 4. A permission the host denies: stop that step, finish everything that does not depend on it, say what was
    blocked and why you wanted it. Never work around a denial, split a call to slip under a threshold, or edit
    a guard to get past it.
+
+The reference scan (a look at 5 to 10 public reels on the topic, `references/18-reference-scan.md`) and the look pick
+(`style_lock.py pick`) run by themselves and feed the decision record; neither is ever a question.
 
 Series: the series gate becomes a decision record too. Propose the premise, cast, look and variation policy,
 lock them with `series.py lock`, and go; the user can amend by saying so, and the next episode obeys.
@@ -211,6 +214,7 @@ Fill these in yourself, in the user's language, and put them in `meta.notes`. Sh
 > Language and dialect | Tier and why | Spend authorisation: where it came from, the cap, the unit (USD or provider credits)
 > Voice route and why | Host: none, AI-generated (disclosed), or the user's own | Music and sound source | Renderer route (H, F or L)
 > Sources | AI-content label decision and its reason | The models and tools used (from `provenance.json`)
+> Look and why (`style_lock.py pick`, never a default) | Reference scan: how many public reels, and what it changed
 
 Run G-1 (the capability probe and your tool list) first, so the record only contains what this environment can
 produce.
@@ -243,10 +247,11 @@ Hybrid video:
          tools, provenance.py init with the director model (references/11-routing.md, 17-ai-models-and-tools.md)
 - [ ] S   Series only, once: series.py init + set, cast sheets and voices, look pack, variation policy, series budget; series.py lock
 - [ ] G0  Brief written (episode/brief.md): thesis in one sentence, intent, language, sources found, claims[] drafted
+         Reference scan (automatic, optional): 5 to 10 public reels on the topic -> hook, length, pace, what is overused (references/18-reference-scan.md)
 - [ ] G1  Beat map written -> cost scout builds pricebook.json (references/14-cost-scout.md)
          -> beatmap_lint.py --pricebook exits 0 -> storyboard.py page with the cost card -> animatic.py watched
          (gate) only if money is needed and nothing authorises it; comedy: the punchline pass
-- [ ] G2  Style lock (AI-defined looks): style_lock.py build + 2 to 4 bake-off stills; pick the look yourself
+- [ ] G2  Look: style_lock.py pick (never the last look, never a default), then build; 2 to 4 bake-off stills when AI defines the look; decide it yourself
 - [ ] G3  Voice: audition routes with voice_check.py, pick the best; voice-over or host clips + word timings -> spans.json; re-lint on the measured rate
 - [ ] G4  Code layer built (free to iterate); contact sheet reviewed
 - [ ] G5  AI stills, then only the clips that need motion; each one looked at; provenance.py add for each
@@ -260,6 +265,7 @@ Hybrid video:
 ```bash
 python3 scripts/capability_probe.py --out episode/capabilities.json          # local facts and ai_models; then add your tools and skills
 python3 scripts/provenance.py init  --episode episode --director "<the model you run as>"
+python3 scripts/reference_scan.py find --topic "<topic>" --n 8 --out episode/references.json   # then analyze, summarize (references/18)
 python3 scripts/textscript.py   episode/beatmap.json                         # script, direction, counting unit, covering fonts
 python3 scripts/cost_plan.py init --out episode/pricebook.json                # the scout fills it: cost_plan.py add ...
 python3 scripts/cost_plan.py plan --beatmap episode/beatmap.json --pricebook episode/pricebook.json   # work list, then the cost card
@@ -268,7 +274,8 @@ python3 scripts/storyboard.py   episode/beatmap.json --lint --pricebook episode/
 python3 scripts/animatic.py     episode/beatmap.json --out episode/animatic.mp4
 python3 scripts/ledger.py init  --episode episode --budget <cap inside the authorisation> --autonomous    # omit --autonomous to require gates (--require plan,look)
 python3 scripts/ledger.py gate  --episode episode --name plan --note "user: go"    # only when gates are on
-python3 scripts/style_lock.py build --identity paper-collage --out episode/        # style.json, style.css, art_style.json
+python3 scripts/style_lock.py pick  --topic "<topic>" --intent <id> --format <id> --recent <earlier episodes>   # ranked looks with reasons
+python3 scripts/style_lock.py build --identity <the pick> --out episode/        # style.json, style.css, art_style.json
 python3 scripts/ledger.py estimate --pricebook episode/pricebook.json --kind ai_image   # price of one call, from the pricebook
 python3 scripts/ledger.py check --episode episode --need <that estimate>      # before EVERY paid call, one call at a time
 python3 scripts/ledger.py spend --episode episode --kind ai_image --usd <the estimate> --beat 3 --request-id <id> --model <id>
@@ -327,6 +334,8 @@ never fill a missing price with a guess.
 - AI-written punchlines nobody rewrote.
 - An AI "expert" persona on health, legal, finance or politics without the user's recorded decision.
 - Copying a named channel's identity, a brand's marks, or any licensed code. Take the technique.
+- Reusing one look across unrelated videos, or letting a support asset (a mascot, a host backdrop) carry another video's palette.
+- Reading the reference scan as a template to copy instead of a map of what to do differently.
 - Claiming a model or tool in the final note that `provenance.json` does not show.
 - Working around a permission the host denied instead of reporting it.
 
@@ -360,7 +369,8 @@ the cost, the sources, the decision record and one line on anything accepted or 
 | `references/14-cost-scout.md` | pricing the plan from this environment: probe, sources, pricebook, credits and balance, the questions |
 | `references/15-series.md` | any series: frame and payload, the series record, the cast, routes for characters, comedy, memory |
 | `references/16-attention-prediction-sota.md` | only when asked to predict or test a cut's attention or retention before publishing: the research, the evidence and a build recommendation |
+| `references/18-reference-scan.md` | the automatic look at public reels on the topic: how to run it, what to take, the limits |
 | `references/17-ai-models-and-tools.md` | finding and using AI models and tools; what to record; the verified talking-host recipe; consent and disclosure |
-| `scripts/` | `beatmap_lint`, `capability_probe`, `cost_plan`, `ledger`, `provenance`, `voice_check`, `speech_align`, `host_assemble`, `render_html`, `mix_audio`, `textscript`, `speech_rate`, `style_lock`, `beatmap_to_brief`, `storyboard`, `animatic`, `ui_labels`, `contact_sheet`, `qc_master`, `series` |
+| `scripts/` | `beatmap_lint`, `capability_probe`, `cost_plan`, `ledger`, `provenance`, `reference_scan`, `voice_check`, `speech_align`, `host_assemble`, `render_html`, `mix_audio`, `textscript`, `speech_rate`, `style_lock`, `beatmap_to_brief`, `storyboard`, `animatic`, `ui_labels`, `contact_sheet`, `qc_master`, `series` |
 | `data/` | `formats.json`, `intents.json`, `identities.json`, `platforms.json`: thresholds live here. Prices do not: they are per episode |
 | `examples/` | beat maps that lint clean (`host-broll-skill-demo.json` is the plan of the demo video); `host-overlay-composition/` is the host-plus-overlay page; `tests/` pins the invariants |

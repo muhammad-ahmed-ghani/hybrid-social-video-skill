@@ -150,6 +150,14 @@ neo-brutalist, halftone-pop. Premium product: dark-luxe, glass-keynote. Match th
 too: `vox-collage` is paper-collage by definition; `flat-vector-motion` is flat-vector;
 `math-science-manim` takes the palette as a colour map (below).
 
+**Do not default to one look.** No identity is a default, and the look is never "the one used last time". Let
+`python3 scripts/style_lock.py pick --topic "<topic>" --intent <id> --format <id> --recent <folder of earlier episodes>` rank them: it
+matches the topic's register, fixes the look when the format defines it, and spreads consecutive videos apart (anything used recently
+is penalised, and so is a background in the same colour family as the last one). Take the first pick and write it, with its reason,
+into `meta.notes`. A user's brand overrides the pick for colour only: apply it with `build --accent`. Support assets follow the video's
+look, not the other way round: a mascot, host backdrop or thumbnail is prompted from `art_style.json` and the brand, so one blue
+palette does not leak across unrelated videos. A series keeps its look on purpose (`15-series.md`); a new topic does not.
+
 For maths and science, assign colours to concepts once, write the map into `style.json`
 (`color_map`), and reuse it for every shape, label and equation term of that concept.
 Never reuse a colour for a second concept and never change the map between scenes. A

@@ -1582,3 +1582,102 @@ def test_ledger_keeps_its_gates_by_default_so_autonomy_is_an_explicit_choice(tmp
     ep2 = tmp_path / "ep2"
     run_script("ledger.py", "init", "--episode", ep2, "--budget", "10", "--autonomous")
     assert run_script("ledger.py", "spend", "--episode", ep2, "--kind", "ai_image", "--usd", "1", "--beat", "1").returncode == 0
+
+
+# ---------------------------------------------------------------- v1.3: look picker and reference scan
+def _pick(*args):
+    r = run_script("style_lock.py", "pick", *args)
+    assert r.returncode == 0, r.stderr
+    return json.loads(r.stdout)
+
+
+def test_the_look_is_picked_by_topic_not_defaulted(tmp_path):
+    fin = [p["id"] for p in _pick("--topic", "compound interest for beginners", "--intent", "finance")["picks"]]
+    assert fin[0] == "newsroom" and set(fin) <= {"newsroom", "editorial-serif", "swiss-grid", "whiteboard-doodle", "tech-terminal"}
+    assert fin == [p["id"] for p in _pick("--topic", "compound interest for beginners", "--intent", "finance")["picks"]]   # repeatable
+    sci = _pick("--topic", "how a jet engine works", "--intent", "mechanism")["picks"][0]["id"]
+    assert sci in {"flat-vector", "blueprint", "whiteboard-doodle"}
+    assert fin[0] != sci
+
+
+def test_the_picker_excludes_and_spreads_consecutive_looks(tmp_path):
+    base = [p["id"] for p in _pick("--topic", "how a jet engine works", "--intent", "mechanism")["picks"]]
+    avoided = _pick("--topic", "how a jet engine works", "--intent", "mechanism", "--avoid", base[0])
+    assert base[0] not in [p["id"] for p in avoided["picks"]]
+    prev = tmp_path / "episodes" / "01"
+    prev.mkdir(parents=True)
+    run_script("style_lock.py", "build", "--identity", "blueprint", "--out", prev)
+    after = _pick("--topic", "how a jet engine works", "--intent", "mechanism", "--recent", tmp_path / "episodes")
+    assert after["recent"] == ["blueprint"]
+    ids = [p["id"] for p in after["picks"]]
+    assert ids[0] != "blueprint"                                           # not the look used last time
+    assert "already used" in " ".join(p["why"] for p in after["picks"] if p["id"] == "blueprint") or "blueprint" not in ids
+    from style_lock import hue_family
+    ids_data = data("identities")["identities"]
+    assert hue_family(ids_data["blueprint"]["tokens"]["bg"]) == "blue"
+    assert hue_family(ids_data[ids[0]]["tokens"]["bg"]) != "blue"          # the next look is not another blue after a blue
+
+
+def test_a_format_that_defines_its_look_fixes_it_and_a_brand_only_sets_the_accent():
+    assert _pick("--format", "vox-collage", "--topic", "x")["picks"][0]["id"] == "paper-collage"
+    out = _pick("--topic", "a startup pitch", "--brand", "#E4572E")
+    assert out["brand_accent"] == "#E4572E" and "--accent" in out["note"]
+    assert run_script("style_lock.py", "pick").returncode == 2
+
+
+def test_hooks_are_classified_by_how_they_open():
+    import reference_scan as rs
+    assert rs.classify_hook("What is compound interest? It's interest") == "question"
+    assert rs.classify_hook("Stop leaving your money in a savings account") == "warning"
+    assert rs.classify_hook("5 ways to grow your savings") == "number"
+    assert rs.classify_hook("Let us talk about coffee money") == "statement"
+    assert rs.classify_hook("I tried investing for a year") == "story"
+    assert rs.classify_hook("Nobody tells you this about banks") == "claim"
+    assert rs.classify_hook("") == "unknown"
+    assert rs.platform_of("https://www.tiktok.com/@a/video/1") == "tiktok" and rs.platform_of("https://youtu.be/x") == "youtube"
+    assert rs.platform_of("https://www.instagram.com/reel/abc/") == "instagram"
+
+
+def test_the_scan_summary_names_the_overused_opener_and_drops_off_topic_reels():
+    import reference_scan as rs
+    items = [{"status": "ok", "platform": "youtube", "duration_s": 20 + i, "avg_shot_s": 2.0, "hook_type": "question", "hook_words": 7,
+              "vertical": True, "on_topic": True} for i in range(5)]
+    items += [{"status": "ok", "platform": "tiktok", "duration_s": 30, "avg_shot_s": 3.0, "hook_type": "number", "hook_words": 5,
+               "vertical": True, "on_topic": False}, {"status": "blocked", "platform": "instagram"}]
+    s = rs.summarize({"items": items})
+    text = " ".join(s["notes"])
+    assert s["scanned"] == 5 and s["median_avg_shot_s"] == 2.0 and s["median_duration_s"] == 22
+    assert "5 of 5 open with a question hook" in text and "off-topic" in text and "never the content" in text
+    few = rs.summarize({"items": items[:2]})
+    assert "only 2 readable" in " ".join(few["notes"])
+
+
+def test_analyze_without_a_download_uses_titles_and_the_scan_skips_cleanly_without_ytdlp(tmp_path):
+    refs = tmp_path / "references.json"
+    refs.write_text(json.dumps({"topic": "compound interest", "items": [
+        {"status": "ok", "platform": "youtube", "url": "https://youtu.be/a", "title": "How does compound interest work?"},
+        {"status": "ok", "platform": "youtube", "url": "https://youtu.be/b", "title": "Cat video"}]}))
+    assert run_script("reference_scan.py", "analyze", "--refs", refs, "--no-download").returncode == 0
+    items = json.loads(refs.read_text())["items"]
+    assert items[0]["hook_type"] == "question" and items[0]["on_topic"] is True and items[1]["on_topic"] is False
+    r = subprocess.run([sys.executable, str(SCRIPTS / "reference_scan.py"), "find", "--topic", "x", "--out", str(tmp_path / "o.json")],
+                       capture_output=True, text=True, env={"PATH": "/nonexistent"})
+    assert r.returncode == 3 and "yt-dlp is not installed" in r.stderr
+
+
+@pytest.mark.skipif(not HAVE_FFMPEG, reason="ffmpeg needed")
+def test_measure_reads_length_cuts_and_shape_from_a_local_video(tmp_path):
+    import reference_scan as rs
+    v = tmp_path / "v.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc2=s=270x480:r=30:d=4", "-f", "lavfi", "-i", "sine=frequency=300:duration=4",
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(v)], check=True)
+    m = rs.measure(v)
+    assert m["vertical"] is True and m["duration_s"] == pytest.approx(4.0, abs=0.2) and m["avg_shot_s"] > 0 and "cuts" in m
+
+
+def test_the_reference_scan_is_documented_with_its_limits():
+    text = (ROOT / "SKILL.md").read_text()
+    assert "references/18-reference-scan.md" in text and "style_lock.py pick" in text
+    doc = (ROOT / "references" / "18-reference-scan.md").read_text()
+    for needle in ("Never bypass a wall", "No personal data", "Technique, not content", "deleted"):
+        assert needle in doc, needle

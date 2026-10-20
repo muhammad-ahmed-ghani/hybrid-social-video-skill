@@ -9,7 +9,7 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 <p align="center">
 <a href="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml"><img src="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT">
-<img src="https://img.shields.io/badge/skill-v1.2-informational" alt="skill v1.2">
+<img src="https://img.shields.io/badge/skill-v1.3-informational" alt="skill v1.3">
 <img src="https://img.shields.io/badge/Agent_Skills-compatible-success" alt="Agent Skills compatible">
 </p>
 
@@ -43,6 +43,11 @@ authorisation, a real person's likeness or voice, a credential. A plan that cost
   drawn in code over them: the host full frame for the hook and the payoff, a bubble beside a diagram while it explains.
 - **A voice people believe.** A ladder, best first: your own recording, host-native speech, a neural voice, and only then a system
   voice, which is marked draft. It auditions voices itself (`voice_check.py`) instead of asking you to listen.
+- **It looks before it makes.** A reference scan reads 5 to 10 public reels on your topic (hook type, length, pace, what is overused)
+  so it can choose a different, better opener and a pace that fits the feed. Craft only: it never copies content, never bypasses a
+  login, and deletes what it downloads.
+- **A different look for each video.** `style_lock.py pick` ranks looks by topic and spreads consecutive videos apart, so one palette
+  does not take over everything it makes. A brand colour sets the accent only.
 - **The right layer for each beat.** Code draws numbers, labels and diagrams exactly; AI invents what no camera could reach; real
   or stock footage proves things. A model never renders a number.
 - **It knows what it uses.** Tools and models are discovered (local models, MCP servers, credentials by name), pinned, and

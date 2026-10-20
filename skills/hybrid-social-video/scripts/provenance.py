@@ -9,7 +9,7 @@
     python3 provenance.py report --episode ep [--json]       # the AI-use statement and the disclosure verdict
     python3 provenance.py check  --episode ep [--beatmap beatmap.json]   # exit 1 on a gap
 
-Roles: script, code, image, video, host, tts, stt, music, sfx, captions, human-voice, other. An entry says what ran
+Roles: script, code, image, video, host, tts, stt, music, sfx, captions, human-voice, reference (public reels analysed), other. An entry says what ran
 (tool, model id, provider, local or hosted), what it was used for, which beats, the request id, what data left the
 machine, how realistic the output is and whether it depicts a real person. `--in-output false` records a test or an asset that is not in the delivered video (it is listed but
 leaves the disclosure verdict). `--ai false` records a non-AI tool or a
@@ -29,7 +29,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from hx_common import eprint, parse_args  # noqa: E402
 
-ROLES = {"script", "code", "image", "video", "host", "tts", "stt", "music", "sfx", "captions", "human-voice", "other"}
+ROLES = {"script", "code", "image", "video", "host", "tts", "stt", "music", "sfx", "captions", "human-voice", "reference", "other"}
 LAYER_ROLES = {"ai_image": {"image"}, "ai_video": {"video", "host"}, "host": {"host", "video"}}
 VOICE_ROLES = {"tts", "host", "human-voice"}
 
