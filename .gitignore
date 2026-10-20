@@ -8,3 +8,4 @@ episode/
 series/
 *.mp4
 !dist/*.skill
+!demo/*.mp4

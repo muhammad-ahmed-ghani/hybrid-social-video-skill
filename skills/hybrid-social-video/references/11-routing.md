@@ -114,10 +114,20 @@ timeline conventions for route H (one caption track, one element kind per track,
 `/hyperframes-studio`; its generic 90% and 80% safe boxes are looser than the measured platform bands in
 `10-platforms.md`, so use the platform bands for anything that matters.
 
+## Host plus overlays (route L, verified)
+
+When the video carries a talking host, the host video is the base layer and the code layer is drawn over it: no HyperFrames
+needed. `scripts/host_assemble.py` joins the clips and writes per-word timings from the host's own audio; an HTML page
+(`examples/host-overlay-composition/`) draws the picture as a pure function of time over pre-extracted host frames:
+the host full frame for the hook, the answer and the payoff, and a circular bubble over a blurred, tinted copy of the host
+while a diagram takes the stage; `scripts/render_html.py` renders the frames in parallel and checks determinism;
+`scripts/mix_audio.py` mixes the host's untouched audio with a ducked bed and meaningful cues; ffmpeg encodes; `qc_master.py`
+checks. HyperFrames stays an optional upgrade for the final note, never a question.
+
 ## When a sibling is missing
 
 1. Say which skill is missing and what it would add, in one line.
-2. Offer the install command once. Do not install without a yes.
+2. Do not stop to ask. Mention the install command once in the final note as an optional upgrade; install only when the user asked for it.
 3. Continue with the degradation in the table above. A plan that needs a layer you cannot produce is re-planned at Gate 1,
    not discovered at render time.
 4. Never improvise a replacement for a missing skill's hard-won rules (frame seek safety, caption fonts, avatar sync).

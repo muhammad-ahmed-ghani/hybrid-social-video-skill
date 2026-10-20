@@ -14,3 +14,4 @@
 - Thresholds live in `data/`. Scripts read them and docs cite them.
 - Scripts stay standard-library only, apart from the optional Pillow import.
 - Every invariant a script relies on gets a test.
+- Never ship a price. Never weaken a spend guard to make a run easier: autonomy is a policy in `SKILL.md`, enforced by the ledger, not a bypass of it.

@@ -29,6 +29,16 @@ none of them is decoration; delete it. "Don't add motion for the sake of adding 
 Elements that slide in attract attention faster than ones that fade, and fast motion at
 the periphery steals attention from the hero.
 
+## Transitions that are not allowed
+
+A transition has to carry meaning: a morph that keeps an object's identity (a full-frame host shrinking into a bubble while a
+diagram takes the stage), a push or scale-through that follows the motion, a cut on an action, a reframe, a whip pan with
+blur. These are not allowed: white or black flash frames between sections, a dip to a colour, a decorative wipe, a glitch
+used as a seam, and any cut or flash added so that a detector counts a cut. If `qc_master.py` reports a pacing failure, give
+the long stretch a real change (a new overlay state, a punch-in on a phrase, a cut to another layer) or, if the check is
+wrong about a moving shot, fix the check. A stylised flash is allowed once per video, on a deliberate beat, with its reason in
+`meta.notes`.
+
 ## Easing
 
 GSAP's default is `power1.out`. Measured on GSAP 3.15.0 (`t(x)` = fraction of the

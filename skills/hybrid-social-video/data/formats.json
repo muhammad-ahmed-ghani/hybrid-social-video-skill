@@ -444,7 +444,8 @@
       "read": [
         "06-sound",
         "07-ai-layer",
-        "11-routing"
+        "11-routing",
+        "17-ai-models-and-tools"
       ]
     },
     "talking-head-package": {

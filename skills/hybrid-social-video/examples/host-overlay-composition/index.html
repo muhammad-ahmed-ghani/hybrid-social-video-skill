@@ -1,0 +1,204 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  :root{--bg:#0F3D7A;--surface:#144C94;--ink:#F2F7FF;--muted:#A9C4EA;--accent:#7FDBFF;--accent2:#FFD166;--naive:#FF6B6B;}
+  html,body{margin:0;padding:0;background:#000;}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#0A2E5C;font-family:Menlo,"Andale Mono",monospace;color:var(--ink);}
+  #hostbg{position:absolute;left:-90px;top:-160px;width:1260px;height:2240px;filter:blur(36px) brightness(.32) saturate(.8);}
+  #tint{position:absolute;inset:0;background:rgba(15,61,122,.66);}
+  svg{position:absolute;left:0;top:0;width:1080px;height:1920px;}
+  #win{position:absolute;overflow:hidden;box-sizing:border-box;border:0 solid var(--accent);}
+  #host{position:absolute;transform-origin:0 0;}
+  #shade{position:absolute;left:0;top:0;width:1080px;height:1920px;background:linear-gradient(to bottom,rgba(6,24,52,0) 0%,rgba(6,24,52,0) 44%,rgba(6,24,52,.55) 62%,rgba(6,24,52,.72) 100%);}
+  #title{position:absolute;left:392px;width:500px;top:330px;font-weight:700;font-size:48px;letter-spacing:1px;text-transform:uppercase;line-height:1.12;}
+  #cap{position:absolute;left:120px;width:768px;top:1112px;display:flex;justify-content:center;}
+  #cap span.pill{background:rgba(7,32,72,.88);border:3px solid rgba(169,196,234,.5);border-radius:14px;padding:12px 20px;font-weight:700;font-size:48px;line-height:1.15;text-align:center;white-space:nowrap;}
+  #cap .on{color:var(--accent2);}
+</style></head>
+<body><div id="stage">
+<img id="hostbg">
+<div id="tint"></div>
+<svg id="bg" viewBox="0 0 1080 1920"></svg>
+<div id="shade"></div>
+<div id="win"><img id="host"></div>
+<div id="title"></div>
+<svg id="art" viewBox="0 0 1080 1920"></svg>
+<div id="cap"></div>
+</div>
+<script src="data.js"></script>
+<script>
+const T=window.TIMING, B=T.beats, D=T.duration+1.0, N=window.NFRAMES;
+const MODE={1:0,2:1,3:1,4:1,5:1,6:0,7:0,8:0};            // 1 = diagram beat (host in a bubble), 0 = host full frame
+const firstOfClip=B.map((b,i)=>i===0||B[i-1].clip!==b.clip);
+const vs=B.map((b,i)=>firstOfClip[i]?b.cs:b.words[0].s-0.2), ve=B.map((b,i)=>i===B.length-1?D:vs[i+1]);
+const C={ink:'#F2F7FF',muted:'#A9C4EA',accent:'#7FDBFF',y:'#FFD166',red:'#FF6B6B',surface:'#144C94',panel:'#0A2E5C'};
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=x=>{x=clamp(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+const eo=x=>1-Math.pow(1-clamp(x),3);
+const pr=(t,a,d)=>clamp((t-a)/d);
+const lerp=(a,b,m)=>a+(b-a)*m;
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const byId=id=>B.find(b=>b.id===id);
+const WS=(id,i)=>byId(id).words[i].s, WE=(id,i)=>byId(id).words[i].e;
+const F='font-family="Menlo, Andale Mono, monospace"';
+const txt=(x,y,s,o={})=>`<text x="${x}" y="${y}" ${F} font-size="${o.size||30}" font-weight="${o.w||700}" fill="${o.fill||C.ink}" text-anchor="${o.a||'start'}" opacity="${o.op==null?1:o.op}">${esc(s)}</text>`;
+const rect=(x,y,w,h,p,o={})=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx==null?6:o.rx}" fill="none" stroke="${o.stroke||C.accent}" stroke-width="${o.sw||4}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${1-p}" opacity="${o.op==null?1:o.op}"/>`+(o.fill?`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx==null?6:o.rx}" fill="${o.fill}" opacity="${(o.fo==null?1:o.fo)*clamp(p*1.4-0.3)*(o.op==null?1:o.op)}"/>`:'');
+const path=(d,p,o={})=>`<path d="${d}" fill="none" stroke="${o.stroke||C.accent}" stroke-width="${o.sw||4}" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${1-p}" opacity="${o.op==null?1:o.op}"/>`;
+const tick=(x,y,p,col)=>path(`M ${x-12} ${y} L ${x-3} ${y+10} L ${x+14} ${y-12}`,p,{stroke:col||C.accent,sw:6});
+const typed=(s,p)=>s.slice(0,Math.floor(s.length*clamp(p)+1e-6));
+const lock=(cx,cy,open,col)=>{const sh=open*9;return `<path d="M ${cx-14} ${cy-2-sh} V ${cy-18-sh} a 14 14 0 0 1 28 0 V ${cy-2-sh-(open>0.5?10:0)}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round"/><rect x="${cx-22}" y="${cy-2}" width="44" height="34" rx="6" fill="${col}"/>`};
+const hatch=(x,y,w,h,op)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#hp)" opacity="${op}"/>`;
+
+// ---------------- diagram beats (host in a bubble); every text >= 40 px (references/09-qa.md Q1) ----------------
+const diagram={
+2(t){
+  const bands=[['CODE','EXACT',860,WS(2,5),C.accent],['AI','ATMOSPHERE',736,WS(2,6),C.y],['REAL','PROOF',612,WS(2,7),C.ink],['HOST','HUMAN',488,WS(2,11),C.muted]];
+  let a='';
+  bands.forEach(b=>{const p=eo(pr(t,b[3]-0.1,0.45));if(p<=0)return;const x=140-(1-p)*140;
+    a+=`<g opacity="${p}">`+rect(x,b[2],690,112,Math.min(1,p*1.2),{stroke:b[4],sw:4,fill:C.surface})+hatch(x+4,b[2]+4,682,104,.12)+txt(x+26,b[2]+74,b[0],{size:56,fill:b[4]})+txt(x+664,b[2]+70,b[1],{size:40,fill:C.muted,a:'end'})+`</g>`;});
+  const top=bands.filter(b=>t>=b[3]-0.1).map(b=>b[2]).reduce((m,v)=>Math.min(m,v),972);
+  const dp=ease(pr(t,WS(2,5)-0.1,0.4));
+  if(dp>0){a+=path(`M 860 972 V ${top}`,dp,{stroke:C.y,sw:3});for(const y of [972,860,736,612,488].filter(y=>y>=top))a+=`<line x1="848" y1="${y}" x2="872" y2="${y}" stroke="${C.y}" stroke-width="3"/>`}
+  const n=Math.round(4*eo(pr(t,WS(2,3),0.4)));
+  return {art:a,title:t>=WS(2,3)?`${n} layers`:''};
+},
+3(t){
+  const rows=[['number(15)',cy=>txt(690,cy+34,'15',{size:104,fill:C.y,a:'middle'}),WS(3,3)],
+    ['label("REEL")',cy=>rect(520,cy-50,330,100,1,{stroke:C.accent,sw:4,fill:C.surface})+txt(685,cy+18,'REEL',{size:56,a:'middle',fill:C.accent}),WS(3,5)],
+    ['axis(0, 35)',cy=>path(`M 545 ${cy-10} H 830`,1,{stroke:C.accent,sw:4})+[545,830].map(x=>`<line x1="${x}" y1="${cy-28}" x2="${x}" y2="${cy+8}" stroke="${C.accent}" stroke-width="4"/>`).join('')+txt(545,cy+52,'0',{size:40,a:'middle',fill:C.muted})+txt(830,cy+52,'35s',{size:40,a:'middle',fill:C.muted}),WS(3,9)]];
+  let a='';
+  rows.forEach((r,i)=>{const y0=500+i*160,cy=y0+70,p=eo(pr(t,r[2]-0.5,0.4));if(p<=0)return;
+    a+=`<g opacity="${p}">`+rect(120,y0,350,140,1,{stroke:C.muted,sw:3,fill:C.panel})+txt(138,y0+84,typed(r[0],pr(t,r[2]-0.5,0.45)),{size:40,fill:C.muted})+`</g>`;
+    const q=eo(pr(t,r[2]-0.05,0.3));a+=path(`M 476 ${cy} H 512`,q,{stroke:C.accent,sw:4});
+    if(q>=1){a+=`<g opacity="${pr(t,r[2]+0.1,0.2)}">`+r[1](cy)+`</g>`+tick(870,cy,eo(pr(t,r[2]+0.4,0.25)),C.accent);}});
+  return {art:a,title:'Labels never drift'};
+},
+4(t){
+  const names=['DATA STORY','MANIM MATHS','KINETIC TYPE','DIAGRAM','SCREEN DEMO','CHAT','VOX COLLAGE','MAP','ARCHIVAL DOC','FLAT VECTOR','HOST + B-ROLL','TALKING HEAD','NEWS BRIEF','COMEDY SKETCH','CARTOON'];
+  const t0=WS(4,7)-0.1,t1=WE(4,10),hl=WS(4,11),card=WS(4,12);let a='';
+  const n=Math.round(15*eo(pr(t,t0,t1-t0)));
+  if(t<t0-0.05){
+    const p=eo(pr(t,WS(4,2),0.4));
+    a+=`<g opacity="${p}">`+[[150,520,1,1],[858,520,-1,1],[150,960,1,-1],[858,960,-1,-1]].map(c=>`<path d="M ${c[0]} ${c[1]+c[3]*60} V ${c[1]} H ${c[0]+c[2]*60}" fill="none" stroke="${C.y}" stroke-width="6" stroke-linecap="round"/>`).join('')+txt(504,772,'DIRECTOR',{size:104,a:'middle',fill:C.y})+txt(504,840,'picks the format',{size:40,a:'middle',fill:C.muted})+`</g>`;
+  }
+  if(t>=t0-0.05&&t<card){
+    const idx=Math.min(14,Math.floor(pr(t,t0,t1-t0)*14.99)),isD=t>=hl,show=isD?3:idx;
+    a+=`<g opacity="${eo(pr(t,t0-0.05,0.2))*(1-eo(pr(t,card-0.25,0.25)))}">`+txt(504,760,String(n),{size:240,a:'middle',fill:C.y})+txt(504,830,'FORMATS',{size:48,a:'middle',fill:C.muted});
+    const cw=560,x=504-cw/2;
+    a+=rect(x,880,cw,110,1,{stroke:isD?C.y:C.accent,sw:isD?6:4,fill:C.surface,fo:.95})+txt(504,950,names[show],{size:52,a:'middle',fill:isD?C.y:C.ink});
+    if(isD)a+=txt(504,1030,'THIS VIDEO',{size:40,a:'middle',fill:C.y,op:eo(pr(t,hl,0.25))});
+    a+=`</g>`;
+  }
+  const cp=ease(pr(t,card,0.55));
+  if(cp>0){const x=130,y=500,w=700,h=520;a+=`<g opacity="${cp}">`+rect(x,y,w,h,1,{stroke:C.y,sw:5,fill:C.panel,fo:.97})+txt(x+30,y+64,'THE PLAN',{size:48,fill:C.y});
+    ['01 HOOK','02 CONTEXT','03 BUILD','04 BUILD','05 BUILD','06 TURN','07 REVEAL','08 PAYOFF'].forEach((l,i)=>{const lp=eo(pr(t,card+0.2+i*0.07,0.2)),col=i%2?x+360:x+30,row=Math.floor(i/2);
+      a+=txt(i%2?x+370:x+30,y+140+row*92,l,{size:40,op:lp})+path(`M ${i%2?x+370:x+30} ${y+156+row*92} H ${(i%2?x+370:x+30)+300*lp}`,1,{stroke:C.muted,sw:2,op:.6*lp});});a+=`</g>`;}
+  return {art:a,title:''};
+},
+5(t){
+  const rows=['PLAN','AI IMAGES','AI CLIPS','HOST'],ap=WE(5,10)-0.2,press=eo(pr(t,ap,0.2)),btn=eo(pr(t,WS(5,5),0.4));let a='';
+  rows.forEach((r,i)=>{const y=480+i*104,rp=ease(pr(t,WS(5,0)+i*0.12,0.4)),priced=eo(pr(t,WS(5,1)+i*(WE(5,3)-WS(5,1))/4,0.25)),opened=ease(pr(t,ap+0.2+i*0.18,0.3));
+    a+=rect(120,y,748,92,rp,{stroke:opened>0.5?C.accent:C.muted,sw:3,fill:C.surface})+`<g opacity="${rp}">`+lock(166,y+28,opened,opened>0.5?C.accent:C.y)+txt(214,y+62,r,{size:40})+`</g>`;
+    if(priced>0)a+=rect(446,y+14,200,64,priced,{stroke:C.muted,sw:3,rx:32})+txt(546,y+58,'PRICED',{size:40,a:'middle',fill:C.muted,op:priced});
+    a+=txt(850,y+62,opened>0.5?'OPEN':'LOCKED',{size:40,a:'end',fill:opened>0.5?C.accent:C.red,op:rp});});
+  if(btn>0){a+=`<g opacity="${btn}">`+rect(214,920,440,110,1,{stroke:C.y,sw:5,fill:C.y,fo:press*0.95})+txt(434,992,'YOU APPROVE',{size:50,a:'middle',fill:press>0.5?C.panel:C.y})+`</g>`;
+    if(press>=1)a+=tick(620,974,eo(pr(t,ap+0.15,0.2)),C.panel);}
+  return {art:a,title:'You approve first'};
+}};
+const shiftD=a=>`<g transform="translate(0 20)">${a}</g>`;
+
+// ---------------- host beats (overlays on the full-frame host) ----------------
+const hostOv={
+1(t){
+  const strike=WS(1,10),tags=[['NUMBERS',225,884,WS(1,2)],['VOICE',783,884,WS(1,3)],['FOOTAGE',225,1050,WS(1,5)],['CAPTIONS',783,1050,WS(1,6)]];
+  const arrows=['M 330 884 Q 450 900 420 935','M 678 884 Q 560 905 588 935','M 330 1050 Q 450 1030 420 997','M 678 1050 Q 560 1034 588 997'];
+  const fade=1-.55*pr(t,strike,0.3),sh=clamp((t-(strike-1.2))/0.5)*(1-clamp((t-strike)/0.15));
+  const dx=Math.sin(t*70)*4*sh,dy=Math.cos(t*83)*3*sh;let a='';
+  tags.forEach((g,i)=>{const p=eo(pr(t,g[3],0.35));
+    a+=rect(g[1]-105,g[2]-32,210,64,p,{stroke:C.muted,sw:3,fill:C.panel,fo:.94,op:fade})+txt(g[1],g[2]+14,g[0],{size:40,a:'middle',op:p*fade})+path(arrows[i],ease(pr(t,g[3]+0.15,0.5)),{stroke:C.accent,sw:4,op:fade});});
+  const bp=ease(pr(t,WS(1,4),0.4));
+  a+=`<g transform="translate(${dx},${dy})">`+rect(354,918,300,96,bp,{stroke:C.accent,sw:5,fill:C.panel,fo:.96,op:1-.5*pr(t,strike,0.3)})+txt(504,985,'ONE TOOL',{size:48,a:'middle',op:bp*(1-.5*pr(t,strike,0.3))})+`</g>`;
+  a+=path('M 130 860 L 880 1080',eo(pr(t,strike,0.25)),{stroke:C.red,sw:12});
+  return {art:a};
+},
+6(t){
+  const L=[['HOW DO YOU',WS(6,1),945],['USE IT?',WS(6,4),1050]];let a='';
+  L.forEach(l=>{const p=eo(pr(t,l[1]-0.05,0.25));a+=txt(504,l[2]+(1-p)*24,l[0],{size:104,a:'middle',op:p,fill:C.ink});});
+  if(Math.floor(t*2)%2===0&&t>WS(6,5)+0.2)a+=`<rect x="700" y="975" width="34" height="86" fill="${C.accent}"/>`;
+  return {art:a};
+},
+7(t){
+  const x=130,y=850,w=748,h=240,wp=ease(pr(t,vs[B.findIndex(b=>b.id===7)],0.35));let a='';
+  a+=rect(x,y,w,h,wp,{stroke:C.accent,sw:4,fill:C.panel,fo:.96})+`<g opacity="${wp}"><line x1="${x}" y1="${y+44}" x2="${x+w}" y2="${y+44}" stroke="${C.accent}" stroke-width="3"/>`+[0,1,2].map(i=>`<circle cx="${x+28+i*28}" cy="${y+22}" r="8" fill="${[C.red,C.y,C.accent][i]}"/>`).join('')+txt(x+w-24,y+32,'agent',{size:40,a:'end',fill:C.muted})+`</g>`;
+  const l1='github.com/',l2='muhammad-ahmed-ghani/',l3='hybrid-social-video-skill';
+  const tA=WS(7,0),tB=WE(7,7),pA=pr(t,tA,(tB-tA)*0.9),inCmd=t>=WS(7,10)-0.05;
+  const L=[typed(l1,pA*3),typed(l2,pA*3-1),typed(l3,pA*3-2)];
+  if(!inCmd){L.forEach((s,i)=>{if(s)a+=txt(x+24,y+92+i*48,s,{size:40,fill:i===2?C.y:C.ink});});}
+  else{const cmd='> '+typed('use hybrid-social-video',pr(t,WS(7,10),WE(7,11)-WS(7,10)-0.15));a+=txt(x+24,y+150,cmd,{size:44,fill:C.y});
+    if(Math.floor(t*2)%2===0)a+=`<rect x="${x+24+cmd.length*26.4+6}" y="${y+112}" width="16" height="46" fill="${C.accent}"/>`;}
+  return {art:a};
+},
+8(t){
+  const chips=[['1','DESCRIBE THE REEL',WS(8,0),850],['2','APPROVE THE PLAN',WS(8,3),934],['3','GET THE VIDEO',WS(8,6),1018]];let a='';
+  chips.forEach(c=>{const p=eo(pr(t,c[2]-0.05,0.4));if(p<=0)return;const x=140-(1-p)*200;
+    a+=`<g opacity="${p}">`+rect(x,c[3],728,76,1,{stroke:C.accent,sw:4,fill:C.surface,fo:.95})+`<circle cx="${x+42}" cy="${c[3]+38}" r="26" fill="${C.y}"/>`+txt(x+42,c[3]+51,c[0],{size:40,a:'middle',fill:C.panel})+txt(x+90,c[3]+52,c[1],{size:40})+`</g>`;});
+  const rp=eo(pr(t,WE(8,8)+0.05,0.4));
+  a+=`<g opacity="${rp}">`+rect(120,1112,768,130,1,{stroke:C.y,sw:4,fill:C.panel,fo:.95})+txt(504,1176,'hybrid-social-video-skill',{size:44,a:'middle',fill:C.y})+txt(504,1224,'github.com/muhammad-ahmed-ghani',{size:36,a:'middle',fill:C.muted})+`</g>`;
+  return {art:a};
+}};
+
+// ---------------- captions ----------------
+function chunks(b){const out=[];let cur=[],len=0;
+  b.words.forEach(w=>{if(cur.length&&(cur.length>=4||len+w.word.length+1>22)){out.push(cur);cur=[];len=0}cur.push(w);len+=w.word.length+1;if(/[.,?:!]$/.test(w.word)){out.push(cur);cur=[];len=0}});
+  if(cur.length)out.push(cur);return out;}
+const CH=B.map(chunks);
+function caption(t,i){let cur=null;for(const c of CH[i])if(t>=c[0].s-0.02)cur=c;if(!cur||t>B[i].e+(B[i].id===8?0.05:0.5))return '';
+  return '<span class="pill">'+cur.map(w=>`<span class="${t>=w.s?'on':''}">${esc(w.word)}</span>`).join(' ')+'</span>';}
+
+// ---------------- background grid ----------------
+function grid(t,m){let s='';const ox=-(t*5)%240,oy=-(t*3)%240;
+  for(let x=ox-240;x<1320;x+=48){const mj=Math.round((x-ox)/48)%5===0;s+=`<line x1="${x}" y1="0" x2="${x}" y2="1920" stroke="#fff" stroke-opacity="${(mj?.16:.07)*m}" stroke-width="${mj?2:1}"/>`}
+  for(let y=oy-240;y<2160;y+=48){const mj=Math.round((y-oy)/48)%5===0;s+=`<line x1="0" y1="${y}" x2="1080" y2="${y}" stroke="#fff" stroke-opacity="${(mj?.16:.07)*m}" stroke-width="${mj?2:1}"/>`}
+  return s;}
+
+const PX=545,PY=500;           // face centre in 1080x1920 host coordinates
+function modeAt(t){let m=MODE[B[0].id];for(let b=1;b<B.length;b++){const a=MODE[B[b-1].id],c=MODE[B[b].id];if(t>=vs[b]-0.1)m=a===c?c:lerp(a,c,ease((t-(vs[b]-0.1))/0.5));}return m;}
+
+async function render(t){
+  t=Math.min(Math.max(t,0),D-1/60);
+  let i=0;for(let k=0;k<B.length;k++)if(t>=vs[k])i=k;
+  const id=B[i].id,u=t-vs[i],m=modeAt(t);
+  const fr='hf/h'+String(Math.min(N-1,Math.round(t*30))+1).padStart(5,'0')+'.jpg';
+  const host=document.getElementById('host'),bgimg=document.getElementById('hostbg');
+  if(!host.src.endsWith(fr)){host.src=fr;bgimg.src=fr;}
+  await Promise.all([host.decode(),bgimg.decode()]).catch(()=>{});
+  // host window: full frame -> bubble
+  const kf=B[i].clip%2===1?1.07:1.0,kb=0.34,k=lerp(kf,kb,m);
+  const w=lerp(1080,220,m),h=lerp(1920,220,m),x=lerp(0,140,m),y=lerp(0,290,m);
+  const win=document.getElementById('win');
+  win.style.left=x+'px';win.style.top=y+'px';win.style.width=w+'px';win.style.height=h+'px';win.style.borderRadius=lerp(0,110,m)+'px';win.style.borderWidth=(6*m)+'px';
+  host.style.width=1080*k+'px';host.style.height=1920*k+'px';
+  const hw=1080*k,hh=1920*k;
+  host.style.left=clamp(lerp((1-kf)*PX,(w/2-PX*kb),m),w-hw,0)+'px';host.style.top=clamp(lerp((1-kf)*PY,(h/2-PY*kb),m),h-hh,0)+'px';
+  document.getElementById('tint').style.opacity=m;bgimg.style.opacity=m;
+  document.getElementById('shade').style.opacity=1-m;
+  document.getElementById('bg').innerHTML=grid(t,m);
+  // art
+  let art='<defs><pattern id="hp" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="18" stroke="#fff" stroke-width="3"/></pattern></defs>';
+  let title='';
+  if(MODE[id]===1){
+    const r=diagram[id](t);const inP=ease(u/0.3);
+    // previous diagram fades out while the new one comes in
+    if(u<0.3&&i>0&&MODE[B[i-1].id]===1){const pv=diagram[B[i-1].id](vs[i]-0.001);art+=`<g opacity="${1-inP}">${shiftD(pv.art)}</g>`;}
+    art+=`<g opacity="${(i>0&&MODE[B[i-1].id]===1)?inP:eo(pr(u,0.2,0.3))}">${shiftD(r.art)}</g>`;title=r.title;
+  }else{
+    const r=hostOv[id](t);art+=`<g opacity="${ease(pr(u,0.05,0.25))*(1-pr(m,0.0,1)*0)}">${r.art}</g>`;
+  }
+  // diagram art must not show while the host is still full-frame (mid-transition): scale by m for diagram beats
+  document.getElementById('art').innerHTML=art;
+  const ti=document.getElementById('title');ti.textContent=title||'';ti.style.opacity=title?Math.min(1,eo(u/0.3))*clamp((m-0.5)*2):0;
+  document.getElementById('cap').innerHTML=caption(t,i);
+  return i;
+}
+window.render=render;window.DUR=D;
+</script></body></html>

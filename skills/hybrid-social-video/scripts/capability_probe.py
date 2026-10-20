@@ -12,6 +12,10 @@ credentials in the environment and the NAMES of provider CLI profile folders (ne
 Credentials can live in a CLI profile instead of an environment variable, so an empty
 `credentials_present` does not mean no access: the scout confirms with the provider's own tool.
 
+It also writes `ai_models`: what on this machine is an AI model or a synthetic-voice route (local speech models, TTS
+modules and binaries, cached model weights, hosted gateways hinted by credential names), with a role, local or hosted,
+and a note such as "DRAFT quality" for system voices. The agent fills `ai_models.director` and `ai_models.tool_models`.
+
 It cannot see the agent's own tools. The scout fills `agent_tools` by reading its tool list
 (image, video, voice, music generators, MCP servers, media catalogs) and `skills` from the
 skills it can load. Local models cost compute, not credits: a local GPU is a capability with
@@ -36,10 +40,26 @@ from hx_common import eprint, parse_args  # noqa: E402
 
 BINARIES = ["ffmpeg", "ffprobe", "node", "npx", "python3", "manim", "latex", "dvisvgm", "nvidia-smi",
             "chromium", "chromium-browser", "google-chrome", "chrome-headless-shell", "yt-dlp",
-            "fal", "piper", "whisper", "espeak-ng", "rhubarb", "fc-list", "pdftotext"]
+            "fal", "piper", "whisper", "espeak-ng", "say", "rhubarb", "fc-list", "pdftotext"]
 MODULES = ["PIL", "manim", "fal_client", "playwright", "numpy", "cv2", "torch", "transformers",
            "onnxruntime", "edge_tts", "TTS", "kokoro", "piper", "whisper", "faster_whisper",
            "pydub", "fontTools", "h5py"]
+# What the AI-looking things on a machine are, so the agent knows what it is working with. Detection only.
+AI_MODULES = {
+    "faster_whisper": ("stt", "local", "speech-to-text, Whisper family"), "whisper": ("stt", "local", "speech-to-text, Whisper family"),
+    "TTS": ("tts", "local", "Coqui text-to-speech"), "kokoro": ("tts", "local", "Kokoro neural text-to-speech"),
+    "piper": ("tts", "local", "Piper small neural text-to-speech"),
+    "edge_tts": ("tts", "hosted", "unofficial web endpoint: can be blocked (HTTP 403), no published price or terms"),
+    "fal_client": ("gateway", "hosted", "fal.ai client: image, video, voice and music models, read ids from its catalog"),
+    "torch": ("runtime", "local", "model runtime"), "transformers": ("runtime", "local", "model runtime"),
+    "onnxruntime": ("runtime", "local", "model runtime"),
+}
+AI_BINARIES = {
+    "say": ("tts", "local", "macOS system voices: DRAFT quality, never the final voice when anything better is reachable"),
+    "espeak-ng": ("tts", "local", "formant synthesiser: DRAFT quality"),
+    "piper": ("tts", "local", "Piper small neural text-to-speech"),
+    "whisper": ("stt", "local", "Whisper CLI"), "fal": ("gateway", "hosted", "fal CLI"),
+}
 # folders that hold a provider login or a model cache; only their NAMES are reported
 PROFILE_DIRS = ["~/.fal", "~/.config/fal", "~/.elevenlabs", "~/.config/elevenlabs", "~/.openai",
                 "~/.replicate", "~/.config/replicate", "~/.heygen", "~/.config/gcloud"]
@@ -114,9 +134,27 @@ def probe() -> dict:
         if root.is_dir():
             caches[name] = sorted(x.name for x in root.iterdir())[:40]
     loc["model_caches"] = caches
+    ai: list[dict] = []
+    for m in loc["modules"]:
+        if m in AI_MODULES:
+            role, runs, note = AI_MODULES[m]
+            ai.append({"id": m, "kind": "python module", "role": role, "runs": runs, "note": note})
+    for b in loc["binaries"]:
+        if b in AI_BINARIES:
+            role, runs, note = AI_BINARIES[b]
+            ai.append({"id": b, "kind": "binary", "role": role, "runs": runs, "note": note})
+    for name, folders in caches.items():
+        for f in folders:
+            if f.startswith("models--"):
+                ai.append({"id": f[len("models--"):].replace("--", "/"), "kind": f"{name} cache", "role": "model", "runs": "local",
+                           "note": "cached weights: confirm what it does before relying on it"})
+    out["ai_models"] = {"local": ai, "hosted_hints": sorted(set(out["credentials_present"].values())),
+                        "director": None, "tool_models": []}
     if "fc-list" in loc["binaries"]:
         loc["installed_font_files"] = len(_run_all(["fc-list"]))
     out["notes"] = [
+        "ai_models.director: write the model you run as (from your own context, never a guess); ai_models.tool_models: every model your image, video, voice and music tools expose, with ids read from the tool",
+        "the agent's own MCP servers can be deferred or still connecting: search for them (ToolSearch) before concluding a layer is missing",
         "agent_tools: fill from your tool list (generators, MCP servers, media catalogs); a live catalog is the best price source",
         "credentials: environment names and CLI profile folders are hints; confirm access with the provider's own tool (for example its whoami or catalog call) before relying on it",
         "skills: fill from the skills you can load (hyperframes, a Manim skill, explainer-reel-skill ...)",

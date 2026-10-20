@@ -50,6 +50,21 @@ avatar clip (`11-routing.md`).
   principle in multimedia learning favours appealing human or high-quality TTS voices over
   flat machine delivery.
 
+## The voice ladder
+
+Best first, and the skill picks without asking the user:
+
+1. The user's own recording, or a real presenter.
+2. Host-native speech: a video model that speaks the line while the host moves (`17-ai-models-and-tools.md`). Its audio is the master clock.
+3. A neural or human-grade text-to-speech tool (read its voice list; send the whole script in one call).
+4. A system voice (macOS `say`, espeak, a small local model): **draft only**. It is acceptable for an animatic and as the last
+   resort when nothing better is reachable; then the final note says it is a draft and names the upgrade.
+
+Audition by measurement, not by asking: render the same two or three lines on each reachable route and run
+`scripts/voice_check.py` (round-trip word error, pace, level). Drop what fails, keep the best that is not `draft`. If the
+user later says a voice is robotic or wrong, that is a defect: move up the ladder and re-run assembly (it is free); only the
+voice itself is paid.
+
 ## Loudness
 
 No platform publishes a loudness target for TikTok, Instagram or Shorts. Documented
