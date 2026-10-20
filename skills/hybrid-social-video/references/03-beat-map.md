@@ -146,13 +146,17 @@ the beat). A beat with no `scene` gets kinetic type from its `on_screen_text`.
 | `type` | Fields | Shows |
 |---|---|---|
 | `kinetic` | `lines`: up to 4 strings or `{text, at}` | big type, one line at a time (hook, turn, payoff) |
-| `stat` | `value` ("$24K", "72%", "1,250"), `label`, `sub`, `at` | one huge number that counts up from 0 |
+| `stat` | `value` ("$24K", "72%", "1,250"), `label`, `sub`, `icon`, `at` | one huge number that counts up from 0 and lands on the spoken word |
 | `steps` | `items`: up to 5 `{text, at}`, optional `title` | numbered chips, the latest highlighted |
-| `flow` | `nodes`: up to 4 `{text, at}` | boxes joined by arrows, the latest highlighted |
+| `flow` | `nodes`: up to 4 `{text, at, icon}` | boxes joined by arrows with a dot travelling along them, the latest highlighted |
+| `cycle` | `nodes`: up to 5 `{text, at, icon}`, `center` | a closed loop: nodes on a ring, arrows draw between them, then a dot keeps circling (heat pumps, feedback loops, a pipeline that repeats) |
 | `compare` | `left`, `right`: `{title, items: up to 3 {text, at}}` | two columns |
 | `bars` | `items`: up to 5 `{label, value, at}`, `unit` | exact bars from zero, values counting up |
 | `terminal` | `lines`: up to 6 `{text, at}` | a typed command window |
 | `quote` | `text`, `by`, `at` | a large quotation |
+
+Any item, node or column may name an `icon` from the built-in set: sun, snow, flame, drop, bolt, coin, lock, shield, check, cross, clock, gear, loop, home, chart, bulb, search, cloud, leaf, thermo, arrow, star, person, camera, mic, globe (an unknown name is reported by the builder and drawn as a plain badge). Scene content is centred in the space it has.
+Start from `examples/starter-beatmap.json` (three beats that lint clean); `examples/faceless-money-guard.json` shows every common scene.
 
 Rules: every figure in a scene comes from a claim (the code layer draws it, a model never does); keep each item to a few words; the first
 item of the first beat appears at once (the hook must work at 0.4 s); a beat longer than about 5 s needs an item or a change every few

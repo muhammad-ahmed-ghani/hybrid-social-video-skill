@@ -111,24 +111,25 @@ note to add.
 ## Fast path: a faceless, zero-spend video in 10 commands
 
 For a simple video (a topic or a pasted article, no authorised host, no paid tool) read only this file and `references/03-beat-map.md`
-(plus the format file if you want its grammar), then run, from the skill folder, with the episode in `episode/`:
+(plus the format file if you want its grammar). Work from the skill folder (`cd ~/.claude/skills/hybrid-social-video`) and set
+`EP=<absolute path of the episode folder>`; scripts print JSON on stdout and a summary on stderr (add `--quiet` to lint for JSON only):
 
 ```bash
-python3 scripts/capability_probe.py --out episode/capabilities.json          # a 5-line summary; detail in the file
-python3 scripts/provenance.py init --episode episode --director "<the model you run as>"
-python3 scripts/reference_scan.py find --topic "<topic>" --n 8 --out episode/references.json   # optional: one attempt, then skip it
-#  write episode/beatmap.json: the story, claims, a `scene` per explanatory beat (references/03-beat-map.md)
-python3 scripts/cost_plan.py init --out episode/pricebook.json --free        # local voice, recognition, music, effects at price 0
-python3 scripts/beatmap_lint.py episode/beatmap.json --pricebook episode/pricebook.json --require-pricebook
-python3 scripts/voice_render.py --beatmap episode/beatmap.json --out episode/vo.wav --target-seconds <N>   # best local voice, fitted length
-python3 scripts/voice_check.py  --audio episode/vo.wav --beatmap episode/beatmap.json --text-file episode/vo.txt --kind system
-python3 scripts/build_video.py  --episode episode --voice episode/vo.wav --qc   # look, timing, frames, mix, encode, captions, QC
-python3 scripts/layout_check.py --page episode/build/index.html              # text size, safe box, collisions
-python3 scripts/provenance.py add --episode episode --role tts --tool say --model "<voice>" --provider local --runs local --used-for "narration" --draft true --upgrade "a neural or host-native voice"
-python3 scripts/provenance.py check --episode episode --beatmap episode/beatmap.json && python3 scripts/provenance.py report --episode episode
+python3 scripts/capability_probe.py --out $EP/capabilities.json              # a 5-line summary; detail in the file
+python3 scripts/provenance.py init --episode $EP --director "<the model you run as>"
+python3 scripts/reference_scan.py find --topic "<topic>" --n 8 --out $EP/references.json   # optional: one attempt, then skip it
+#  write $EP/beatmap.json: the story, claims, a `scene` per beat (references/03-beat-map.md; start from examples/starter-beatmap.json)
+python3 scripts/cost_plan.py init --out $EP/pricebook.json --free            # local voice, recognition, music, effects at price 0
+python3 scripts/voice_render.py --beatmap $EP/beatmap.json --out $EP/vo.wav --target-seconds <N>   # best local voice, fitted length
+python3 scripts/speech_rate.py measure --audio $EP/vo.wav --beatmap $EP/beatmap.json --write       # the measured rate, so lint judges the real length
+python3 scripts/beatmap_lint.py $EP/beatmap.json --pricebook $EP/pricebook.json --require-pricebook
+python3 scripts/voice_check.py  --audio $EP/vo.wav --beatmap $EP/beatmap.json --text-file $EP/vo.txt --kind system
+python3 scripts/build_video.py  --episode $EP --voice $EP/vo.wav --qc        # look, timing, frames, mix, encode, captions, QC and layout check
+python3 scripts/provenance.py check --episode $EP --beatmap $EP/beatmap.json && python3 scripts/provenance.py report --episode $EP
 ```
 
-Then open the contact sheet (`contact_sheet.py episode/master.mp4 --beatmap episode/beatmap.json`), fix what the bar says is wrong
+`build_video.py` records the speech recogniser and the voice (draft, with the upgrade named) in `provenance.json` and writes the look it
+picked into `meta.style`. Then open the contact sheet (`contact_sheet.py episode/master.mp4 --beatmap episode/beatmap.json`), fix what the bar says is wrong
 (re-run `build_video.py`: it is free), add `captions.srt`, the decision record and the AI-use statement to the final message. With a
 budget authorised, take the host route instead (`references/17-ai-models-and-tools.md`, `examples/host-overlay-composition/`).
 

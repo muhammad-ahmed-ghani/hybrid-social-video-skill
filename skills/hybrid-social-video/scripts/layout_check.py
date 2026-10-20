@@ -30,7 +30,7 @@ READ = """() => {
     const cs = getComputedStyle(el);
     let op = 1, n = el;
     while (n && n.nodeType === 1) { const o = parseFloat(getComputedStyle(n).opacity); if (!isNaN(o)) op *= o; n = n.parentElement; }
-    if (op < 0.35) return;                      // still fading in or out: not read as text yet
+    if (op < 0.95) return;                      // still fading or scaling in or out: judged once it has settled
     const fs = parseFloat(el.getAttribute('font-size')) || parseFloat(cs.fontSize);
     const m = el.getScreenCTM ? el.getScreenCTM() : null;
     const scale = m ? Math.hypot(m.a, m.b) : 1;

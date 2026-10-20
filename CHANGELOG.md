@@ -7,6 +7,13 @@ All notable changes to this skill. Format follows [Keep a Changelog](https://kee
 Found by two independent trials in which fresh agents used the skill, with no paid tools, to make a heat-pump explainer and a Spanish
 article video. Both succeeded, scored it 3 to 4 out of 5 on autonomy and reliability, and wrote down 50 frictions; this release fixes them.
 
+A second round of the same two trials, on this release, needed about 20 tool calls each (down from 53 and 52), asked no questions, wrote no tooling of
+their own, and passed QC; they scored autonomy 5 and script reliability 4 to 5, and output quality 2.5 to 3 ("clean but plain"). The second pass below
+answers their notes: a design upgrade of the faceless template (a 26-icon set, a looping `cycle` scene, dots travelling along flows and loops, drifting
+background light, content centred in the space it has, stat count-ups that land on the spoken word), the layout check folded into the build
+verdict, the recogniser and voice recorded in provenance automatically, a warning for a beat that starts empty, default number words per
+language, a starter beat map, and a scan skip that says why.
+
 ### Added
 - **Faceless route in one command.** `scripts/build_video.py` (look, word alignment, frames, mix, encode, captions, QC) over
   `templates/faceless/index.html`, with eight scene types (`kinetic`, `stat`, `steps`, `flow`, `compare`, `bars`, `terminal`, `quote`) specified

@@ -353,7 +353,8 @@ def main(argv: list[str]) -> int:
         try:
             ident = build(opt.get("identity", ""), opt.get("accent"), parse_colormap(opt.get("colormap")))
         except KeyError:
-            eprint(f"unknown identity '{opt.get('identity')}'. Try: style_lock.py list")
+            eprint(f"unknown or missing --identity '{opt.get('identity')}'. Choose one with `style_lock.py pick --topic ... --format ...` "
+                   "(or `list`); build_video.py picks and builds one itself when episode/style.json is missing")
             return 2
         except ValueError as exc:
             eprint(str(exc))

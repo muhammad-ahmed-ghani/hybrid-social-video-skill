@@ -30,7 +30,10 @@ sys.path.insert(0, str(HERE))
 from hx_common import eprint, parse_args  # noqa: E402
 from style_lock import STACKS, build as build_style, css, art_style, pick  # noqa: E402
 
-SCENE_LIMITS = {"steps": ("items", 5), "compare": ("left", 1), "flow": ("nodes", 4), "bars": ("items", 5), "kinetic": ("lines", 4), "terminal": ("lines", 6)}
+SCENE_LIMITS = {"steps": ("items", 5), "flow": ("nodes", 4), "cycle": ("nodes", 5), "bars": ("items", 5), "kinetic": ("lines", 4), "terminal": ("lines", 6)}
+SCENE_TYPES = ("stat", "steps", "compare", "flow", "cycle", "bars", "kinetic", "terminal", "quote")
+ICONS = {"sun", "snow", "flame", "drop", "bolt", "coin", "lock", "shield", "check", "cross", "clock", "gear", "loop", "home", "chart", "bulb", "search",
+         "cloud", "leaf", "thermo", "arrow", "star", "person", "camera", "mic", "globe"}
 TEMPLATE = HERE.parent / "templates" / "faceless" / "index.html"
 
 
@@ -48,7 +51,7 @@ def auto_scene(b: dict) -> dict:
 
 def reveal_times(beat: dict, sc: dict) -> list[float]:
     """Seconds at which each item of a scene appears (the same rule as the page's `when`)."""
-    key = {"steps": "items", "flow": "nodes", "bars": "items"}.get(sc.get("type", ""))
+    key = {"steps": "items", "flow": "nodes", "cycle": "nodes", "bars": "items"}.get(sc.get("type", ""))
     items = sc.get(key) or []
     words = beat["words"]
     out = []
@@ -64,6 +67,28 @@ def reveal_times(beat: dict, sc: dict) -> list[float]:
     if sc.get("type") == "stat":
         out = [beat["s"]]
     return out
+
+
+def _record_provenance(ep: Path, voice: str, lang: str) -> None:
+    """When the episode keeps a provenance.json, add what this build used: the speech recogniser and, when voice_render wrote its
+    sidecar, the voice (marked draft unless it is a high-quality local voice). Never duplicates an entry."""
+    pj = ep / "provenance.json"
+    if not pj.is_file():
+        return
+    have = json.loads(pj.read_text(encoding="utf-8")).get("entries", [])
+    add = [sys.executable, str(HERE / "provenance.py"), "add", "--episode", str(ep)]
+    if not any(e.get("role") == "stt" for e in have):
+        model = "Systran/faster-whisper-base.en" if lang[:2] == "en" else "Systran/faster-whisper-base"
+        subprocess.run(add + ["--role", "stt", "--tool", "faster-whisper", "--model", model, "--provider", "local", "--runs", "local",
+                              "--used-for", "word timings for captions and picture cues"], capture_output=True)
+    side = Path(voice).with_suffix(".json")
+    if side.is_file() and not any(e.get("role") == "tts" for e in have):
+        v = json.loads(side.read_text(encoding="utf-8"))
+        cmd = add + ["--role", "tts", "--tool", v.get("engine", "say"), "--model", v.get("voice", "system voice"), "--provider", "local", "--runs", "local",
+                     "--used-for", "narration"]
+        if v.get("draft"):
+            cmd += ["--draft", "true", "--upgrade", "a Premium or Enhanced local voice, a neural voice or host-native speech"]
+        subprocess.run(cmd, capture_output=True)
 
 
 def main(argv: list[str]) -> int:
@@ -103,6 +128,11 @@ def main(argv: list[str]) -> int:
         log["style"] = {"picked": top["id"], "why": top["why"]}
         eprint(f"[build] look picked: {top['id']} ({top['why']}); record it in meta.notes")
     style = json.loads(sj.read_text(encoding="utf-8"))
+    if "style" in log:                                                      # this run picked the look: write it into the plan
+        meta["style"] = {"name": style.get("name", style["id"]), "family": style["id"]}
+        meta["notes"] = (meta.get("notes", "") + f" Look: {style['id']} (picked by style_lock.py: {log.get('style', {}).get('why', 'existing style.json')}).").strip()
+        bm["meta"] = meta
+        bm_path.write_text(json.dumps(bm, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # 2. timing
     tj = Path(opt["timing"]) if opt.get("timing") not in (None, True) else ep / "timing.json"
@@ -129,12 +159,20 @@ def main(argv: list[str]) -> int:
             eprint(f"[build] beat {b['id']} has no timing: re-run the alignment")
             return 1
         sc = b.get("scene") or auto_scene(b)
-        if sc.get("type") not in ("stat", "steps", "compare", "flow", "bars", "kinetic", "terminal", "quote"):
+        if sc.get("type") not in SCENE_TYPES:
             log["warnings"].append(f"beat {b['id']}: unknown scene type {sc.get('type')!r}, drawn as kinetic type")
             sc = auto_scene(b)
         lim = SCENE_LIMITS.get(sc["type"])
         if lim and lim[0] in sc and isinstance(sc[lim[0]], list) and len(sc[lim[0]]) > lim[1] and sc["type"] != "compare":
             log["warnings"].append(f"beat {b['id']}: {sc['type']} shows at most {lim[1]} {lim[0]}; the rest are dropped")
+        for key in ("items", "nodes"):                                   # an unknown icon name is drawn as a plain badge: say so
+            for it in sc.get(key, []):
+                if isinstance(it, dict) and it.get("icon") and it["icon"] not in ICONS:
+                    log["warnings"].append(f"beat {b['id']}: unknown icon '{it['icon']}' (one of {', '.join(sorted(ICONS))})")
+        times = reveal_times({"s": tb["s"], "e": tb["e"], "words": tb["words"]}, sc)
+        if times and sc["type"] != "stat" and (times[0] - tb["s"] > 0.8 or len(set(round(x, 2) for x in times)) < len(times)):
+            log["warnings"].append(f"beat {b['id']}: the first item appears {times[0] - tb['s']:.1f} s after the beat starts, or two items share an anchor word: "
+                                   "the beat may look empty; set earlier or distinct `at` words")
         beats.append({"id": b["id"], "s": tb["s"], "e": tb["e"], "words": tb["words"], "scene": sc})
     dur = round(max(timing["duration"], beats[-1]["e"]) + 0.9, 2)
     tk = dict(style["tokens"])
@@ -171,6 +209,7 @@ def main(argv: list[str]) -> int:
         return 1
     enc = json.loads(r.stdout.strip().splitlines()[-1])
     _run([HERE / "captions.py", "--timing", tj, "--out", ep / "captions.srt", "--vtt"], "captions")
+    _record_provenance(ep, voice, lang=str(meta.get("language_tag") or "en"))
     res = {"master": enc["master"], "seconds": enc["seconds"], "mb": enc["mb"], "loudness_lufs": mix_info.get("output_lufs"),
            "captions": str(ep / "captions.srt"), "scenes": [b["scene"]["type"] for b in beats], **log}
     if opt.get("qc"):
@@ -180,6 +219,13 @@ def main(argv: list[str]) -> int:
             res["qc"] = {"ok": rep["ok"], "failures": rep["failures"]}
         except ValueError:
             res["qc"] = {"ok": False, "failures": ["unreadable qc output"]}
+        lc = subprocess.run([sys.executable, str(HERE / "layout_check.py"), "--page", str(work / "index.html")], capture_output=True, text=True)
+        try:
+            lay = json.loads(lc.stdout)
+            res["layout"] = {"ok": lay["ok"], "issues": [f"{i['rule']}: {i['text']} ({i['detail']})" for i in lay["issues"]]}
+        except ValueError:
+            res["layout"] = {"ok": False, "issues": ["layout_check could not run"]}
+        res["qc"]["ok"] = res["qc"]["ok"] and res["layout"]["ok"]            # one verdict: the picture QC and the text layout both pass
     print(json.dumps(res, ensure_ascii=False))
     return 0
 

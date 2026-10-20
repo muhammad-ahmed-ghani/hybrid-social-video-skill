@@ -29,7 +29,7 @@ def chunks(words: list[dict], max_words: int = 4, max_chars: int = 24) -> list[l
             cur, n = [], 0
         cur.append(w)
         n += len(w["word"]) + 1
-        if re.search(r"[.,?:!;¿¡…]$", w["word"]):
+        if re.search(r"[.?!…]$", w["word"]) or (re.search(r"[,:;]$", w["word"]) and len(cur) >= 2):     # a comma never leaves a one-word cue
             out.append(cur)
             cur, n = [], 0
     if cur:

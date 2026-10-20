@@ -1715,7 +1715,7 @@ def test_captions_break_after_punctuation_and_write_srt_and_vtt(tmp_path):
     r = run_script("captions.py", "--timing", tj, "--out", out, "--vtt")
     assert r.returncode == 0 and json.loads(r.stdout)["cues"] == 2
     srt = out.read_text()
-    assert "00:00:00,000 --> 00:00:00,500\nHello," in srt and "this is a test." in srt
+    assert "Hello, this is a" in srt and "test." in srt              # a comma never leaves a one-word cue
     assert out.with_suffix(".vtt").read_text().startswith("WEBVTT")
 
 
@@ -1844,7 +1844,7 @@ def test_build_video_makes_a_checked_master_from_a_beat_map_and_timings(tmp_path
     words = [("Can", 0.0), ("an", 0.3), ("AI", 0.5), ("agent", 0.8), ("spend", 1.1), ("your", 1.4), ("money", 1.7), ("without", 2.0), ("overspending?", 2.4),
              ("A", 3.2), ("price", 3.4), ("from", 3.7), ("memory", 4.0), ("goes", 4.3), ("stale,", 4.6), ("so", 5.0), ("every", 5.2), ("price", 5.5), ("is", 5.8),
              ("read", 6.0), ("from", 6.3), ("the", 6.5), ("tool.", 6.7), ("It", 7.5), ("estimates,", 7.7), ("checks", 8.3), ("the", 8.6), ("ledger,", 8.8),
-             ("and", 9.3), ("only", 9.5), ("then", 9.8), ("spends", 10.0), ("once.", 10.4)]
+             ("spends", 9.3), ("once,", 9.6), ("and", 9.9), ("records", 10.1), ("it.", 10.5)]
     texts = [b["text"].split() for b in bm["beats"]]
     flat = [w for w, _ in words]
     assert [w for t in texts for w in t] == flat
@@ -1856,13 +1856,19 @@ def test_build_video_makes_a_checked_master_from_a_beat_map_and_timings(tmp_path
     (ep / "timing.json").write_text(json.dumps({"beats": timing, "duration": 11.0}))
     voice = tmp_path / "vo.wav"
     _tone(voice, 11)
+    (tmp_path / "vo.json").write_text(json.dumps({"voice": "Test Voice", "engine": "say", "draft": True}))
+    run_script("provenance.py", "init", "--episode", ep, "--director", "test")
     r = run_script("build_video.py", "--episode", ep, "--voice", voice, "--fps", "10", "--qc")
     assert r.returncode == 0, r.stderr
     res = json.loads(r.stdout.strip().splitlines()[-1])
-    assert res["scenes"] == ["kinetic", "compare", "flow"] and Path(res["master"]).is_file() and (ep / "captions.srt").is_file()
+    assert res["scenes"] == ["kinetic", "compare", "cycle"] and Path(res["master"]).is_file() and (ep / "captions.srt").is_file()
     assert res["seconds"] == pytest.approx(11.9, abs=0.5) and (ep / "style.json").is_file()
-    lay = run_script("layout_check.py", "--page", ep / "build" / "index.html")
-    assert lay.returncode == 0, lay.stderr
+    assert res["layout"]["ok"] is True, res["layout"]
+    assert res["qc"]["failures"] == [] or set(res["qc"]["failures"]) <= {"duration", "pacing", "spec"}, res["qc"]       # a 3-beat, 12 s clip rendered at 10 fps for speed: the spec check rightly objects
+    roles = {e["role"]: e for e in json.loads((ep / "provenance.json").read_text())["entries"]}
+    assert "stt" in roles and roles["tts"]["draft"] is True and roles["tts"]["model"] == "Test Voice"    # recorded without being asked
+    assert json.loads((ep / "beatmap.json").read_text())["meta"]["style"]["family"] == json.loads((ep / "style.json").read_text())["id"]
+    assert run_script("layout_check.py", "--page", ep / "build" / "index.html").returncode == 0
 
 
 def test_the_docs_no_longer_tell_an_autonomous_agent_to_ask():
@@ -1876,3 +1882,15 @@ def test_the_docs_no_longer_tell_an_autonomous_agent_to_ask():
     skill = (ROOT / "SKILL.md").read_text()
     assert "## Fast path" in skill and "build_video.py" in skill and "layout_check.py" in skill and "Accepted defects" in skill
     assert (ROOT / "templates" / "faceless" / "index.html").is_file()
+
+
+def test_the_starter_beat_map_lints_clean_and_every_scene_type_is_documented():
+    rep = beatmap_lint.lint(load(ROOT / "examples" / "starter-beatmap.json"))
+    assert rep["ok"], rep["errors"]
+    doc = (ROOT / "references" / "03-beat-map.md").read_text()
+    page = (ROOT / "templates" / "faceless" / "index.html").read_text()
+    import re
+    types = re.findall(r"^(\w+)\(b,sc,t\)\{", page, flags=re.M)
+    assert {"stat", "steps", "flow", "cycle", "compare", "bars", "kinetic", "terminal", "quote"} <= set(types)
+    for ty in types:
+        assert f"| `{ty}` |" in doc, ty

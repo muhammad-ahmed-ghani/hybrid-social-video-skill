@@ -179,6 +179,8 @@ def lint(bm: dict, pricebook: dict | None = None, require_pricebook: bool = Fals
     texts = beatmap_texts(bm)
     tprof = text_profile(texts)
     number_words = [str(w) for w in (meta.get("number_words") or [])]
+    if not number_words:                                      # a default list for the language tag (data/number_words.json)
+        number_words = [str(w) for w in (data("number_words").get(str(meta.get("language_tag") or "")[:2].lower()) or [])]
     not_checked: list[str] = []
     if not number_words:
         not_checked.append("E051 spelled-out numbers: set meta.number_words to this language's number words, or check by eye")

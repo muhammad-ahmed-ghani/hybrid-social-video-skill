@@ -147,6 +147,9 @@ def main(argv: list[str]) -> int:
                 if abs(secs - target) <= 0.4:
                     break
             rate, secs = best[1], render_say(text, v["name"], best[1], out)
+    info = {"voice": v["name"], "locale": v["locale"], "engine": v["engine"], "rate": rate, "seconds": round(secs, 2),
+            "quality": v["quality"], "draft": v["quality"] != "system-hq"}
+    out.with_suffix(".json").write_text(json.dumps(info))                    # read by build_video.py to record the voice in provenance.json
     print(json.dumps({"voice": v["name"], "locale": v["locale"], "engine": v["engine"], "rate": rate, "seconds": round(secs, 2),
                       "quality": v["quality"], "out": str(out),
                       "draft": v["quality"] != "system-hq",

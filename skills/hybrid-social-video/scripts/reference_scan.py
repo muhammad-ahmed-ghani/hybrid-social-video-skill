@@ -163,6 +163,7 @@ def cmd_find(opt: dict) -> int:
         return 3
     added = 0
     failed = 0
+    tried: list[str] = []
     t_start = time.time()
     budget = float(opt.get("budget", 75))                    # one attempt, a time budget, then stop: never a retry loop
     for url in dict.fromkeys(cands):
@@ -173,6 +174,7 @@ def cmd_find(opt: dict) -> int:
             break
         got = _run_json(["yt-dlp", "--dump-json", "--skip-download", "--no-warnings", url], timeout=45)
         meta = got[0] if got else {}
+        tried.append(url)
         if not meta:
             failed += 1
             if failed >= 3 and added == 0:                    # three refusals in a row and nothing read: a wall, not bad luck
@@ -186,8 +188,12 @@ def cmd_find(opt: dict) -> int:
         added += 1
         if added >= n:
             break
+    if added == 0 and failed:
+        doc["skipped_reason"] = (f"{failed} public page(s) could not be read (a bot or sign-in wall, a rate limit or no network); "
+                                 f"tried: {', '.join(tried[:3])}")
     _save(opt["out"], doc)
-    print(json.dumps({"added": added, "items": len(doc["items"]), "unreadable": failed, "out": opt["out"]}))
+    print(json.dumps({"added": added, "items": len(doc["items"]), "unreadable": failed, "out": opt["out"],
+                      "skipped_reason": doc.get("skipped_reason")}))
     if added == 0 and failed:
         eprint(f"[scan] {failed} page(s) could not be read (a bot or sign-in wall, rate limit or no network): the scan is skipped, never bypassed. "
                "Write the skip into meta.notes and carry on.")

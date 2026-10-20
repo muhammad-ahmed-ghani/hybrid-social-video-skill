@@ -50,8 +50,8 @@ authorisation, a real person's likeness or voice, a credential. A plan that cost
   login, and deletes what it downloads.
 - **A different look for each video.** `style_lock.py pick` ranks looks by topic and spreads consecutive videos apart, so one palette
   does not take over everything it makes. A brand colour sets the accent only.
-- **A faceless route that builds itself.** Give each beat a `scene` (a stat that counts up, steps, a flow, a comparison, bars, kinetic type,
-  a terminal) and `build_video.py` does the rest: it picks the look, aligns the voice-over word by word, draws the frames with text fitted
+- **A faceless route that builds itself.** Give each beat a `scene` (a stat that counts up, steps, a flow, a closed loop, a comparison, bars, kinetic type,
+  a terminal, a quote, with 26 built-in icons) and `build_video.py` does the rest: it picks the look, aligns the voice-over word by word, draws the frames with text fitted
   inside the safe box, mixes the sound, encodes the master, writes the captions and runs QC. `layout_check.py` then measures text size, the
   safe box and collisions from the page itself.
 - **A voice route that needs no one.** `voice_render.py` picks the best local voice for the language (Premium, Enhanced and Siri voices

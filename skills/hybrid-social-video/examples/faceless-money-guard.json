@@ -127,7 +127,8 @@
               "text": "no source",
               "at": "goes"
             }
-          ]
+          ],
+          "icon": "clock"
         },
         "right": {
           "title": "FROM THE TOOL",
@@ -140,7 +141,8 @@
               "text": "source and date",
               "at": "tool"
             }
-          ]
+          ],
+          "icon": "search"
         }
       },
       "claim_refs": [
@@ -152,26 +154,35 @@
       "role": "build",
       "layer": "code",
       "layer_why": "a three-node chain is a drawn flow",
-      "text": "It estimates, checks the ledger, and only then spends once.",
-      "visual": "three boxes connect with arrows, one highlighted at a time",
-      "device": "flow",
+      "text": "It estimates, checks the ledger, spends once, and records it.",
+      "visual": "four icons sit on a loop; a dot travels it and the loop closes",
+      "device": "cycle",
       "on_screen_text": [
         "Estimate, check, spend"
       ],
       "scene": {
-        "type": "flow",
+        "type": "cycle",
+        "center": "LEDGER",
         "nodes": [
           {
             "text": "ESTIMATE",
+            "icon": "search",
             "at": "estimates"
           },
           {
-            "text": "CHECK LEDGER",
+            "text": "CHECK",
+            "icon": "shield",
             "at": "checks"
           },
           {
             "text": "SPEND ONCE",
+            "icon": "coin",
             "at": "spends"
+          },
+          {
+            "text": "RECORD",
+            "icon": "chart",
+            "at": "records"
           }
         ]
       },
@@ -224,7 +235,8 @@
         "value": "1",
         "label": "respend per asset",
         "sub": "only for a content defect",
-        "at": "1"
+        "at": "1",
+        "icon": "shield"
       },
       "claim_refs": [
         "c3"
@@ -246,15 +258,18 @@
         "items": [
           {
             "text": "You authorise a budget",
-            "at": "authorise"
+            "at": "authorise",
+            "icon": "person"
           },
           {
             "text": "The cap is enforced",
-            "at": "enforced"
+            "at": "enforced",
+            "icon": "lock"
           },
           {
             "text": "You get the receipt",
-            "at": "receipt"
+            "at": "receipt",
+            "icon": "check"
           }
         ]
       },
