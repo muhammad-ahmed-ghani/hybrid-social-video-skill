@@ -28,6 +28,7 @@ costs is a separate question, answered by the cost scout (`14-cost-scout.md`) fr
 | Voice and word timings | a TTS tool, fal MCP, or `/media-use` | script, captions and animatic only; say so |
 | Talking host | an avatar endpoint | voice-over format; never fake a host with a still |
 | ffmpeg and ffprobe | `ffmpeg -version` | install yourself; everything local needs it |
+| Person tracking and matte | `person_fx.py doctor`; the probe's `person-aware effects` line | `pip install numpy opencv-python pillow onnxruntime`, then `doctor --fetch`; offline it degrades to a rougher matte |
 
 Side effect to expect: running the HyperFrames CLI from an agent can install or refresh its whole skill set
 into global agent directories (`~/.claude/skills`, `~/.agents` and others). That is documented behaviour of
@@ -49,6 +50,7 @@ into global agent directories (`~/.claude/skills`, `~/.agents` and others). That
 | faceless code-only explainer | `/faceless-explainer` (via the router) | formats `kinetic-type-essay`, `diagram-mechanism`, `data-story` |
 | short unnarrated hit, or a transparent overlay | `/motion-graphics` | stat hits, lower thirds, alpha overlays for route F |
 | existing footage plus designed cards | `/talking-head-recut` | `talking-head-package` (cards) |
+| a person on screen and an effect that must know where they are (type behind the head, face-following cards, light, camera, glass) | this skill's `scripts/person_fx.py` | `host-broll`, `talking-head-package`; run before the HyperFrames cards (`20-person-aware-effects.md`) |
 | existing footage plus captions | `/embedded-captions` | `talking-head-package` (captions) |
 | a site, a pull request or a product as the subject | `/website-to-video`, `/pr-to-video`, `/product-launch-video` | capture sources for `screen-demo`; a promo is a different job |
 | anything custom or long | `/general-video` | the workflow for the editorial formats |

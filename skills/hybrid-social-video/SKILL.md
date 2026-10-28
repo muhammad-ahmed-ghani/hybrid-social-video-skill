@@ -10,11 +10,12 @@ description: >-
   keeps a series' look, cast and memory consistent, hands each layer to its own skill
   and runs QC. Use for "make an explainer reel", "turn this article or dataset into a
   vertical video", "Vox or 3Blue1Brown style short", "a comedy, cartoon or
-  tech-explainer series", "episode 3 of my show". Not for a single AI clip, an ad, a
-  music video, or timeline editing.
-compatibility: Needs python3 and ffmpeg/ffprobe for the scripts (Pillow for the sheet and animatic; Playwright for the HTML compose route). Layer skills (HyperFrames first, via its local skills or its hosted MCP; a Manim skill; explainer-reel-skill) and any image, video, voice or music tools (fal, an MCP server such as ImagineArt) are used when present; references/11-routing.md says how to degrade.
+  tech-explainer series", "episode 3 of my show". With a person on screen it adds
+  effects that know where they are (type behind the head, face-following cards, light,
+  camera pushes). Not for a single AI clip, an ad, a music video, or timeline editing.
+compatibility: Needs python3 and ffmpeg/ffprobe for the scripts (Pillow for the sheet and animatic; Playwright for the HTML compose route; numpy, OpenCV and optionally onnxruntime for the person-aware effects). Layer skills (HyperFrames first, via its local skills or its hosted MCP; a Manim skill; explainer-reel-skill) and any image, video, voice or music tools (fal, an MCP server such as ImagineArt) are used when present; references/11-routing.md says how to degrade.
 metadata:
-  version: "1.5"
+  version: "1.6"
 ---
 
 # Hybrid Social Video
@@ -150,6 +151,17 @@ fallback and look plainer. At G-1 read the probe's `HyperFrames:` line (and your
   and give the user the one-line install in the final note.
 - Never copy HyperFrames' skills into this skill or re-teach them: read their `SKILL.md` at run time, because they change. Details, the workflow table and
   the hand-off: `references/19-hyperframes.md`.
+
+## Person-aware effects: when a person is on screen
+
+When a host speaks (generated or recorded), the picture can react to them: type behind the head, graphics that follow the face and never cover it, light that
+leaves the speaker lit, camera pushes, liquid-glass cards, interface mock-ups, stamps and hand-drawn marks. `scripts/person_fx.py` does it locally and for free: it tracks
+the face and cuts a soft matte of the person (`scripts/person_track.py`), draws 45 effects against that (`references/20-person-aware-effects.md`, catalogue in
+`data/effects.json`), and its `check` command looks at one frame per effect and fails an effect that covers a face. The loop: word times, a plan (by hand or from the beat
+map with `scripts/fx_plan_from_beatmap.py`), `check`, look, `render`. Cues land on the word that names them (`"on": "never wrong"`); a figure an effect draws must come from a
+claim (`--beatmap` checks it). Do the depth pass first, then hand `host_fx.mp4` to HyperFrames for cards and captions. Run `person_fx.py doctor --fetch` yourself when it is
+missing (a pip install and a 28 MB model download: the host's prompt is the user's consent); offline it degrades to a rougher matte and system fonts. Record the local
+models in provenance (`render` writes `out.fx.json` and prints the command). Three well-placed effects beat ten.
 
 ## The model: story, format, tier, series
 
@@ -431,6 +443,7 @@ the cost, the sources, the decision record and one line on anything accepted or 
 | `references/14-cost-scout.md` | pricing the plan from this environment: probe, sources, pricebook, credits and balance, the questions |
 | `references/15-series.md` | any series: frame and payload, the series record, the cast, routes for characters, comedy, memory |
 | `references/16-attention-prediction-sota.md` | only when asked to predict or test a cut's attention or retention before publishing: the research, the evidence and a build recommendation |
+| `references/20-person-aware-effects.md`, `scripts/person_fx.py`, `person_track.py`, `fx_core.py`, `fx_looks.py`, `fx_ui.py`, `fx_registry.py`, `fx_assets.py`, `fx_plan_from_beatmap.py`, `data/effects.json`, `data/assets.json` | a person is on screen and an effect should react to them: depth, light, camera, cards, glass; the plan, check and render loop |
 | `references/19-hyperframes.md` | motion design and rendering: connecting HyperFrames (local skills, hosted MCP), which workflow for which video, the hand-off |
 | `references/18-reference-scan.md` | the automatic look at public reels on the topic: how to run it, what to take, the limits |
 | `references/17-ai-models-and-tools.md` | finding and using AI models and tools; what to record; the verified talking-host recipe; consent and disclosure |

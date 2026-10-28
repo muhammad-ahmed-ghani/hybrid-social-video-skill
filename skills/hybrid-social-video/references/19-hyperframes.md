@@ -71,6 +71,13 @@ re-opened, the claims and the numbers, the look (a style preset that fits `style
 the footage and its audio are untouched. HyperFrames keeps its own checks (`lint`, `check`, `snapshot`) and renders; run them. Ask it to report any
 beat it could not realise instead of substituting another layer.
 
+## Depth first, cards second
+
+HyperFrames draws on top of the footage; it cannot put a word behind a head or follow a face through the picture. When a person is on screen and the plan wants
+that, run `scripts/person_fx.py render` first (`20-person-aware-effects.md`) and give its `host_fx.mp4` to `/talking-head-recut` as the input video. If a card should
+sit by the face, export the track (`person_track.py export host_fx.mp4 --out face.json`: per frame `cx, cy, fw, fh, top, shoulder` as 0..1 fractions) and place the
+card from those numbers in the composition. The host's audio is still the master clock.
+
 ## What stays ours
 
 Whichever route draws the picture: the story, intent and claims; the cost scout and the ledger for every paid call (a HyperFrames hosted

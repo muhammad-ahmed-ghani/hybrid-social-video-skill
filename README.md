@@ -27,6 +27,22 @@ generated a fictional presenter and one talking clip per beat, timed everything 
 over the footage to HyperFrames (sources in [`demo/hyperframes/`](demo/hyperframes/)), mixed the sound, and passed QC. The host and his voice are AI-generated and labelled as such.
 How it was made, model by model: [`demo/AI-USE.md`](demo/AI-USE.md) · the plan: [`demo/beatmap.json`](demo/beatmap.json).
 
+### Effects that know where the speaker is
+
+<p align="center">
+<img src="assets/person-fx.webp" width="300" alt="One host clip with eight effects in turn: a word behind the head, golden light, an ink stamp, a graph-paper room, a counting number, a glass stat card, brackets that lock onto the face, message banners.">
+</p>
+
+<p align="center">One clip, eight effects, silent preview. Each one is placed by the tracker, so type sits behind the head and nothing lands on the face.</p>
+
+```bash
+python3 skills/hybrid-social-video/scripts/person_fx.py check   plan.json host.mp4 out/ --words host.words.json   # one frame per effect, a contact sheet, a face-cover audit
+python3 skills/hybrid-social-video/scripts/person_fx.py render  plan.json host.mp4 host_fx.mp4 --words host.words.json
+```
+
+A plan is a short list such as `{"fx": "word-behind", "on": "everything", "text": "EVERYTHING"}`: the effect starts on the word the speaker says. The catalogue, the options and
+the rules are in [`references/20-person-aware-effects.md`](skills/hybrid-social-video/references/20-person-aware-effects.md).
+
 ## Use it in one line
 
 Install it (below), then tell your agent:
@@ -51,6 +67,10 @@ authorisation, a real person's likeness or voice, a credential. A plan that cost
 - **Motion design by HyperFrames.** When [HyperFrames](https://github.com/heygen-com/hyperframes) is reachable the skill hands the motion design and the
   render to it (`/talking-head-recut` for designed overlays over a host video, `/faceless-explainer` and `/general-video` for the rest), writing the
   brief from the approved plan. It references HyperFrames and never copies its skills. Without it, a built-in route takes over.
+- **Effects that know where the speaker is.** With a person on screen, `person_fx.py` tracks the face and cuts a soft matte of the person, then draws against it: type
+  *behind* the head, cards that follow the face and never cover it, light that leaves the speaker lit, camera pushes, liquid-glass stat cards, interface mock-ups,
+  stamps and hand-drawn marks (45 effects). It cues them on the words the speaker says, checks one frame per effect and fails a covered face, and checks every
+  figure against the plan's claims. Free and local. See below.
 - **A faceless fallback that builds itself.** Give each beat a `scene` (a stat that counts up, steps, a flow, a closed loop, a comparison, bars, kinetic type,
   a terminal, a quote, with 26 built-in icons) and `build_video.py` does the rest: it picks the look, aligns the voice-over word by word, draws the frames with text fitted
   inside the safe box, mixes the sound, encodes the master, writes the captions and runs QC. `layout_check.py` then measures text size, the
@@ -119,6 +139,8 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 ## Requirements
 
 - `python3` (3.9+) and `ffmpeg` / `ffprobe`. The scripts use the standard library, with `Pillow` for sheets and `numpy` for the mix.
+- For the person-aware effects: `pip install numpy opencv-python pillow onnxruntime` (the first three are required; onnxruntime gives the real person matte). The first run downloads about 28 MB of
+  models and fonts from their upstream projects ([`THIRD-PARTY.md`](skills/hybrid-social-video/THIRD-PARTY.md)); offline it falls back to a rougher matte and system fonts.
 - For the host-plus-overlay route: `playwright` with Chromium (`pip install playwright && playwright install chromium`) and
   `faster-whisper` for word timings.
 - Faceless route: Playwright with Chromium, `faster-whisper`, `numpy` and `Pillow`; a local voice (macOS `say`, espeak-ng or better).
@@ -132,12 +154,12 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 ├── skills/hybrid-social-video/     the skill (what gets installed)
 │   ├── SKILL.md                    entry point: operating mode, the bar, rules, loop
 │   ├── references/                 formats, beat map, style, sound, governance, QA, routing, series, AI models and tools
-│   ├── scripts/                    lint, cost plan, ledger, provenance, voice check, host assembly, HTML renderer, mixer, QC, series
-│   ├── data/                       formats, intents, identities, platforms (thresholds, no prices)
+│   ├── scripts/                    lint, cost plan, ledger, provenance, voice check, host assembly, HTML renderer, mixer, QC, series, person tracking and effects
+│   ├── data/                       formats, intents, identities, platforms (thresholds, no prices), the effects catalogue, pinned third-party files
 │   ├── examples/                   linting beat maps and the host-plus-overlay page behind the demo
 │   └── tests/                      pytest suite pinning the skill's invariants
 ├── demo/                           the demo reel, its animated preview, its plan, its HyperFrames sources, and its AI-use statement
-├── assets/                         the mascot and the social preview image
+├── assets/                         the mascot, the social preview image and the effects preview
 ├── dist/hybrid-social-video.skill  packaged skill, rebuilt by tools/package_skill.py
 ├── tools/package_skill.py          validate and pack
 ├── .claude-plugin/marketplace.json
@@ -148,7 +170,7 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 ## Development
 
 ```bash
-pip install pytest pillow numpy
+pip install pytest pillow numpy opencv-python-headless
 python3 -m pytest -q skills/hybrid-social-video/tests/     # media tests need ffmpeg
 python3 tools/package_skill.py                              # validate and rebuild dist/
 ```
@@ -161,6 +183,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).
 The mascot, Slate, is an AI-generated image (GPT Image 2.5 Flare through the ImagineArt MCP). The demo's presenter is a fictional
 AI-generated person (Nano Banana Pro for the portrait, Veo 3.1 Fast for the talking clips); every model is listed in
 [`demo/AI-USE.md`](demo/AI-USE.md).
+
+The person matte and face detector are open models that run locally: MODNet (Apache-2.0) and YuNet (MIT). Fonts are SIL OFL or Apache-2.0. Nothing is bundled; the files, their
+licences and their sources are listed in [`THIRD-PARTY.md`](skills/hybrid-social-video/THIRD-PARTY.md).
 
 ## License
 

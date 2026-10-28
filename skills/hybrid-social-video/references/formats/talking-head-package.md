@@ -63,7 +63,9 @@ Untouched: the footage's audio plays as recorded. Do not normalise or duck it. A
 1. Probe the file for real (resolution, fps, duration, audio); transcribe with word timestamps locally.
 2. Beat map: layer `real` base, `overlays` per card with the word it lands on; claims for each number or quote; lint; board;
    Gate 1.
-3. Cards: `/talking-head-recut`. Captions: `/embedded-captions` (a verbatim rail, or captions composited behind the
+3. Depth and emphasis in the picture (optional): `scripts/person_fx.py` puts type behind the speaker, follows the face, lights the speaker, punches in on a word; it never
+   retimes or recolours the footage beyond the effect you chose (`20-person-aware-effects.md`). Run it first, then hand its output to the cards step.
+   Cards: `/talking-head-recut`. Captions: `/embedded-captions` (a verbatim rail, or captions composited behind the
    subject). Both leave the footage untouched. Enter through `/hyperframes`, which routes and installs the workflow.
 4. QC: `qc_master.py` (loudness gate applies to the existing mix: if the speaker is quiet, report it, do not process it),
    contact sheet, safe zones, face occlusion.

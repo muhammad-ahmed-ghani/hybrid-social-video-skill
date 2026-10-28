@@ -117,6 +117,10 @@ python3 scripts/provenance.py report --episode episode
 The report is the AI-use statement for the final note and the disclosure verdict (`08-governance.md`). Count the director
 (the model that wrote the plan, script and code), speech recognition used for timings, and any synthetic voice.
 
+Models the skill's own scripts run on the machine (they process footage, they generate no pixels, and they belong in the statement): MODNet (Apache-2.0, a portrait
+matte) and YuNet (MIT, a face box) for `person_fx.py` and `person_track.py`; a Whisper model for `speech_align.py` and `person_fx.py words`. Record them with
+`--role other --ai true --provider local` (the exact command is printed by `person_fx.py render`); the render also writes `out.fx.json` listing them.
+
 ## Consent and disclosure
 
 - Only a fictional presenter, or the user's own photos, or a person who has given the user clear permission. Never a

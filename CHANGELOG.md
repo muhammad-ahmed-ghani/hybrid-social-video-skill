@@ -2,6 +2,23 @@
 
 All notable changes to this skill. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.0] - 2026-10-28
+
+### Added
+- **Person-aware effects.** `scripts/person_track.py` finds the speaker in every frame (a face box, the head top, the shoulder line and a soft person matte from MODNet through onnxruntime,
+  with YuNet and a Haar cascade for the face, a guided filter for clean edges, two-pass smoothing, a per-file cache, and fallbacks that degrade rather than stop). `scripts/person_fx.py` draws 45
+  effects against it: type behind the head, face-following cards, an orbit and carousel of reels, light and rooms, camera pushes, liquid-glass stat cards and widgets, interface mock-ups
+  (comments, messages, switches, task list, tier list), stamps, hand-drawn marks, covers, a timeline look. A plan (`hybrid-fx/1`) cues each effect on the words the speaker says.
+  `check` renders one frame per effect, measures how much of the head a front layer covers (exit 1 on a covered face), warns when graphics enter the platform's UI bands, and builds a
+  contact sheet; `render` touches only the frames inside an effect window and copies the audio. Numbers an effect draws are checked against the beat map's claims (`--beatmap`).
+- `fx_plan_from_beatmap.py` turns a beat map's overlays into a plan timed on the spoken words; `fx_assets.py` fetches the models and fonts on first use, resumable and pinned by size and sha256
+  (`data/assets.json`, `THIRD-PARTY.md`); `capability_probe.py` reports whether the layer is ready and how good the matte will be; `person_fx.py doctor` says what is missing.
+- `references/20-person-aware-effects.md`, `data/effects.json` (generated, tested for drift), `examples/person-fx/plan.json`, and 61 tests that run every effect on a synthetic frame.
+
+### Changed
+- `host-broll` and `talking-head-package` list the person-aware layer as an optional, free step before the HyperFrames cards (`19-hyperframes.md`: depth first, cards second).
+- QA check Q6 (face occlusion) now has a command. `17-ai-models-and-tools.md` records the local models the skill's own scripts run.
+
 ## [1.5.1] - 2026-10-21
 
 ### Changed
