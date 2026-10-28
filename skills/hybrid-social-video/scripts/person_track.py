@@ -223,12 +223,15 @@ class FaceFinder:
                 try:
                     self.yunet = cv2.FaceDetectorYN.create(str(p), "", (w, h), 0.6, 0.3, 20)
                     self.name = "yunet"
-                except Exception:
+                except Exception:      # includes builds without FaceDetectorYN
                     self.yunet = None
         if self.yunet is None and prefer in ("auto", "haar"):
-            hc = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-            if not hc.empty():
-                self.haar, self.name = hc, "haar"
+            try:     # some minimal OpenCV builds ship without the cascade module: the face is then read off the matte
+                hc = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+                if not hc.empty():
+                    self.haar, self.name = hc, "haar"
+            except (AttributeError, cv2.error):
+                self.haar = None
 
     def __call__(self, rgb):
         import cv2
