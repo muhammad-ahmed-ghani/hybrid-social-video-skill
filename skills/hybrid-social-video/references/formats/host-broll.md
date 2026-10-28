@@ -76,10 +76,13 @@ changes and impacts. The avatar's audio is kept untouched; ducking applies to th
 4. G2 look pack before the host call: portrait, a 10 s voice sample, a contact sheet of the b-roll stills, spend so far.
    Generate stills first and look at them before any clip (a bad still costs cents, a bad clip a dollar). The sibling
    generates still and clip in one call, so run its still step, review, then the clip step.
-5. Code-layer overlays (charts, quote cards, lower thirds, captions): build with HyperFrames as a transparent alpha
+5. Person-aware layer (optional, free): when the speaker is on screen, `scripts/person_fx.py` can put a word behind the head, follow the face with a card, light the speaker,
+   push the camera, drop a stamp. Plan it from the beat map (`fx_plan_from_beatmap.py`), `check` it, render `host_fx.mp4`, and use that as the base video for the steps below
+   (`20-person-aware-effects.md`). One to three effects in a 35 s reel; the hook and the number beat are the best candidates.
+6. Code-layer overlays (charts, quote cards, lower thirds, captions): build with HyperFrames as a transparent alpha
    track, assemble the base with `assemble.py --no-captions`, composite the overlay in ffmpeg (route F in
    `11-routing.md`), mux the avatar audio, QC.
-6. Mirror the sibling's `costs.jsonl` into the ledger (`ledger.py import`).
+7. Mirror the sibling's `costs.jsonl` into the ledger (`ledger.py import`).
 
 Beat map to `plan.json`:
 

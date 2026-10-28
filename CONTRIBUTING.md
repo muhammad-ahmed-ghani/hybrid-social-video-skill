@@ -12,6 +12,7 @@
 - The `description` frontmatter is the trigger: say what the skill does and when to use it, in at most 1024 characters.
 - Never write a price into the skill. Prices are read from the environment per episode.
 - Thresholds live in `data/`. Scripts read them and docs cite them.
-- Scripts stay standard-library only, apart from the optional Pillow import.
+- Scripts stay standard-library only, apart from the optional Pillow import. The person-aware effects (`person_*`, `fx_*`) are the exception: they need numpy, OpenCV and Pillow, import them
+  at the top, and their tests skip when those are absent. Third-party files are downloaded on first use, pinned by sha256 in `data/assets.json`, never vendored; add new ones to `THIRD-PARTY.md`.
 - Every invariant a script relies on gets a test.
 - Never ship a price. Never weaken a spend guard to make a run easier: autonomy is a policy in `SKILL.md`, enforced by the ledger, not a bypass of it.

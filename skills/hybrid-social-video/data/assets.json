@@ -1,0 +1,122 @@
+{
+ "_comment": "Third-party files the person-aware effects download on first use into ~/.cache/hybrid-social-video (override with HSV_CACHE). Each is pinned by size and sha256: a file that does not match is refused, and the effects fall back (system fonts, a cruder matte). Nothing here is vendored in the skill.",
+ "assets": {
+  "modnet": {
+   "kind": "model",
+   "url": "https://huggingface.co/Xenova/modnet/resolve/main/onnx/model.onnx",
+   "file": "models/modnet.onnx",
+   "bytes": 25888640,
+   "sha256": "07c308cf0fc7e6e8b2065a12ed7fc07e1de8febb7dc7839d7b7f15dd66584df9",
+   "licence": "Apache-2.0",
+   "about": "MODNet portrait matting, ONNX export: a soft person matte per frame"
+  },
+  "yunet": {
+   "kind": "model",
+   "url": "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+   "file": "models/yunet.onnx",
+   "bytes": 232589,
+   "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+   "licence": "MIT",
+   "about": "YuNet face detector for OpenCV: face box per frame"
+  },
+  "anton": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/anton/Anton-Regular.ttf",
+   "file": "fonts/Anton-Regular.ttf",
+   "bytes": 170812,
+   "sha256": "a4ba3a92350ebb031da0cb47630ac49eb265082ca1bc0450442f4a83ab947cab",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "archivo-black": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/archivoblack/ArchivoBlack-Regular.ttf",
+   "file": "fonts/ArchivoBlack-Regular.ttf",
+   "bytes": 90988,
+   "sha256": "dd9a89a019b4849f66ab75455fe7bdf931311042cbb0f0f97acc061539703180",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "instrument-serif-italic": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/instrumentserif/InstrumentSerif-Italic.ttf",
+   "file": "fonts/InstrumentSerif-Italic.ttf",
+   "bytes": 71592,
+   "sha256": "08939b8bdf534afec24ae0ef5e03f948940cd9a8fe08e7fecbad040e62327385",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "instrument-serif": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/instrumentserif/InstrumentSerif-Regular.ttf",
+   "file": "fonts/InstrumentSerif-Regular.ttf",
+   "bytes": 70012,
+   "sha256": "498efd461f6ddfcb7a111bf9a565709d2085d48201d501ead960d93e84ffbb88",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "space-mono-bold": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/spacemono/SpaceMono-Bold.ttf",
+   "file": "fonts/SpaceMono-Bold.ttf",
+   "bytes": 98232,
+   "sha256": "405e73d41afb7e5906efce206a326af5c956f38e255f35421c260e861e599c59",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "permanent-marker": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/apache/permanentmarker/PermanentMarker-Regular.ttf",
+   "file": "fonts/PermanentMarker-Regular.ttf",
+   "bytes": 74632,
+   "sha256": "28f82c8a7943cb8e9d599f8554da1d4fc75dbcf69b9885ad6c0611d20c6946c5",
+   "licence": "Apache-2.0",
+   "about": "font for rendered text"
+  },
+  "playfair": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf",
+   "file": "fonts/PlayfairDisplay.ttf",
+   "bytes": 300724,
+   "sha256": "c40f2293766a503bc70cce9e512ef844a4ccb7cbcde792fe2ea31d191917d8d6",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "playfair-italic": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/playfairdisplay/PlayfairDisplay-Italic%5Bwght%5D.ttf",
+   "file": "fonts/PlayfairDisplay-Italic.ttf",
+   "bytes": 278688,
+   "sha256": "a5e26dc5e2e77fb2803a0bf02fd4f81ee136ec8dea863ccdb0c59a263b21378b",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "montserrat": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/montserrat/Montserrat%5Bwght%5D.ttf",
+   "file": "fonts/Montserrat.ttf",
+   "bytes": 744936,
+   "sha256": "0f7b311b2f3279e4eef9b2f968bcdbab6e28f4daeb1f049f4f278a902bcd82f7",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "inter": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
+   "file": "fonts/Inter.ttf",
+   "bytes": 876576,
+   "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  },
+  "caveat": {
+   "kind": "font",
+   "url": "https://github.com/google/fonts/raw/main/ofl/caveat/Caveat%5Bwght%5D.ttf",
+   "file": "fonts/Caveat.ttf",
+   "bytes": 403648,
+   "sha256": "0bdb6b660482d31531b3945849fba5916b3ef8695da7024a9e6b9ee3c4157988",
+   "licence": "OFL-1.1",
+   "about": "font for rendered text"
+  }
+ }
+}

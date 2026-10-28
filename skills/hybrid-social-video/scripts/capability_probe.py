@@ -110,6 +110,22 @@ def _hyperframes() -> dict:
                       "refuses compose and render from CLI agents. Read references/19-hyperframes.md"}
 
 
+def _person_fx() -> dict:
+    """Can person-aware effects (person_fx.py) run here, and how good would the matte be? Local facts only; never downloads."""
+    have = {m: importlib.util.find_spec(m) is not None for m in ("numpy", "cv2", "PIL", "onnxruntime")}
+    cached: dict = {}
+    try:
+        import fx_assets
+        cached = {n: bool(fx_assets.verified(n)) for n in ("modnet", "yunet")}
+        cached["fonts"] = sum(1 for n, sp in fx_assets.catalog().items() if sp["kind"] == "font" and fx_assets.verified(n))
+    except Exception:
+        pass
+    ready = have["numpy"] and have["cv2"] and have["PIL"]
+    matte = "modnet (cached)" if have["onnxruntime"] and cached.get("modnet") else ("modnet (will download once, 26 MB)" if have["onnxruntime"] else "grabcut (rough; pip install onnxruntime for the real matte)")
+    return {"ready": ready, "modules": have, "assets_cached": cached, "matte": matte,
+            "get_it": "pip install numpy opencv-python pillow onnxruntime  (then person_fx.py fetches the models and fonts it needs on first use; references/20-person-aware-effects.md)"}
+
+
 def _voice_routes() -> dict:
     """Offline voice routes: the best local voice per language and any high-quality (Premium, Enhanced, Siri) voices."""
     try:
@@ -182,6 +198,7 @@ def probe() -> dict:
                            "note": "cached weights: confirm what it does before relying on it"})
     out["hyperframes"] = _hyperframes()
     out["hyperframes"]["cli"] = loc.get("hyperframes_cli")
+    out["person_fx"] = _person_fx()
     out["ai_models"] = {"local": ai, "hosted_hints": sorted(set(out["credentials_present"].values())),
                         "director": None, "tool_models": [], "voice_routes": _voice_routes()}
     if "fc-list" in loc["binaries"]:
@@ -219,6 +236,8 @@ def main(argv: list[str]) -> int:
             hf = rep["hyperframes"]
             print(f"[probe] HyperFrames: skills {', '.join(hf['skills'][:4]) + (' ...' if len(hf['skills']) > 4 else '') if hf['skills'] else 'NOT installed'}"
                   f" | cli {hf['cli'] or 'no'}" + ("" if hf["skills_installed"] else " | get it: npx skills add heygen-com/hyperframes (references/19-hyperframes.md)"))
+            pf = rep["person_fx"]
+            print(f"[probe] person-aware effects: {'ready' if pf['ready'] else 'NOT ready (' + pf['get_it'] + ')'} | matte: {pf['matte']}")
             print(f"[probe] voices: {vr.get('engine') or 'none'} ({vr.get('voices', 0)}); high-quality local: {', '.join(vr.get('high_quality') or []) or 'none'}; "
                   f"best by language: " + "; ".join(f"{k}: {(vr.get('best_by_language') or {})[k]}" for k in ("en", "es", "fr", "de", "pt", "it", "ar", "hi", "ur", "ja", "zh", "ko") if k in (vr.get("best_by_language") or {})))
             print("[probe] AI models here: " + ", ".join(f"{m['id']} ({m['role']}, {'offline' if m['offline'] else 'online'})" for m in ai["local"] if m["role"] != "runtime") + "; "

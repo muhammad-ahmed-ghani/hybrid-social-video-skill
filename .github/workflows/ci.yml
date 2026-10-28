@@ -16,7 +16,7 @@ jobs:
       - name: Install ffmpeg and fontconfig
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fontconfig
       - name: Install Python dependencies
-        run: pip install pytest pillow numpy playwright
+        run: pip install pytest pillow numpy opencv-python-headless playwright
       - name: Install a browser for the render route tests
         run: playwright install --with-deps chromium
       - name: Validate the skill and check the committed .skill is current
