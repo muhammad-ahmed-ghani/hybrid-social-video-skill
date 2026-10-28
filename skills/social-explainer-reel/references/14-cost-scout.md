@@ -160,7 +160,7 @@ When the environment supports sub-agents, the scout can run as one, so the main 
 this, with the paths filled in. It is self-contained on purpose: the sub-agent has only what you write.
 
 ```
-Role: cost scout for a hybrid social video episode. You find what generation costs in THIS environment and record it.
+Role: cost scout for a social explainer reel episode. You find what generation costs in THIS environment and record it.
 You do not generate anything, install anything, or spend money.
 
 Read: references/14-cost-scout.md in <skill dir>, and <episode>/beatmap.json.

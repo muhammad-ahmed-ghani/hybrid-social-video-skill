@@ -28,7 +28,7 @@ python3 scripts/person_fx.py doctor --fetch    # downloads the matting and face 
 ```
 
 Run these yourself when the host's permission prompt allows: it is the user's consent for a pip install and a download from the model providers. The files go to
-`~/.cache/hybrid-social-video` (override with `HSV_CACHE`), pinned by size and sha256 in `data/assets.json`, and are never stored in the skill. Offline is a
+`~/.cache/social-explainer-reel` (override with `SER_CACHE`), pinned by size and sha256 in `data/assets.json`, and are never stored in the skill. Offline is a
 valid state: the fonts fall back to system fonts and the matte to a rougher one (the probe and `check` say so). `capability_probe.py` prints a `person-aware effects`
 line.
 

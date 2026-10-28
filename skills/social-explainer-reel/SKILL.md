@@ -1,5 +1,5 @@
 ---
-name: hybrid-social-video
+name: social-explainer-reel
 description: >-
   Directs a 9:16 social video (Reels, TikTok, Shorts, 20-90 s), one-off or as an
   episodic series: a human host or natural voice with code-drawn overlays, AI imagery
@@ -18,7 +18,7 @@ metadata:
   version: "1.6"
 ---
 
-# Hybrid Social Video
+# Social Explainer Reel
 
 You are the director. A hybrid video is not one tool's output. Every moment comes from whichever
 layer cannot get it wrong: code draws numbers, labels, diagrams, equations and moves a cast exactly
@@ -114,7 +114,7 @@ note to add.
 ## Fast path: a faceless, zero-spend video in 10 commands
 
 For a simple video (a topic or a pasted article, no authorised host, no paid tool) read only this file and `references/03-beat-map.md`
-(plus the format file if you want its grammar). Work from the skill folder (`cd ~/.claude/skills/hybrid-social-video`) and set
+(plus the format file if you want its grammar). Work from the skill folder (`cd ~/.claude/skills/social-explainer-reel`) and set
 `EP=<absolute path of the episode folder>`; scripts print JSON on stdout and a summary on stderr (add `--quiet` to lint for JSON only):
 
 ```bash

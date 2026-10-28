@@ -1,9 +1,9 @@
 # Contributing
 
 1. Branch off `main`: `fix/short-slug` for repairs, `feature/short-slug` for additions.
-2. Edit the skill under `skills/hybrid-social-video/`.
-3. Run the tests: `python3 -m pytest -q skills/hybrid-social-video/tests/`.
-4. Rebuild the archive: `python3 tools/package_skill.py`, and commit `dist/hybrid-social-video.skill` with your change.
+2. Edit the skill under `skills/social-explainer-reel/`.
+3. Run the tests: `python3 -m pytest -q skills/social-explainer-reel/tests/`.
+4. Rebuild the archive: `python3 tools/package_skill.py`, and commit `dist/social-explainer-reel.skill` with your change.
 5. Add a line to `CHANGELOG.md`. Bump `metadata.version` in `SKILL.md` for user-visible changes.
 
 ## Skill rules

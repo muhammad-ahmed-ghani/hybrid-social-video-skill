@@ -1,4 +1,4 @@
-"""Behavioural tests for the hybrid-social-video scripts.
+"""Behavioural tests for the social-explainer-reel scripts.
 
 Run:  python3 -m pytest -q tests/        (stdlib + pytest; ffmpeg needed for the media tests)
 Each test pins an invariant the skill relies on, not a snapshot of current data.
@@ -1491,7 +1491,7 @@ def test_host_beats_require_a_stated_source_and_consent_for_real_people():
 # ---------------------------------------------------------------- v1.2: models, provenance, voice, pacing
 def test_spoken_tokens_treat_digits_and_number_words_alike():
     from speech_align import align, tokens, wer
-    assert tokens("It picks 1 of 15 formats, hybrid-social-video") == ["it", "picks", "one", "of", "fifteen", "formats", "hybrid", "social", "video"]
+    assert tokens("It picks 1 of 15 formats, social-explainer-reel") == ["it", "picks", "one", "of", "fifteen", "formats", "social", "explainer", "reel"]
     assert wer(tokens("1 of 15"), tokens("one of fifteen")) == 0.0
     assert wer(tokens("a b c d"), tokens("a x c d")) == pytest.approx(0.25)
     assert align(["a", "b", "c"], ["a", "c"]) == {0: 0, 2: 1}

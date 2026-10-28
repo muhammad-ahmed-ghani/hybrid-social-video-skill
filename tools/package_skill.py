@@ -3,7 +3,7 @@
 
 Usage: python3 tools/package_skill.py [skill-dir] [out-dir]
        python3 tools/package_skill.py --check      fail if dist/ is out of date with the skill folder
-Defaults: skills/hybrid-social-video  dist/
+Defaults: skills/social-explainer-reel  dist/
 Stdlib only. The archive is reproducible: sorted entries, fixed timestamps.
 """
 from __future__ import annotations
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     root = Path(__file__).resolve().parent.parent
     if sys.argv[1:] == ["--check"]:
         import tempfile
-        skill = root / "skills" / "hybrid-social-video"
+        skill = root / "skills" / "social-explainer-reel"
         with tempfile.TemporaryDirectory() as tmp:
             fresh = package(skill, Path(tmp))
             committed = root / "dist" / fresh.name
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                 sys.exit(f"{committed} is out of date: run python3 tools/package_skill.py and commit it")
         print("dist is current")
         sys.exit(0)
-    skill = Path(sys.argv[1]) if len(sys.argv) > 1 else root / "skills" / "hybrid-social-video"
+    skill = Path(sys.argv[1]) if len(sys.argv) > 1 else root / "skills" / "social-explainer-reel"
     dest = Path(sys.argv[2]) if len(sys.argv) > 2 else root / "dist"
     try:
         result = package(skill.resolve(), dest)

@@ -5,7 +5,7 @@
     python3 fx_assets.py fetch [name ...]  # download (default: everything), resumable, size and sha256 checked
     python3 fx_assets.py path modnet       # print the cached path (exit 1 if absent)
 
-The list is data/assets.json. Files go to ~/.cache/hybrid-social-video (override with the HSV_CACHE environment variable), never into the
+The list is data/assets.json. Files go to ~/.cache/social-explainer-reel (override with the SER_CACHE environment variable), never into the
 skill. A file that is the wrong size or hash is deleted and refused, so a moved or tampered upstream file can never be used; the callers
 fall back (a system font, a cruder matte). Offline is a valid state. Exit 0 ok | 1 something missing or refused | 2 usage.
 """
@@ -23,7 +23,7 @@ CATALOG = SKILL_DIR / "data" / "assets.json"
 
 
 def cache_dir() -> Path:
-    return Path(os.environ.get("HSV_CACHE") or (Path.home() / ".cache" / "hybrid-social-video"))
+    return Path(os.environ.get("SER_CACHE") or (Path.home() / ".cache" / "social-explainer-reel"))
 
 
 def catalog() -> dict:
@@ -61,7 +61,7 @@ def _download(spec: dict, dest: Path, tries: int = 4) -> bool:
         if have > spec["bytes"]:
             part.unlink()
             have = 0
-        req = urllib.request.Request(spec["url"], headers={"User-Agent": "hybrid-social-video-skill", **({"Range": f"bytes={have}-"} if have else {})})
+        req = urllib.request.Request(spec["url"], headers={"User-Agent": "social-explainer-reel-skill", **({"Range": f"bytes={have}-"} if have else {})})
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
                 if have and r.status != 206:      # the server ignored the range: start over

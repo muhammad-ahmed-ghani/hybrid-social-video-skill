@@ -1,8 +1,8 @@
 # HyperFrames source of the demo reel
 
-The motion design of `../hybrid-social-video-demo.mp4` was written for HyperFrames' `talking-head-recut` workflow: a host video, eight designed cards,
+The motion design of `../social-explainer-reel-demo.mp4` was written for HyperFrames' `talking-head-recut` workflow: a host video, eight designed cards,
 a caption track and one paused GSAP timeline that moves the host between full frame and a round picture-in-picture. These are the sources, kept as a
-worked example of the hand-off in [`references/19-hyperframes.md`](../../skills/hybrid-social-video/references/19-hyperframes.md).
+worked example of the hand-off in [`references/19-hyperframes.md`](../../skills/social-explainer-reel/references/19-hyperframes.md).
 
 - `build_hf.py` generates `index.html` and `cards/` from `timing.json` (the host's word times), so every cue lands on the word it belongs to.
 - `index.html`, `cards/`, `storyboard.json`, `transcript.json` are the generated output.

@@ -1,4 +1,4 @@
-<h1 align="center"><img src="assets/mascot-small.png" height="72" align="absmiddle" alt="Slate, the mascot"> Hybrid Social Video</h1>
+<h1 align="center"><img src="assets/mascot-small.png" height="72" align="absmiddle" alt="Slate, the mascot"> Social Explainer Reel</h1>
 
 <p align="center">
 An <a href="https://agentskills.io">Agent Skill</a> that directs 9:16 reels, TikToks and Shorts: a human host with code-drawn overlays,
@@ -7,7 +7,7 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 </p>
 
 <p align="center">
-<a href="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml"><img src="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill/actions/workflows/ci.yml"><img src="https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT">
 <img src="https://img.shields.io/badge/skill-v1.5-informational" alt="skill v1.5">
 <img src="https://img.shields.io/badge/Agent_Skills-compatible-success" alt="Agent Skills compatible">
@@ -19,12 +19,13 @@ It runs end to end without asking you questions, and it knows, and tells you, wh
 <img src="demo/demo.webp" width="300" alt="The demo reel: a host explains the skill with motion graphics over the footage. Silent preview of the full 35 second video.">
 </p>
 
-<p align="center">Silent preview of the full 35 s reel. <a href="https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill/raw/main/demo/hybrid-social-video-demo.mp4"><b>Download it with sound (mp4)</b></a>.</p>
+<p align="center">Silent preview of the full 35 s reel. <a href="https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill/raw/main/demo/social-explainer-reel-demo.mp4"><b>Download it with sound (mp4)</b></a>.</p>
 
 That reel was made by this skill from one sentence: *"create a video explaining that if you want social reels or explainer
 videos, go to this repository and tell your agent to use it."* The agent chose the format, wrote and linted the plan, priced it,
 generated a fictional presenter and one talking clip per beat, timed everything from the host's own words, handed the motion design
 over the footage to HyperFrames (sources in [`demo/hyperframes/`](demo/hyperframes/)), mixed the sound, and passed QC. The host and his voice are AI-generated and labelled as such.
+The reel was recorded before the skill took this name, so its host still says the old one aloud.
 How it was made, model by model: [`demo/AI-USE.md`](demo/AI-USE.md) · the plan: [`demo/beatmap.json`](demo/beatmap.json).
 
 ### Effects that know where the speaker is
@@ -36,18 +37,18 @@ How it was made, model by model: [`demo/AI-USE.md`](demo/AI-USE.md) · the plan:
 <p align="center">One clip, eight effects, silent preview. Each one is placed by the tracker, so type sits behind the head and nothing lands on the face.</p>
 
 ```bash
-python3 skills/hybrid-social-video/scripts/person_fx.py check   plan.json host.mp4 out/ --words host.words.json   # one frame per effect, a contact sheet, a face-cover audit
-python3 skills/hybrid-social-video/scripts/person_fx.py render  plan.json host.mp4 host_fx.mp4 --words host.words.json
+python3 skills/social-explainer-reel/scripts/person_fx.py check   plan.json host.mp4 out/ --words host.words.json   # one frame per effect, a contact sheet, a face-cover audit
+python3 skills/social-explainer-reel/scripts/person_fx.py render  plan.json host.mp4 host_fx.mp4 --words host.words.json
 ```
 
 A plan is a short list such as `{"fx": "word-behind", "on": "everything", "text": "EVERYTHING"}`: the effect starts on the word the speaker says. The catalogue, the options and
-the rules are in [`references/20-person-aware-effects.md`](skills/hybrid-social-video/references/20-person-aware-effects.md).
+the rules are in [`references/20-person-aware-effects.md`](skills/social-explainer-reel/references/20-person-aware-effects.md).
 
 ## Use it in one line
 
 Install it (below), then tell your agent:
 
-> use hybrid-social-video to make a 35 second reel that explains how compound interest works
+> use social-explainer-reel to make a 35 second reel that explains how compound interest works
 
 That is all. It decides the format, length, platforms, language, voice, look and renderer, writes each choice into the plan, and
 shows you the decisions once, at the end. It stops to ask only for what exists nowhere but in your head: money with no
@@ -106,10 +107,10 @@ authorisation, a real person's likeness or voice, a credential. A plan that cost
 
 ## Install
 
-**The `.skill` file** — download [`dist/hybrid-social-video.skill`](dist/hybrid-social-video.skill) (a zip with the skill folder at its root):
+**The `.skill` file** — download [`dist/social-explainer-reel.skill`](dist/social-explainer-reel.skill) (a zip with the skill folder at its root):
 
 ```bash
-unzip -o dist/hybrid-social-video.skill -d ~/.claude/skills/
+unzip -o dist/social-explainer-reel.skill -d ~/.claude/skills/
 ```
 
 For Claude.ai or Claude Desktop: Settings, Capabilities, Skills, upload the `.skill` file.
@@ -117,15 +118,15 @@ For Claude.ai or Claude Desktop: Settings, Capabilities, Skills, upload the `.sk
 **Claude Code plugin marketplace**
 
 ```
-/plugin marketplace add muhammad-ahmed-ghani/hybrid-social-video-skill
-/plugin install hybrid-social-video@hybrid-social-video-marketplace
+/plugin marketplace add muhammad-ahmed-ghani/social-explainer-reel-skill
+/plugin install social-explainer-reel@social-explainer-reel-marketplace
 ```
 
 **Clone**
 
 ```bash
-git clone https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill.git
-cp -R hybrid-social-video-skill/skills/hybrid-social-video ~/.claude/skills/
+git clone https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill.git
+cp -R social-explainer-reel-skill/skills/social-explainer-reel ~/.claude/skills/
 ```
 
 Start a new session afterwards so the skill is picked up.
@@ -134,13 +135,13 @@ Start a new session afterwards so the skill is picked up.
 `npx skills add heygen-com/hyperframes`; the skill does this itself when the host allows it. In a chat client with no filesystem (Claude.ai, ChatGPT, Grok)
 connect the hosted MCP by following the [HyperFrames MCP guide](https://hyperframes.heygen.com/guides/mcp) (endpoint
 `https://mcp.heygen.com/mcp/hyperframes/`, HeyGen sign-in). The hosted MCP refuses compose and render from local CLI agents, so there the local skills are the way.
-Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/19-hyperframes.md).
+Details: [`references/19-hyperframes.md`](skills/social-explainer-reel/references/19-hyperframes.md).
 
 ## Requirements
 
 - `python3` (3.9+) and `ffmpeg` / `ffprobe`. The scripts use the standard library, with `Pillow` for sheets and `numpy` for the mix.
 - For the person-aware effects: `pip install numpy opencv-python pillow onnxruntime` (the first three are required; onnxruntime gives the real person matte). The first run downloads about 28 MB of
-  models and fonts from their upstream projects ([`THIRD-PARTY.md`](skills/hybrid-social-video/THIRD-PARTY.md)); offline it falls back to a rougher matte and system fonts.
+  models and fonts from their upstream projects ([`THIRD-PARTY.md`](skills/social-explainer-reel/THIRD-PARTY.md)); offline it falls back to a rougher matte and system fonts.
 - For the host-plus-overlay route: `playwright` with Chromium (`pip install playwright && playwright install chromium`) and
   `faster-whisper` for word timings.
 - Faceless route: Playwright with Chromium, `faster-whisper`, `numpy` and `Pillow`; a local voice (macOS `say`, espeak-ng or better).
@@ -151,7 +152,7 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 
 ```
 .
-├── skills/hybrid-social-video/     the skill (what gets installed)
+├── skills/social-explainer-reel/   the skill (what gets installed)
 │   ├── SKILL.md                    entry point: operating mode, the bar, rules, loop
 │   ├── references/                 formats, beat map, style, sound, governance, QA, routing, series, AI models and tools
 │   ├── scripts/                    lint, cost plan, ledger, provenance, voice check, host assembly, HTML renderer, mixer, QC, series, person tracking and effects
@@ -160,7 +161,7 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 │   └── tests/                      pytest suite pinning the skill's invariants
 ├── demo/                           the demo reel, its animated preview, its plan, its HyperFrames sources, and its AI-use statement
 ├── assets/                         the mascot, the social preview image and the effects preview
-├── dist/hybrid-social-video.skill  packaged skill, rebuilt by tools/package_skill.py
+├── dist/social-explainer-reel.skill packaged skill, rebuilt by tools/package_skill.py
 ├── tools/package_skill.py          validate and pack
 ├── .claude-plugin/marketplace.json
 ├── .github/workflows/ci.yml        validate, test, check the .skill is current
@@ -171,11 +172,11 @@ Details: [`references/19-hyperframes.md`](skills/hybrid-social-video/references/
 
 ```bash
 pip install pytest pillow numpy opencv-python-headless
-python3 -m pytest -q skills/hybrid-social-video/tests/     # media tests need ffmpeg
+python3 -m pytest -q skills/social-explainer-reel/tests/     # media tests need ffmpeg
 python3 tools/package_skill.py                              # validate and rebuild dist/
 ```
 
-CI fails if `dist/hybrid-social-video.skill` is out of date, so rebuild and commit it with any change to the skill.
+CI fails if `dist/social-explainer-reel.skill` is out of date, so rebuild and commit it with any change to the skill.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Credits
@@ -185,7 +186,7 @@ AI-generated person (Nano Banana Pro for the portrait, Veo 3.1 Fast for the talk
 [`demo/AI-USE.md`](demo/AI-USE.md).
 
 The person matte and face detector are open models that run locally: MODNet (Apache-2.0) and YuNet (MIT). Fonts are SIL OFL or Apache-2.0. Nothing is bundled; the files, their
-licences and their sources are listed in [`THIRD-PARTY.md`](skills/hybrid-social-video/THIRD-PARTY.md).
+licences and their sources are listed in [`THIRD-PARTY.md`](skills/social-explainer-reel/THIRD-PARTY.md).
 
 ## License
 

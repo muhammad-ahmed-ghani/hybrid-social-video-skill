@@ -1,6 +1,6 @@
 # Third-party files
 
-Nothing below is stored in this skill. `scripts/fx_assets.py` downloads each file on first use into `~/.cache/hybrid-social-video` (override with `HSV_CACHE`), checks its size
+Nothing below is stored in this skill. `scripts/fx_assets.py` downloads each file on first use into `~/.cache/social-explainer-reel` (override with `SER_CACHE`), checks its size
 and sha256 against `data/assets.json`, and refuses anything that does not match. Every one is optional: offline, the effects fall back to system fonts and a rougher matte.
 
 | File | What it is | Licence | Source |
