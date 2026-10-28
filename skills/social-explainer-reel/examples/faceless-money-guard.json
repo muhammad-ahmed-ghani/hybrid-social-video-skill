@@ -38,8 +38,8 @@
       "id": "c1",
       "text": "Every price is read from the environment's own tools and recorded with its source; a price is never remembered.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, iron rule 1",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, iron rule 1",
       "date": "2026-10-21",
       "verified": true
     },
@@ -47,8 +47,8 @@
       "id": "c2",
       "text": "Before each paid call the ledger is checked, and a call that would pass the cap is refused.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, iron rule 1",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, iron rule 1",
       "date": "2026-10-21",
       "verified": true
     },
@@ -56,8 +56,8 @@
       "id": "c3",
       "text": "An asset gets 1 respend, only for a content defect, and only after the prompt changes.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, iron rule 3",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, iron rule 3",
       "date": "2026-10-21",
       "verified": true
     },
@@ -65,8 +65,8 @@
       "id": "c4",
       "text": "The user authorises a budget, the cap is enforced either way, and the ledger report matches what the user is told.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, execution contract",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, execution contract",
       "date": "2026-10-21",
       "verified": true
     }

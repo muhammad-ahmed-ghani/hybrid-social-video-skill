@@ -33,7 +33,7 @@ HAVE_FFMPEG = shutil.which("ffmpeg") and shutil.which("ffprobe")
 @pytest.fixture(autouse=True)
 def offline(tmp_path, monkeypatch):
     """No downloads: assets resolve to nothing, so fonts fall back to the system's and the matte to a drawn one."""
-    monkeypatch.setenv("HSV_CACHE", str(tmp_path / "cache"))
+    monkeypatch.setenv("SER_CACHE", str(tmp_path / "cache"))
     monkeypatch.setattr(fx_assets, "ensure", lambda name, quiet=True: None)
 
 
@@ -161,7 +161,7 @@ def test_param_matte_is_a_person_shape():
 
 def test_assets_refuse_a_wrong_file(tmp_path, monkeypatch):
     monkeypatch.undo()
-    monkeypatch.setenv("HSV_CACHE", str(tmp_path))
+    monkeypatch.setenv("SER_CACHE", str(tmp_path))
     spec = fx_assets.catalog()["yunet"]
     p = tmp_path / spec["file"]
     p.parent.mkdir(parents=True)

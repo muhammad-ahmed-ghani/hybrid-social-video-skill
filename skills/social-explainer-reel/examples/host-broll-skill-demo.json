@@ -1,8 +1,8 @@
 {
   "schema": "hybrid-beatmap/1",
   "meta": {
-    "topic": "Make reels and explainers: point your agent at the hybrid-social-video repo",
-    "thesis": "To make social reels or explainer videos, open the hybrid-social-video repository and tell your agent to use the skill.",
+    "topic": "Make reels and explainers: point your agent at the social-explainer-reel repo",
+    "thesis": "To make social reels or explainer videos, open the social-explainer-reel repository and tell your agent to use the skill.",
     "intent": "mechanism",
     "misconception_note": "The hook flips the belief that one AI video tool should make the whole reel; beat 1 names it, beats 2 to 5 show the layered mechanism that replaces it.",
     "format": "host-broll",
@@ -45,48 +45,48 @@
       "id": "c1",
       "text": "The skill mixes 4 layers: code-rendered graphics, AI imagery and video, stock or real footage, and a host or recurring cast, giving each beat to the layer that is reliable for it.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md",
       "date": "2026-10-20"
     },
     {
       "id": "c2",
       "text": "Code draws numbers, labels, diagrams and equations exactly; a generative model never renders them.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, iron rule 4",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, iron rule 4",
       "date": "2026-10-20"
     },
     {
       "id": "c3",
       "text": "The skill picks 1 of 15 formats and writes a linted beat map.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md",
       "date": "2026-10-20"
     },
     {
       "id": "c4",
       "text": "Every paid generation is priced from the environment and the ledger refuses it until the plan gate is approved and the budget cap allows it.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, iron rule 1",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, iron rule 1",
       "date": "2026-10-20"
     },
     {
       "id": "c5",
-      "text": "Install from the repo (the .skill file, the plugin marketplace, or a clone), then ask the agent to use hybrid-social-video; the user gets master.mp4 after approving the plan.",
+      "text": "Install from the repo (the .skill file, the plugin marketplace, or a clone), then ask the agent to use social-explainer-reel; the user gets master.mp4 after approving the plan.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video README",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel README",
       "date": "2026-10-20"
     },
     {
       "id": "c6",
       "text": "Code gives exactness, AI gives atmosphere, real footage gives proof, and a host gives a human reason to stay.",
       "confidence": "primary",
-      "source": "https://github.com/muhammad-ahmed-ghani/hybrid-social-video-skill",
-      "source_name": "hybrid-social-video SKILL.md, introduction",
+      "source": "https://github.com/muhammad-ahmed-ghani/social-explainer-reel-skill",
+      "source_name": "social-explainer-reel SKILL.md, introduction",
       "date": "2026-10-20"
     }
   ],
@@ -219,17 +219,17 @@
       "role": "reveal",
       "layer": "host",
       "layer_why": "a human presence earns trust and carries the speech; graphics are code overlays on top",
-      "text": "Open this repository, give it to your agent, and say: use hybrid-social-video.",
-      "visual": "a terminal card types the repo path, then a second line: use hybrid-social-video",
+      "text": "Open this repository, give it to your agent, and say: use social-explainer-reel.",
+      "visual": "a terminal card types the repo path, then a second line: use social-explainer-reel",
       "device": "terminal-type",
       "overlays": [
         {
           "kind": "stat",
-          "content": "github.com/muhammad-ahmed-ghani/hybrid-social-video-skill"
+          "content": "github.com/muhammad-ahmed-ghani/social-explainer-reel-skill"
         }
       ],
       "on_screen_text": [
-        "use hybrid-social-video"
+        "use social-explainer-reel"
       ],
       "zone": "center",
       "claim_refs": [

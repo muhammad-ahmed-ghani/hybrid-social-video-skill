@@ -1,4 +1,4 @@
-"""hx_common.py - shared helpers for the hybrid-social-video scripts.
+"""hx_common.py - shared helpers for the social-explainer-reel scripts.
 
 Stdlib only (PIL is optional and only used by contact_sheet / animatic).
 Data files live in ../data and are the single source of truth for thresholds,

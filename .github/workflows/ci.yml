@@ -22,4 +22,4 @@ jobs:
       - name: Validate the skill and check the committed .skill is current
         run: python3 tools/package_skill.py --check
       - name: Run tests
-        run: python3 -m pytest -q skills/hybrid-social-video/tests/
+        run: python3 -m pytest -q skills/social-explainer-reel/tests/

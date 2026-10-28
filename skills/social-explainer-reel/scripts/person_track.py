@@ -11,7 +11,7 @@ sit behind the speaker, a card can follow the head, a light can leave the speake
 How: the matte comes from a portrait-matting network (MODNet, ONNX, run on CPU with onnxruntime, about 0.15 s per frame at 540 x 960) and
 is tightened with a guided filter against the footage so the edge follows the hair. The face comes from OpenCV's YuNet, then a Haar
 cascade, then the matte itself. Tracking runs every Nth frame (default 15 fps) and is interpolated; the face and the lines derived from the
-matte are smoothed with a two-pass filter, so the smoothing adds no lag. Everything is cached under ~/.cache/hybrid-social-video/track, keyed on
+matte are smoothed with a two-pass filter, so the smoothing adds no lag. Everything is cached under ~/.cache/social-explainer-reel/track, keyed on
 the file, so a second run, or a check frame, costs nothing.
 
 Backends degrade, never stop: with no network and no cached model the matte falls back to GrabCut seeded from the face box, then to a
